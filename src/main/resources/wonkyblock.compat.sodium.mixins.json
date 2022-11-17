@@ -1,15 +1,12 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "net.fabricmc.example.mixin",
+  "plugin": "nl.enjarai.wonkyblock.compat.sodium.SodiumMixinPlugin",
+  "package": "nl.enjarai.wonkyblock.compat.sodium.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
   ],
   "client": [
-    "BlockItemMixin",
-    "BlockMixin",
-    "ParticleManagerMixin",
-    "RebuildTaskMixin"
   ],
   "injectors": {
     "defaultRequire": 1

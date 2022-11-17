@@ -1,6 +1,6 @@
-package net.fabricmc.example.mixin;
+package nl.enjarai.wonkyblock.mixin;
 
-import net.fabricmc.example.ExampleMod;
+import nl.enjarai.wonkyblock.WonkyBlock;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.render.block.BlockRenderManager;
@@ -53,7 +53,7 @@ public abstract class RebuildTaskMixin {
     )
     private BlockRenderType redirectGetRenderType(BlockState blockState) {
         var renderType = blockState.getRenderType();
-        if (ExampleMod.isBlockInvisible(pos)) {
+        if (WonkyBlock.isBlockInvisible(pos)) {
             return BlockRenderType.INVISIBLE;
         }
 

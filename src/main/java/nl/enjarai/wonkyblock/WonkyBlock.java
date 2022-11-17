@@ -1,9 +1,9 @@
-package net.fabricmc.example;
+package nl.enjarai.wonkyblock;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.example.particle.PlacingBlockParticle;
-import net.fabricmc.example.util.RenderUtil;
+import nl.enjarai.wonkyblock.particle.PlacingBlockParticle;
+import nl.enjarai.wonkyblock.util.RenderUtil;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.minecraft.particle.DefaultParticleType;
@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 
-public class ExampleMod implements ModInitializer, ClientModInitializer {
+public class WonkyBlock implements ModInitializer, ClientModInitializer {
 	// This logger is used to write text to the console and the log file.
 	// It is considered best practice to use your mod id as the logger's name.
 	// That way, it's clear which mod wrote info, warnings, and errors.

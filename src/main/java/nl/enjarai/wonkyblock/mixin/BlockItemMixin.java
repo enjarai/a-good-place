@@ -1,6 +1,6 @@
-package net.fabricmc.example.mixin;
+package nl.enjarai.wonkyblock.mixin;
 
-import net.fabricmc.example.ExampleMod;
+import nl.enjarai.wonkyblock.WonkyBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
@@ -19,8 +19,8 @@ public abstract class BlockItemMixin {
     )
     private void placeFromNbt(BlockPos pos, World world, ItemStack stack, BlockState state, CallbackInfoReturnable<BlockState> cir) {
         if (world.isClient()) {
-            ExampleMod.addInvisibleBlock(pos);
-            world.addImportantParticle(ExampleMod.PLACING_PARTICLE, true, pos.getX(), pos.getY(), pos.getZ(), 0, 0, 0);
+            WonkyBlock.addInvisibleBlock(pos);
+            world.addImportantParticle(WonkyBlock.PLACING_PARTICLE, true, pos.getX(), pos.getY(), pos.getZ(), 0, 0, 0);
         }
     }
 }

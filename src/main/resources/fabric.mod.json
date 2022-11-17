@@ -1,42 +1,38 @@
 {
   "schemaVersion": 1,
-  "id": "modid",
+  "id": "wonkyblock",
   "version": "${version}",
 
-  "name": "Example Mod",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "name": "Wonky Block",
+  "description": "#TODO, if you see this, i probably forgot to add a description. please do let me know.",
   "authors": [
-    "Me!"
+    "enjarai"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://enjarai.nl/",
+    "sources": "https://github.com/enjarai/wonky-block"
   },
 
-  "license": "CC0-1.0",
-  "icon": "assets/modid/icon.png",
+  "license": "MIT",
+  "icon": "assets/wonkyblock/icon.png",
 
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.fabricmc.example.ExampleMod"
+      "nl.enjarai.wonkyblock.WonkyBlock"
     ],
     "client": [
-      "net.fabricmc.example.ExampleMod"
+      "nl.enjarai.wonkyblock.WonkyBlock"
     ]
   },
   "mixins": [
-    "modid.mixins.json"
+    "wonkyblock.mixins.json",
+    "wonkyblock.compat.sodium.mixins.json"
   ],
-  "accessWidener": "modid.accesswidener",
+  "accessWidener": "wonkyblock.accesswidener",
 
   "depends": {
-    "fabricloader": ">=0.14.9",
     "fabric-api": "*",
-    "minecraft": "~1.19",
-    "java": ">=17"
-  },
-  "suggests": {
-    "another-mod": "*"
+    "minecraft": "~1.19"
   }
 }

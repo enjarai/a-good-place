@@ -1,4 +1,4 @@
-package net.fabricmc.example.util;
+package nl.enjarai.wonkyblock.util;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.math.BlockPos;

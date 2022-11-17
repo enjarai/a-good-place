@@ -1,8 +1,7 @@
-package net.fabricmc.example.particle;
+package nl.enjarai.wonkyblock.particle;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.fabricmc.example.ExampleMod;
-import net.fabricmc.example.util.MixinHooks;
+import nl.enjarai.wonkyblock.WonkyBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -10,18 +9,13 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleFactory;
 import net.minecraft.client.particle.ParticleTextureSheet;
-import net.minecraft.client.particle.SpriteProvider;
 import net.minecraft.client.render.*;
 import net.minecraft.client.render.block.BlockModelRenderer;
 import net.minecraft.client.render.model.BakedModel;
-import net.minecraft.client.texture.SpriteAtlasHolder;
-import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.particle.DefaultParticleType;
-import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.util.math.*;
-import org.lwjgl.opengl.GL11;
 
 import java.util.Random;
 
@@ -114,8 +108,8 @@ public class PlacingBlockParticle extends Particle {
     @Override
     public void tick() {
         if (++age >= 10 || inPosition) {
-            if (ExampleMod.isBlockInvisible(pos)) {
-                ExampleMod.removeInvisibleBlock(pos);
+            if (WonkyBlock.isBlockInvisible(pos)) {
+                WonkyBlock.removeInvisibleBlock(pos);
             }
         }
         if (age >= 11) {
@@ -358,6 +352,6 @@ public class PlacingBlockParticle extends Particle {
 
     @Override
     public void markDead() {
-        ExampleMod.removeInvisibleBlock(pos);
+        WonkyBlock.removeInvisibleBlock(pos);
     }
 }
