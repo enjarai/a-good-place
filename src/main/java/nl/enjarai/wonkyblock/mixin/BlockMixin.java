@@ -18,7 +18,7 @@ public abstract class BlockMixin {
             at = @At("HEAD"),
             cancellable = true
     )
-    private static void shouldDrawSide(BlockState state, BlockView world, BlockPos pos, Direction side, BlockPos otherPos, CallbackInfoReturnable<Boolean> cir) {
+    private static void wonkyblock$overrideCulling(BlockState state, BlockView world, BlockPos pos, Direction side, BlockPos otherPos, CallbackInfoReturnable<Boolean> cir) {
         if (WonkyBlock.isBlockInvisible(otherPos)) {
             cir.setReturnValue(true);
         }

@@ -1,5 +1,6 @@
 package nl.enjarai.wonkyblock.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import nl.enjarai.wonkyblock.WonkyBlock;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
@@ -28,12 +29,12 @@ public abstract class RebuildTaskMixin {
     @Inject(
             method = "render",
             at = @At(
-                    value = "INVOKE_ASSIGN",
+                    value = "INVOKE",
                     target = "Lnet/minecraft/block/BlockState;getRenderType()Lnet/minecraft/block/BlockRenderType;"
             ),
             locals = LocalCapture.CAPTURE_FAILHARD
     )
-    private void interceptLocals(
+    private void wonkyblock$catchLocals(
             float cameraX, float cameraY, float cameraZ, BlockBufferBuilderStorage blockBufferBuilderStorage,
             CallbackInfoReturnable<ChunkBuilder.BuiltChunk.RebuildTask.RenderData> cir,
             ChunkBuilder.BuiltChunk.RebuildTask.RenderData renderData, int i, BlockPos blockPos, BlockPos blockPos2,
@@ -44,20 +45,20 @@ public abstract class RebuildTaskMixin {
         pos = blockPos3;
     }
 
-    @Redirect(
+    @ModifyReturnValue(
             method = "render",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/block/BlockState;getRenderType()Lnet/minecraft/block/BlockRenderType;"
             )
     )
-    private BlockRenderType redirectGetRenderType(BlockState blockState) {
-        var renderType = blockState.getRenderType();
+    private BlockRenderType wonkyblock$hideBlock(BlockRenderType renderType) {
+        var pos = this.pos;
+        this.pos = null;
+
         if (WonkyBlock.isBlockInvisible(pos)) {
             return BlockRenderType.INVISIBLE;
         }
-
-        pos = null;
         return renderType;
     }
 }

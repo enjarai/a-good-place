@@ -17,7 +17,7 @@ public abstract class BlockItemMixin {
             method = "placeFromNbt",
             at = @At("HEAD")
     )
-    private void placeFromNbt(BlockPos pos, World world, ItemStack stack, BlockState state, CallbackInfoReturnable<BlockState> cir) {
+    private void wonkyblock$startPlaceAnimation(BlockPos pos, World world, ItemStack stack, BlockState state, CallbackInfoReturnable<BlockState> cir) {
         if (world.isClient()) {
             WonkyBlock.addInvisibleBlock(pos);
             world.addImportantParticle(WonkyBlock.PLACING_PARTICLE, true, pos.getX(), pos.getY(), pos.getZ(), 0, 0, 0);

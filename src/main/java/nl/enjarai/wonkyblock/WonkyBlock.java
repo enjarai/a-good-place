@@ -19,8 +19,8 @@ public class WonkyBlock implements ModInitializer, ClientModInitializer {
 	// This logger is used to write text to the console and the log file.
 	// It is considered best practice to use your mod id as the logger's name.
 	// That way, it's clear which mod wrote info, warnings, and errors.
-	public static final String MODID = "modid";
-	public static final Logger LOGGER = LoggerFactory.getLogger("modid");
+	public static final String MODID = "wonkyblock";
+	public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
 	public static final DefaultParticleType PLACING_PARTICLE = FabricParticleTypes.simple();
 	public static final HashSet<BlockPos> invisibleBlocks = new HashSet<>();
 
