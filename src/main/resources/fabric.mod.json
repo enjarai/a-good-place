@@ -23,6 +23,9 @@
     ],
     "client": [
       "nl.enjarai.wonkyblock.WonkyBlock"
+    ],
+    "preLaunch": [
+      "nl.enjarai.wonkyblock.WonkyBlock"
     ]
   },
   "mixins": [

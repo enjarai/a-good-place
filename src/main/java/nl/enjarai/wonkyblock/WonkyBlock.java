@@ -1,7 +1,9 @@
 package nl.enjarai.wonkyblock;
 
+import com.llamalad7.mixinextras.MixinExtrasBootstrap;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint;
 import nl.enjarai.wonkyblock.particle.PlacingBlockParticle;
 import nl.enjarai.wonkyblock.util.RenderUtil;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
@@ -15,7 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 
-public class WonkyBlock implements ModInitializer, ClientModInitializer {
+public class WonkyBlock implements ModInitializer, ClientModInitializer, PreLaunchEntrypoint {
 	// This logger is used to write text to the console and the log file.
 	// It is considered best practice to use your mod id as the logger's name.
 	// That way, it's clear which mod wrote info, warnings, and errors.
@@ -37,6 +39,11 @@ public class WonkyBlock implements ModInitializer, ClientModInitializer {
 	public void onInitializeClient() {
 		Registry.register(Registry.PARTICLE_TYPE, id("placing_particle"), PLACING_PARTICLE);
 		ParticleFactoryRegistry.getInstance().register(PLACING_PARTICLE, new PlacingBlockParticle.Factory());
+	}
+
+	@Override
+	public void onPreLaunch() {
+		MixinExtrasBootstrap.init();
 	}
 
 	public static Identifier id(String path) {
