@@ -7,7 +7,7 @@
   "mixins": [
   ],
   "client": [
-    "TerrainBuildTaskMixin"
+    "ChunkRenderRebuildTaskMixin"
   ],
   "injectors": {
     "defaultRequire": 1
