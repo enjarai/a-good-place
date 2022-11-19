@@ -10,12 +10,12 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleFactory;
 import net.minecraft.client.particle.ParticleTextureSheet;
 import net.minecraft.client.render.*;
-import net.minecraft.client.render.block.BlockModelRenderer;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.util.math.*;
+import nl.enjarai.wonkyblock.util.RendererImplementation;
 
 import java.util.Random;
 
@@ -28,7 +28,7 @@ public class PlacingBlockParticle extends Particle {
     Block block;
     BlockState blockState;
 
-    BlockModelRenderer modelRenderer;
+    RendererImplementation renderer;
 
     BakedModel model;
 
@@ -91,7 +91,7 @@ public class PlacingBlockParticle extends Particle {
 
         block = (blockState = state).getBlock();
 
-        modelRenderer = client.getBlockRenderManager().getModelRenderer();
+        renderer = WonkyBlock.getRenderer();
 
         collidesWithWorld = false;
 
@@ -107,42 +107,13 @@ public class PlacingBlockParticle extends Particle {
 
     @Override
     public void tick() {
-        if (++age >= 10 || inPosition) {
-            if (WonkyBlock.isBlockInvisible(pos)) {
-                WonkyBlock.removeInvisibleBlock(pos);
-            }
-        }
-        if (age >= 11) {
+        if (age >= 10) {
             killParticle();
         }
-
-//        if (!collidesWithWorld) {
-//            var s = world.getBlockState(pos);
-//
-//            if (s.getBlock() != FBP.FBPBlock || s.getBlock() == block) {
-//                if (blockSet && s.getBlock() == Blocks.AIR) {
-//                    // the block was destroyed during the animation
-//                    killParticle();
-//
-//                    FBP.FBPBlock.onBlockDestroyedByPlayer(client.world, pos, s);
-//                    client.world.setBlockState(pos, Blocks.AIR.getDefaultState(), 2);
-//                    return;
-//                }
-//
-//                FBP.FBPBlock.copyState(client.world, pos, blockState, this);
-//                client.world.setBlockState(pos, FBP.FBPBlock.getDefaultState(), 2);
-//
-//                Chunk c = world.getChunk(pos);
-//                c.resetRelightChecks();
-//                c.setLightPopulated(true);
-//
-//                FBPRenderUtil.markBlockForRender(pos);
-//
-//                blockSet = true;
-//            }
-//
-//            spawned = true;
-//        }
+        if (++age >= 10 || inPosition) {
+            WonkyBlock.getInvisibleBlocks().remove(pos);
+            age = 11;
+        }
 
         if (dead || client.isPaused())
             return;
@@ -279,8 +250,9 @@ public class PlacingBlockParticle extends Particle {
         matrices.translate(-tRot.x, -tRot.y, -tRot.z);
         matrices.translate(t.x, t.y, t.z);
 
-        modelRenderer.render(world, model, blockState, pos, matrices, blockVertexConsumer, false, MC_RANDOM, blockState.getRenderingSeed(pos), OverlayTexture.DEFAULT_UV);
-//        if (FBP.animSmoothLighting)
+        renderer.renderBlock(world, model, blockState, pos, matrices, blockVertexConsumer, false, MC_RANDOM, blockState.getRenderingSeed(pos));
+
+        //        if (FBP.animSmoothLighting)
 //            modelRenderer.renderSmooth(client.world, model, blockState, pos, buff, false, textureSeed);
 //        else
 //            modelRenderer.renderFlat(client.world, model, blockState, pos, buff, false, textureSeed);
@@ -352,6 +324,6 @@ public class PlacingBlockParticle extends Particle {
 
     @Override
     public void markDead() {
-        WonkyBlock.removeInvisibleBlock(pos);
+        WonkyBlock.getInvisibleBlocks().remove(pos);
     }
 }

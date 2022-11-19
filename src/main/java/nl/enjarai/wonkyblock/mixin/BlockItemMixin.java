@@ -19,7 +19,7 @@ public abstract class BlockItemMixin {
     )
     private void wonkyblock$startPlaceAnimation(BlockPos pos, World world, ItemStack stack, BlockState state, CallbackInfoReturnable<BlockState> cir) {
         if (world.isClient()) {
-            WonkyBlock.addInvisibleBlock(pos);
+            WonkyBlock.getInvisibleBlocks().add(pos);
             world.addImportantParticle(WonkyBlock.PLACING_PARTICLE, true, pos.getX(), pos.getY(), pos.getZ(), 0, 0, 0);
         }
     }

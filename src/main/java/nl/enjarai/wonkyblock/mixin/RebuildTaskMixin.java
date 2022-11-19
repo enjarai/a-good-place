@@ -27,6 +27,6 @@ public abstract class RebuildTaskMixin {
     private boolean wonkyblock$hideBlock(BlockRenderManager blockRenderManager, BlockState blockState,
                                          BlockPos blockPos, BlockRenderView blockRenderView, MatrixStack matrixStack,
                                          VertexConsumer vertexConsumer, boolean bl, Random random) {
-        return !WonkyBlock.isBlockInvisible(blockPos);
+        return !WonkyBlock.getInvisibleBlocks().contains(blockPos);
     }
 }

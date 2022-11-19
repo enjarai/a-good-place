@@ -19,7 +19,7 @@ public abstract class BlockMixin {
             cancellable = true
     )
     private static void wonkyblock$overrideCulling(BlockState state, BlockView world, BlockPos pos, Direction side, BlockPos otherPos, CallbackInfoReturnable<Boolean> cir) {
-        if (WonkyBlock.isBlockInvisible(otherPos)) {
+        if (WonkyBlock.getInvisibleBlocks().contains(otherPos)) {
             cir.setReturnValue(true);
         }
     }

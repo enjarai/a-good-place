@@ -7,7 +7,7 @@
   "mixins": [
   ],
   "client": [
-    "ChunkRenderRebuildTaskMixin"
+    "BlockRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

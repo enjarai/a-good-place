@@ -3,15 +3,19 @@ package nl.enjarai.wonkyblock;
 import com.llamalad7.mixinextras.MixinExtrasBootstrap;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint;
+import nl.enjarai.wonkyblock.compat.sodium.SodiumRendererImplementation;
 import nl.enjarai.wonkyblock.particle.PlacingBlockParticle;
-import nl.enjarai.wonkyblock.util.RenderUtil;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
+import nl.enjarai.wonkyblock.util.BlockTracker;
+import nl.enjarai.wonkyblock.util.RendererImplementation;
+import nl.enjarai.wonkyblock.util.VanillaRendererImplementation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +28,9 @@ public class WonkyBlock implements ModInitializer, ClientModInitializer, PreLaun
 	public static final String MODID = "wonkyblock";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
 	public static final DefaultParticleType PLACING_PARTICLE = FabricParticleTypes.simple();
-	public static final HashSet<BlockPos> invisibleBlocks = new HashSet<>();
+
+	private static RendererImplementation renderer;
+	private static BlockTracker invisibleBlocks;
 
 	@Override
 	public void onInitialize() {
@@ -39,6 +45,14 @@ public class WonkyBlock implements ModInitializer, ClientModInitializer, PreLaun
 	public void onInitializeClient() {
 		Registry.register(Registry.PARTICLE_TYPE, id("placing_particle"), PLACING_PARTICLE);
 		ParticleFactoryRegistry.getInstance().register(PLACING_PARTICLE, new PlacingBlockParticle.Factory());
+
+		if (FabricLoader.getInstance().isModLoaded("sodium")) {
+			renderer = new SodiumRendererImplementation();
+		} else {
+			renderer = new VanillaRendererImplementation();
+		}
+
+		invisibleBlocks = new BlockTracker(renderer);
 	}
 
 	@Override
@@ -50,20 +64,11 @@ public class WonkyBlock implements ModInitializer, ClientModInitializer, PreLaun
 		return new Identifier(MODID, path);
 	}
 
-	public static void addInvisibleBlock(BlockPos pos) {
-		invisibleBlocks.add(pos);
+	public static RendererImplementation getRenderer() {
+		return renderer;
 	}
 
-	public static boolean isBlockInvisible(BlockPos pos) {
-		return invisibleBlocks.contains(pos);
-	}
-
-	public static void clearInvisibleBlocks() {
-		invisibleBlocks.clear();
-	}
-
-	public static void removeInvisibleBlock(BlockPos pos) {
-		invisibleBlocks.remove(pos);
-		RenderUtil.markBlockForRender(pos);
+	public static BlockTracker getInvisibleBlocks() {
+		return invisibleBlocks;
 	}
 }
