@@ -1,32 +1,31 @@
 package nl.enjarai.wonkyblock.mixin;
 
-import com.llamalad7.mixinextras.injector.WrapWithCondition;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.block.BlockRenderManager;
-import net.minecraft.client.render.chunk.BlockBufferBuilderStorage;
-import net.minecraft.client.render.chunk.ChunkBuilder;
-import net.minecraft.client.render.chunk.ChunkRendererRegion;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.BlockRenderView;
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.chunk.ChunkRenderDispatcher;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.block.state.BlockState;
 import nl.enjarai.wonkyblock.WonkyBlock;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 
-@Mixin(ChunkBuilder.BuiltChunk.RebuildTask.class)
+@Mixin(ChunkRenderDispatcher.RenderChunk.RebuildTask.class)
 public abstract class RebuildTaskMixin {
     @WrapWithCondition(
-            method = "render",
+            method = "compile",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/client/render/block/BlockRenderManager;renderBlock(Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/BlockRenderView;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;ZLnet/minecraft/util/math/random/Random;)V"
+                    target = "Lnet/minecraft/client/renderer/block/BlockRenderDispatcher;renderBatched(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/BlockAndTintGetter;Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;ZLnet/minecraft/util/RandomSource;)V"
             )
     )
-    private boolean wonkyblock$hideBlock(BlockRenderManager blockRenderManager, BlockState blockState,
-                                         BlockPos blockPos, BlockRenderView blockRenderView, MatrixStack matrixStack,
-                                         VertexConsumer vertexConsumer, boolean bl, Random random) {
+    private boolean wonkyblock$hideBlock(BlockRenderDispatcher blockRenderManager, BlockState blockState,
+                                         BlockPos blockPos, BlockAndTintGetter blockRenderView, PoseStack matrixStack,
+                                         VertexConsumer vertexConsumer, boolean bl, RandomSource random) {
         return !WonkyBlock.getInvisibleBlocks().contains(blockPos);
     }
 }

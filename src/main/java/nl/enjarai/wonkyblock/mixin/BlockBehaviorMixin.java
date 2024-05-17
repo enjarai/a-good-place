@@ -4,27 +4,27 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import nl.enjarai.wonkyblock.WonkyBlock;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import javax.swing.text.html.BlockView;
+@Mixin(BlockBehaviour.BlockStateBase.class)
+public abstract class BlockBehaviorMixin {
 
-@Mixin(Block.class)
-public abstract class BlockMixin {
     @Inject(
-            method = "shouldRenderFace",
+            method = "isSolidRender",
             at = @At("HEAD"),
             cancellable = true
     )
-    private static void wonkyblock$overrideCulling(BlockState state, BlockGetter level, BlockPos otherPos, Direction face, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
+    private void wonkyblock$overrideCulling(BlockGetter level, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
         if (WonkyBlock.getInvisibleBlocks().contains(pos)) {
-            cir.setReturnValue(true);
+            cir.setReturnValue(false);
         }
     }
-
-
 }

@@ -4,11 +4,15 @@
   "package": "nl.enjarai.wonkyblock.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "BlockBehaviorMixin",
+    "sodium.BlockOcclusionCacheMixin"
   ],
   "client": [
+    "BlockEntityRendererDispatcherMixin",
     "BlockItemMixin",
     "BlockMixin",
-    "RebuildTaskMixin"
+    "RebuildTaskMixin",
+    "sodium.BlockRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

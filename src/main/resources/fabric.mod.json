@@ -29,13 +29,12 @@
     ]
   },
   "mixins": [
-    "wonkyblock.mixins.json",
-    "wonkyblock.compat.sodium.mixins.json"
+    "wonkyblock.mixins.json"
   ],
   "accessWidener": "wonkyblock.accesswidener",
 
   "depends": {
     "fabric-api": "*",
-    "minecraft": "~1.19"
+    "minecraft": "~1.20"
   }
 }
