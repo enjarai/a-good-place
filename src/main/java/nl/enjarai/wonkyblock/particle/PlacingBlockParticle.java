@@ -29,6 +29,7 @@ import org.joml.Matrix4f;
 
 import java.util.Random;
 
+// we use a non registered particle because this is a client only mod and we need to render from event anyways
 public class PlacingBlockParticle extends Particle {
     private static final Random RANDOM = new Random();
     private static final RandomSource MC_RANDOM = RandomSource.create();
@@ -54,15 +55,8 @@ public class PlacingBlockParticle extends Particle {
 
     Minecraft client;
 
-    public static class Factory implements ParticleProvider<SimpleParticleType> {
-        @Override
-        public Particle createParticle(SimpleParticleType type, ClientLevel world, double x, double y, double z, double vx, double vy, double vz) {
-            return new PlacingBlockParticle(world, x, y, z);
-        }
-    }
-
-    public PlacingBlockParticle(ClientLevel world, double x, double y, double z) {
-        super(world, x, y, z);
+    public PlacingBlockParticle(ClientLevel world, BlockPos blockPos) {
+        super(world, blockPos.getX(), blockPos.getY(), blockPos.getZ());
 
         client = Minecraft.getInstance();
 
@@ -70,7 +64,6 @@ public class PlacingBlockParticle extends Particle {
         blockState = world.getBlockState(pos);
         tileEntity = world.getBlockEntity(pos);
         model = client.getBlockRenderer().getBlockModel(blockState);
-
 
         facing = client.player.getDirection();
 
@@ -195,7 +188,7 @@ public class PlacingBlockParticle extends Particle {
 
     private void setRemovedNextTick() {
         //remove from block now. Next tick this particle will not render. Enough time for smooth transition
-        WonkyBlock.getInvisibleBlocks().remove(pos);
+        WonkyBlock.getStuff().unHideBlock(pos);
         removeNextTick = true;
     }
 

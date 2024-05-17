@@ -30,7 +30,7 @@ public abstract class BlockOcclusionCacheMixin {
             cancellable = true
     )
     private void wonkyblock$overrideCulling(BlockState selfState, BlockGetter view, BlockPos pos, Direction facing, CallbackInfoReturnable<Boolean> cir) {
-        if (WonkyBlock.getInvisibleBlocks().contains(cpos)){
+        if (WonkyBlock.getStuff().isBlockHidden(cpos)){
             cir.setReturnValue(true);
         }
     }

@@ -4,7 +4,7 @@
   "version": "${version}",
 
   "name": "Wonky Block",
-  "description": "#TODO, if you see this, i probably forgot to add a description. please do let me know.",
+  "description": "Fancy Block Placement Animations.",
   "authors": [
     "enjarai"
   ],
@@ -18,13 +18,7 @@
 
   "environment": "*",
   "entrypoints": {
-    "main": [
-      "nl.enjarai.wonkyblock.WonkyBlock"
-    ],
     "client": [
-      "nl.enjarai.wonkyblock.WonkyBlock"
-    ],
-    "preLaunch": [
       "nl.enjarai.wonkyblock.WonkyBlock"
     ]
   },

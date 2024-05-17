@@ -21,7 +21,7 @@ public abstract class BlockRendererMixin {
             cancellable = true
     )
     private void wonkyblock$hideBlock(BlockRenderContext ctx, ChunkBuildBuffers buffers, CallbackInfo ci) {
-        if (WonkyBlock.getInvisibleBlocks().contains(ctx.pos())) {
+        if (WonkyBlock.getStuff().isBlockHidden(ctx.pos())) {
             ci.cancel();
         }
     }

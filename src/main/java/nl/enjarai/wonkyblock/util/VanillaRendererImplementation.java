@@ -14,20 +14,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.HashSet;
 
-public class VanillaRendererImplementation implements RendererImplementation {
+public class VanillaRendererImplementation {
 
-    @Override
-    public void renderBlock(BlockAndTintGetter world, BakedModel model, BlockState state, BlockPos pos, PoseStack matrices, VertexConsumer vertexConsumer, boolean cull, RandomSource random, long seed) {
-        Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(
-                world, model, state, pos, matrices, vertexConsumer,
-                cull, random, seed, OverlayTexture.NO_OVERLAY);
-    }
 
-    @Override
-    public void markBlockForRender(BlockPos pos) {
-        var client = Minecraft.getInstance();
-        BlockState state = client.level.getBlockState(pos);
-        //this just calls set block dirty which calls set section dirty for neighbors
-        client.level.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
-    }
 }

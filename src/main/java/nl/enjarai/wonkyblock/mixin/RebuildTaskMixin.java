@@ -12,7 +12,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import nl.enjarai.wonkyblock.WonkyBlock;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 
 @Mixin(ChunkRenderDispatcher.RenderChunk.RebuildTask.class)
 public abstract class RebuildTaskMixin {
@@ -26,6 +25,6 @@ public abstract class RebuildTaskMixin {
     private boolean wonkyblock$hideBlock(BlockRenderDispatcher blockRenderManager, BlockState blockState,
                                          BlockPos blockPos, BlockAndTintGetter blockRenderView, PoseStack matrixStack,
                                          VertexConsumer vertexConsumer, boolean bl, RandomSource random) {
-        return !WonkyBlock.getInvisibleBlocks().contains(blockPos);
+        return !WonkyBlock.getStuff().isBlockHidden(blockPos);
     }
 }

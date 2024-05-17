@@ -19,8 +19,7 @@ public abstract class BlockItemMixin {
     )
     private void wonkyblock$startPlaceAnimation(BlockPos pos, Level world, ItemStack stack, BlockState state, CallbackInfoReturnable<BlockState> cir) {
         if (world.isClientSide) {
-            WonkyBlock.getInvisibleBlocks().add(pos);
-            world.addAlwaysVisibleParticle(WonkyBlock.PLACING_PARTICLE, true, pos.getX(), pos.getY(), pos.getZ(), 0, 0, 0);
+            WonkyBlock.getStuff().addParticle(pos);
         }
     }
 }
