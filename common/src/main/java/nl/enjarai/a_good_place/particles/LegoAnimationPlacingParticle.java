@@ -1,7 +1,6 @@
 package nl.enjarai.a_good_place.particles;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -9,7 +8,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 
-public class LegoAnimationPlacingParticle extends PlacingBlockParticle{
+public class LegoAnimationPlacingParticle extends PlacingBlockParticle {
 
     protected Direction facing;
 
@@ -28,7 +27,7 @@ public class LegoAnimationPlacingParticle extends PlacingBlockParticle{
 
         prevHeight = height = Mth.randomBetween(this.random,
                 0.065f, 0.115f);
-        float startingAngle =  Mth.randomBetween(this.random,
+        float startingAngle = Mth.randomBetween(this.random,
                 0.03125f, 0.0635f);
 
         prevRot = new Vec3(0, 0, 0);
@@ -77,9 +76,11 @@ public class LegoAnimationPlacingParticle extends PlacingBlockParticle{
 
         float translationAmount = Mth.lerp(partialTicks, prevHeight, height);
 
+
+        float animationTile = (age + partialTicks) / (lifetime + 1);
+        translationAmount = 0.08f-parabula(animationTile, 1.5f, 0.002f*5f, 0f, 0.08f);
         if (translationAmount <= 0)
             translationAmount = 0;
-
         var translate = switch (facing) {
             case EAST -> new Vec3(-translationAmount, translationAmount, translationAmount);
             case NORTH -> new Vec3(translationAmount, translationAmount, translationAmount);
@@ -87,7 +88,7 @@ public class LegoAnimationPlacingParticle extends PlacingBlockParticle{
             case WEST -> new Vec3(translationAmount, translationAmount, -translationAmount);
             default -> new Vec3(0, 0, 0);
         };
-        translate =translate.multiply(2,0,2);
+        translate = translate.multiply(2, 0, 2);
         Vec3 smoothRot = prevRot.lerp(rot, partialTicks);
 
         //anim
@@ -99,5 +100,14 @@ public class LegoAnimationPlacingParticle extends PlacingBlockParticle{
         poseStack.translate(-tRot.x, -tRot.y, -tRot.z);
 
         poseStack.translate(translate.x, translate.y, translate.z);
+    }
+
+
+    private float parabula(float t, float exp, float startSlope, float startValue, float endValue) {
+        float h = 1 / startSlope;
+
+        float parabY = (float) Math.pow(t, exp) * h + (1 - h) * t;
+
+        return startSlope * parabY + (endValue - startValue);
     }
 }

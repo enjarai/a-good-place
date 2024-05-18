@@ -1,0 +1,54 @@
+package nl.enjarai.a_good_place.pack;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.mojang.serialization.JsonOps;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.util.RandomSource;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.level.block.state.BlockState;
+import nl.enjarai.a_good_place.AGoodPlace;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+public class AnimationManager extends SimpleJsonResourceReloadListener {
+
+    private static List<AnimationParameters> ANIMATIONS = new ArrayList<>();
+
+    public AnimationManager() {
+        super(new Gson(), "placement_animations");
+    }
+
+
+    @Override
+    protected void apply(Map<ResourceLocation, JsonElement> jsons, ResourceManager resourceManager, ProfilerFiller profiler) {
+        ANIMATIONS.clear();
+
+        for (var j : jsons.entrySet()) {
+            var json = j.getValue();
+            var id = j.getKey();
+
+            AnimationParameters effect = AnimationParameters.CODEC.decode(JsonOps.INSTANCE, json)
+                    .getOrThrow(false, errorMsg -> AGoodPlace.LOGGER.warn("Could not decode Biome Special Effect with json id {} - error: {}", id, errorMsg))
+                    .getFirst();
+
+            ANIMATIONS.add(effect);
+        }
+    }
+
+    @Nullable
+    public static AnimationParameters getAnimation(BlockState blockState, BlockPos pos, RandomSource random) {
+        for (var animation : ANIMATIONS) {
+            if (animation.matches(blockState, pos, random)) {
+                return animation;
+            }
+        }
+        return null;
+    }
+}
