@@ -3,7 +3,7 @@ package nl.enjarai.wonkyblock.mixin;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import nl.enjarai.wonkyblock.WonkyBlock;
+import nl.enjarai.wonkyblock.particle.WonkyBlocksManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -18,7 +18,7 @@ public abstract class BlockBehaviorMixin {
             cancellable = true
     )
     private void wonkyblock$overrideCulling(BlockGetter level, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
-        if (WonkyBlock.getStuff().isBlockHidden(pos)) {
+        if (WonkyBlocksManager.isBlockHidden(pos)) {
             cir.setReturnValue(false);
         }
     }

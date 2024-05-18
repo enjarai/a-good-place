@@ -9,21 +9,20 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
-import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import nl.enjarai.wonkyblock.WonkyBlock;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 
@@ -51,7 +50,7 @@ public class PlacingBlockParticle extends Particle {
     private float height;
     private float prevHeight;
 
-    private boolean removeNextTick;
+    private boolean destinationReached;
 
     Minecraft client;
 
@@ -86,7 +85,7 @@ public class PlacingBlockParticle extends Particle {
 
     @Override
     public void tick() {
-        if (removeNextTick) {
+        if (destinationReached) {
             remove();
             return;
         }
@@ -111,6 +110,9 @@ public class PlacingBlockParticle extends Particle {
         height -= step * 5f;
 
         step *= 1.5678982f;
+    }
+
+    private void setRemovedNextTick() {
     }
 
 
@@ -165,7 +167,7 @@ public class PlacingBlockParticle extends Particle {
 
         poseStack.translate(translate.x, translate.y, translate.z);
 
-        WonkyBlock.getRenderer().renderBlock(level, model, blockState, pos, poseStack,
+        renderBlock(level, model, blockState, pos, poseStack,
                 blockVertexConsumer, false, MC_RANDOM, blockState.getSeed(pos));
         bufferSource.endBatch();
 
@@ -179,6 +181,11 @@ public class PlacingBlockParticle extends Particle {
         poseStack.pushPose();
     }
 
+    private void renderBlock(BlockAndTintGetter world, BakedModel model, BlockState state, BlockPos pos, PoseStack matrices, VertexConsumer vertexConsumer, boolean cull, RandomSource random, long seed) {
+        client.getBlockRenderer().getModelRenderer().tesselateBlock(
+                world, model, state, pos, matrices, vertexConsumer,
+                cull, random, seed, OverlayTexture.NO_OVERLAY);
+    }
 
     @Override
     public ParticleRenderType getRenderType() {
@@ -186,10 +193,8 @@ public class PlacingBlockParticle extends Particle {
     }
 
 
-    private void setRemovedNextTick() {
-        //remove from block now. Next tick this particle will not render. Enough time for smooth transition
-        WonkyBlock.getStuff().unHideBlock(pos);
-        removeNextTick = true;
+    public boolean reachedDestination() {
+        return destinationReached;
     }
 
 }

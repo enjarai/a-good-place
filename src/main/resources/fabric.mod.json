@@ -19,7 +19,7 @@
   "environment": "*",
   "entrypoints": {
     "client": [
-      "nl.enjarai.wonkyblock.WonkyBlock"
+      "nl.enjarai.wonkyblock.WonkyBlocksMod"
     ]
   },
   "mixins": [

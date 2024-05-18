@@ -5,7 +5,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import nl.enjarai.wonkyblock.WonkyBlock;
+import nl.enjarai.wonkyblock.particle.WonkyBlocksManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -19,7 +19,7 @@ public abstract class BlockItemMixin {
     )
     private void wonkyblock$startPlaceAnimation(BlockPos pos, Level world, ItemStack stack, BlockState state, CallbackInfoReturnable<BlockState> cir) {
         if (world.isClientSide) {
-            WonkyBlock.getStuff().addParticle(pos);
+            WonkyBlocksManager.addParticle(pos, world);
         }
     }
 }

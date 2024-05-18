@@ -3,7 +3,7 @@ package nl.enjarai.wonkyblock.mixin.sodium;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.ChunkBuildBuffers;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.pipeline.BlockRenderContext;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.pipeline.BlockRenderer;
-import nl.enjarai.wonkyblock.WonkyBlock;
+import nl.enjarai.wonkyblock.particle.WonkyBlocksManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
@@ -21,7 +21,7 @@ public abstract class BlockRendererMixin {
             cancellable = true
     )
     private void wonkyblock$hideBlock(BlockRenderContext ctx, ChunkBuildBuffers buffers, CallbackInfo ci) {
-        if (WonkyBlock.getStuff().isBlockHidden(ctx.pos())) {
+        if (WonkyBlocksManager.isBlockHidden(ctx.pos())) {
             ci.cancel();
         }
     }

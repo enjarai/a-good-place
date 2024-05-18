@@ -5,7 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.state.BlockState;
-import nl.enjarai.wonkyblock.WonkyBlock;
+import nl.enjarai.wonkyblock.particle.WonkyBlocksManager;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
@@ -30,7 +30,7 @@ public abstract class BlockOcclusionCacheMixin {
             cancellable = true
     )
     private void wonkyblock$overrideCulling(BlockState selfState, BlockGetter view, BlockPos pos, Direction facing, CallbackInfoReturnable<Boolean> cir) {
-        if (WonkyBlock.getStuff().isBlockHidden(cpos)){
+        if (WonkyBlocksManager.isBlockHidden(cpos)){
             cir.setReturnValue(true);
         }
     }

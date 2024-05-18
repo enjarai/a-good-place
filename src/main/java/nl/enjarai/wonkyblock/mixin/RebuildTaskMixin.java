@@ -9,7 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
-import nl.enjarai.wonkyblock.WonkyBlock;
+import nl.enjarai.wonkyblock.particle.WonkyBlocksManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
@@ -25,6 +25,6 @@ public abstract class RebuildTaskMixin {
     private boolean wonkyblock$hideBlock(BlockRenderDispatcher blockRenderManager, BlockState blockState,
                                          BlockPos blockPos, BlockAndTintGetter blockRenderView, PoseStack matrixStack,
                                          VertexConsumer vertexConsumer, boolean bl, RandomSource random) {
-        return !WonkyBlock.getStuff().isBlockHidden(blockPos);
+        return !WonkyBlocksManager.isBlockHidden(blockPos);
     }
 }
