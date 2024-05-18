@@ -16,7 +16,7 @@
   "environment": "client",
   "entrypoints": {
     "client": [
-      "nl.enjarai.wonkyblock.fabric.AGoodPlaceImpl"
+      "nl.enjarai.a_good_place.fabric.AGoodPlaceImpl"
     ]
   },
   "mixins": [
