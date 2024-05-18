@@ -11,13 +11,12 @@ dependencies {
     // Do NOT use other classes from fabric loader
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
 
-    implementation 'net.objecthunter:exp4j:0.4.8'
-
     annotationProcessor("com.github.LlamaLad7:MixinExtras:${mixin_extras_version}")
     implementation("com.github.LlamaLad7:MixinExtras:${mixin_extras_version}")
     annotationProcessor 'net.fabricmc:sponge-mixin:0.12.5+mixin.0.8.5'
 
-    modImplementation ("curse.maven:curios-309927:4583413")
+    modImplementation "curse.maven:embeddium-908741:5321174"
+
 
 }
 

@@ -30,8 +30,6 @@ dependencies {
     include(implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:${mixin_extras_version}")))
     annotationProcessor 'net.fabricmc:sponge-mixin:0.12.5+mixin.0.8.5'
 
-    implementation include( 'net.objecthunter:exp4j:0.4.8')
-
     //modImplementation("maven.modrinth:sodium:mc1.20.3-0.5.6")
     modImplementation "curse.maven:embeddium-908741:5321174"
 

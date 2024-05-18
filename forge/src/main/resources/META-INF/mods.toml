@@ -6,7 +6,7 @@ license = "${mod_license}"
 issueTrackerURL = "${mod_github}/issues"
 
 [[mods]]
-    modId = "polytone"
+    modId = "a_good_place"
     version = "${mod_version}"
     displayName = "${mod_name}"
     logoFile = "icon.png"
@@ -16,20 +16,17 @@ issueTrackerURL = "${mod_github}/issues"
     modUrl = "${mod_homepage}"
     itemIcon="minecraft:brush" #catalogue icon
 
-[[dependencies.polytone]]
+[[dependencies.a_good_place]]
     modId = "forge"
     mandatory = true
     versionRange = "${neo_version_range}"
     ordering = "NONE"
     side = "CLIENT"
 
-[[dependencies.polytone]]
+[[dependencies.a_good_place]]
     modId = "minecraft"
     mandatory = true
     versionRange = "[${minecraft_min_version},${minecraft_max_version})"
     ordering = "NONE"
     side = "CLIENT"
-
-[incompatible_mods]
-    slotify = "*"
 

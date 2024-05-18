@@ -26,8 +26,5 @@
   "depends": {
     "fabric": "*",
     "minecraft": ">=${minecraft_min_version} <${minecraft_max_version}"
-  },
-  "breaks": {
-    "slotify": "*"
   }
 }

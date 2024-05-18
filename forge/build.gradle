@@ -126,16 +126,9 @@ dependencies {
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
 
-    implementation include( 'net.objecthunter:exp4j:0.4.8')
-    forgeRuntimeLibrary ( 'net.objecthunter:exp4j:0.4.8')
-
     implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:${mixin_extras_version}"))
     implementation(include("io.github.llamalad7:mixinextras-forge:${mixin_extras_version}"))
     annotationProcessor 'net.fabricmc:sponge-mixin:0.12.5+mixin.0.8.5'
-
-    modCompileOnly ("curse.maven:curios-309927:4583413")
-    modCompileOnly ("curse.maven:quark-243121:4812006")
-    modImplementation("curse.maven:selene-499980:5318429")
 
     implementation 'org.jetbrains:annotations:22.0.0'
 }
