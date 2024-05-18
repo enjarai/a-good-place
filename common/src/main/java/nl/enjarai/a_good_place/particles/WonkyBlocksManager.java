@@ -61,17 +61,20 @@ public class WonkyBlocksManager {
     }
 
 
-    public static void tickParticles() {
+    public static void tickParticles(ClientLevel level) {
+
         var iterator = PARTICLES.entrySet().iterator();
         while (iterator.hasNext()) {
             var entry = iterator.next();
             var p = entry.getValue();
             p.tick();
-            if(p.reachedDestination()){
-                unHideBlock(entry.getKey());
+            BlockPos pos = entry.getKey();
+            if (p.finishedAnimation()) {
+                unHideBlock(pos);
             }
-            if (!p.isAlive()) {
+            if (!p.isAlive() || level.getBlockState(pos) != p.blockState) {
                 iterator.remove();
+                unHideBlock(pos); //just incase
             }
         }
 

@@ -9,6 +9,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import nl.enjarai.a_good_place.pack.AnimationParameters;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
@@ -19,113 +20,63 @@ public class OverEnineeredPlacingParticle extends PlacingBlockParticle {
 
     private final AnimationParameters settings;
 
-    private final float slideStartX;
-    private final float slideStartY;
-    private final float slideStartZ;
-
-    protected Direction facing;
-    private Vec3 prevRot;
-    private Vec3 rot;
-    private float step = 0.00275f;
+    // these are all starting values. They all have to end up at 0 (or 1 for scale) since it needs to match the placed block
+    private final Vec3 slideStart;
+    private final Vec3 rotStart;
 
     public OverEnineeredPlacingParticle(ClientLevel world, BlockPos blockPos, Direction face,
                                         Player placer, AnimationParameters params) {
         super(world, blockPos, face);
 
         settings = params;
-        lifetime = 3;//params.duration();
+        lifetime = 4;//params.duration();
         extraLifeTicks = 2;
 
-        Direction playerFacing = placer.getDirection();
 
+        // Slide animation
         // slide in animation. We would like to slide in the block so it looks like it comes from the player hand
-        Vector3f slideDir = playerFacing.getOpposite().step().rotateY(Mth.HALF_PI / 2);
+        //actually we use the real look dir so we wont snap to directions. Possibly a config here
+        Vector3f playerHorizLook = placer.getLookAngle().toVector3f().mul(-1,0,-1).normalize();
+        //another config here. rotate slide toward hand instead of directly toward player
+        Vector3f slideDir = playerHorizLook.rotateY(Mth.HALF_PI / 2);
+        // also adds a y component
+        if (placer.getXRot() > 0) {
+            //add back
+          //  slideDir.add(0, 1, 0);
+        } else slideDir.add(0, -1, 0);
 
-        // check neighboring blocks to see if they are free
-        List<Direction> affectedDir = getAffectedDirections(slideDir.x(), slideDir.y(), slideDir.z());
-        List<Direction> emptyDirections = new ArrayList<>();
-        for (var d : Direction.values()) {
-            BlockPos neighbor = pos.relative(d);
-            BlockState state = world.getBlockState(neighbor);
-            var collision = state.getCollisionShape(world, neighbor);
-            if (collision.isEmpty()) emptyDirections.add(d);
-            else {
-                if (d.getAxisDirection() == Direction.AxisDirection.POSITIVE) {
-                    if (collision.min(d.getAxis()) > 0.25f) emptyDirections.add(d);
-                } else {
-                    if (collision.max(d.getAxis()) < 0.75f) emptyDirections.add(d);
-                }
-            }
-        }
+        slideDir = adjustDirectionBasedOnNeighbors(world, placer, slideDir);
 
-        for(var d : affectedDir){
-            if(!emptyDirections.contains(d)){
-                //remove component in this dir
-                slideDir.sub(d.step().mul(slideDir));
-                break;
-            }
-        }
-
-        if(slideDir.length() == 0 && !emptyDirections.isEmpty()){
-            //get nearest direction of the one that are empty
-            var nearest = List.of(Direction.orderedByNearest(placer));
-            emptyDirections.sort(Comparator.comparingInt(nearest::indexOf));
-            slideDir = emptyDirections.get(0).step();
-        }
-
-        float slidePow = Mth.randomBetween(this.random, 0.065f, 0.115f);
+        //config here
+        float slidePow = Mth.randomBetween(this.random, 0.1f, 0.14f);
         slideDir.normalize().mul(slidePow);
 
-        slideStartX = slideDir.x();
-        slideStartY = slideDir.y();
-        slideStartZ = slideDir.z();
+        slideStart = new Vec3(slideDir);
 
 
-        facing = placer.getDirection();
+        // Rotation animation
 
+        // config here
         float startingAngle = Mth.randomBetween(this.random,
                 0.03125f, 0.0635f);
 
-        prevRot = new Vec3(0, 0, 0);
-
-        rot = switch (facing) {
-            case EAST -> new Vec3(-startingAngle, 0, -startingAngle);
-            case NORTH -> new Vec3(-startingAngle, 0, startingAngle);
-            case SOUTH -> new Vec3(startingAngle, 0, -startingAngle);
-            case WEST -> new Vec3(startingAngle, 0, startingAngle);
-            default -> new Vec3(0, 0, 0);
-        };
-
-
+        //perpendicular vector on y plane
+        rotStart = new Vec3(slideStart.z() * startingAngle, 0, -slideStart.x() * startingAngle);
     }
 
-    @Override
-    public void tick() {
-        super.tick();
-
-        prevRot = rot;
-
-        rot = switch (facing) {
-            case EAST -> rot.add(step, 0, step);
-            case NORTH -> rot.add(step, 0, -step);
-            case SOUTH -> rot.add(-step, 0, step);
-            case WEST -> rot.add(-step, 0, -step);
-            default -> new Vec3(0, 0, 0);
-        };
-
-        step *= 1.5678982f;
-    }
 
 
     @Override
     public void applyAnimation(PoseStack poseStack, float time, float partialTicks) {
-        var tRot = switch (facing) {
-            case EAST -> new Vec3(1, 0, -1);
-            case NORTH -> new Vec3(-1, 0, -1);
-            case SOUTH -> new Vec3(1, 0, 1);
-            case WEST -> new Vec3(-1, 0, 1);
-            default -> new Vec3(0, 0, 0);
-        };
+
+        poseStack.translate(0.5, 0.5, 0.5);
+
+
+        //tralsate toward move direciton on block edge
+       Vec3 tRot = slideStart.multiply(1, 0, 1).normalize().scale(0.5f);
+        //rotate from up part of the block
+        tRot = tRot.add(0, slideStart.y < 0 ? 0.5 : -0.5, 0);
+
 
         float translationAmount;// = Mth.lerp(partialTicks, prevHeight, height);
 
@@ -138,23 +89,30 @@ public class OverEnineeredPlacingParticle extends PlacingBlockParticle {
             translationAmount = 0;
         }
 
-        Vec3 translate = new Vec3(
-                slideStartX * translationAmount,
-                slideStartY * translationAmount,
-                slideStartZ * translationAmount);
+        //slide
+        Vec3 translate = slideStart.scale(translationAmount);
+
+        poseStack.translate(translate.x, translate.y, translate.z);
 
 
-        Vec3 smoothRot = prevRot.lerp(rot, partialTicks);
+        // rotate
+        Vec3 rotation = rotStart.scale(translationAmount);
 
-        //anim
+
         poseStack.translate(tRot.x, tRot.y, tRot.z);
 
-        //  poseStack.mulPose(Axis.YP.rotation((float) smoothRot.x));
-        //   poseStack.mulPose(Axis.ZP.rotation((float) smoothRot.z));
+        // original anim also had some y ais rotation...
+        // poseStack.mulPose(Axis.YP.rotation((float) rotation.x));
+        // another config. determines if they are rotated toward moving dir or opposite
+        boolean invert = false;
+        if(invert)rotation = rotation.scale(-1);
+        //poseStack.mulPose(Axis.ZP.rotation((float) -rotation.z));
+        //poseStack.mulPose(Axis.XP.rotation((float) -rotation.x));
 
         poseStack.translate(-tRot.x, -tRot.y, -tRot.z);
 
-        poseStack.translate(translate.x, translate.y, translate.z);
+
+        poseStack.translate(-0.5, -0.5, -0.5);
     }
 
 
@@ -181,4 +139,42 @@ public class OverEnineeredPlacingParticle extends PlacingBlockParticle {
         if (y < 0) list.add(Direction.DOWN);
         return list;
     }
+
+    // given a slide direction removes all components from direction where neighbors are full blocks.
+    // If none is available picks another directon from the available ones. Can return empty vector if this too fails
+    @NotNull
+    private Vector3f adjustDirectionBasedOnNeighbors(ClientLevel world, Player placer, Vector3f slideDir) {
+        // check neighboring blocks to see if they are free
+        List<Direction> affectedDir = getAffectedDirections(slideDir.x(), slideDir.y(), slideDir.z());
+        List<Direction> emptyDirections = new ArrayList<>();
+        for (var d : Direction.values()) {
+            BlockPos neighbor = pos.relative(d);
+            BlockState state = world.getBlockState(neighbor);
+            var collision = state.getCollisionShape(world, neighbor);
+            if (collision.isEmpty()) emptyDirections.add(d);
+            else {
+                if (d.getAxisDirection() == Direction.AxisDirection.POSITIVE) {
+                    if (collision.min(d.getAxis()) > 0.25f) emptyDirections.add(d);
+                } else {
+                    if (collision.max(d.getAxis()) < 0.75f) emptyDirections.add(d);
+                }
+            }
+        }
+
+        for (var d : affectedDir) {
+            if (!emptyDirections.contains(d)) {
+                //remove component in this dir. Yes ths crappy code does that
+                slideDir.sub(d.step().mul(d.step()).mul(slideDir));
+            }
+        }
+
+        if (slideDir.length() == 0 && !emptyDirections.isEmpty()) {
+            //get nearest direction of the one that are empty
+            var nearest = List.of(Direction.orderedByNearest(placer));
+            emptyDirections.sort(Comparator.comparingInt(nearest::indexOf));
+            slideDir = emptyDirections.get(0).step();
+        }
+        return slideDir;
+    }
+
 }

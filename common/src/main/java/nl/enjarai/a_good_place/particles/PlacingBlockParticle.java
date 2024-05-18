@@ -86,7 +86,7 @@ public abstract class PlacingBlockParticle extends Particle {
         return ParticleRenderType.CUSTOM;
     }
 
-    public boolean reachedDestination() {
+    public boolean finishedAnimation() {
         return age >= lifetime;
     }
 

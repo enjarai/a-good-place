@@ -40,11 +40,9 @@ public class AGoodPlaceImpl implements ClientModInitializer {
             WonkyBlocksManager.renderParticles(context.matrixStack(), context.tickDelta());
         });
 
-        ClientTickEvents.END_WORLD_TICK.register((clientWorld) -> {
-            WonkyBlocksManager.tickParticles();
-        });
+        ClientTickEvents.END_WORLD_TICK.register(WonkyBlocksManager::tickParticles);
 
-        //clear on level change
+        //todo: clear on level change
 
         addClientReloadListener(AnimationManager::new, new ResourceLocation(MOD_ID, "animations"));
     }

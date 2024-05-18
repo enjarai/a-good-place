@@ -2,6 +2,7 @@ package nl.enjarai.a_good_place.forge;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -12,6 +13,7 @@ import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.RenderTypeHelper;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
@@ -29,14 +31,13 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 
+@Mod.EventBusSubscriber(modid = AGoodPlace.MOD_ID, value = Dist.CLIENT)
 @Mod(AGoodPlaceImpl.MOD_ID)
 public class AGoodPlaceImpl {
     public static final String MOD_ID = AGoodPlace.MOD_ID;
 
     public AGoodPlaceImpl() {
-        MinecraftForge.EVENT_BUS.register(this);
-        //clear on level change
-
+        //todo : clear on level change
         addClientReloadListener(AnimationManager::new, new ResourceLocation(MOD_ID, "animations"));
     }
 
@@ -50,7 +51,7 @@ public class AGoodPlaceImpl {
     @SubscribeEvent
     public void onClientTick(TickEvent.LevelTickEvent tickEvent) {
         if (tickEvent.phase == TickEvent.Phase.END) {
-            WonkyBlocksManager.tickParticles();
+            WonkyBlocksManager.tickParticles((ClientLevel) tickEvent.level);
         }
     }
 
