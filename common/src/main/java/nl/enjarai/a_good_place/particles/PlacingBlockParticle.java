@@ -27,8 +27,7 @@ public abstract class PlacingBlockParticle extends Particle {
     private final BakedModel model;
     private final long seed;
     private final BlockRenderDispatcher renderer;
-
-    private boolean destinationReached;
+    protected int extraLifeTicks = 0;
 
 
     public PlacingBlockParticle(ClientLevel world, BlockPos blockPos, Direction face) {
@@ -49,12 +48,9 @@ public abstract class PlacingBlockParticle extends Particle {
 
     @Override
     public void tick() {
-        if (destinationReached) {
+        age++;
+        if (age >= lifetime + extraLifeTicks) {
             remove();
-            return;
-        }
-        if (age++ >= lifetime) {
-            setRemovedNextTick();
         }
     }
 
@@ -79,7 +75,7 @@ public abstract class PlacingBlockParticle extends Particle {
 
 
     public final void applyAnimation(PoseStack poseStack, float partialTicks) {
-        float t = (age + partialTicks) / (lifetime + 1); //from 0 to 1
+        float t = Math.min(1,(age + partialTicks) / (lifetime + 1)); //from 0 to 1
         applyAnimation(poseStack, t, partialTicks);
     }
 
@@ -90,12 +86,8 @@ public abstract class PlacingBlockParticle extends Particle {
         return ParticleRenderType.CUSTOM;
     }
 
-    private void setRemovedNextTick() {
-        destinationReached = true;
-    }
-
     public boolean reachedDestination() {
-        return destinationReached;
+        return age >= lifetime;
     }
 
 }

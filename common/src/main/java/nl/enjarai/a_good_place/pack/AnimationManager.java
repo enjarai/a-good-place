@@ -19,12 +19,11 @@ import java.util.Map;
 
 public class AnimationManager extends SimpleJsonResourceReloadListener {
 
-    private static List<AnimationParameters> ANIMATIONS = new ArrayList<>();
+    private static final List<AnimationParameters> ANIMATIONS = new ArrayList<>();
 
     public AnimationManager() {
         super(new Gson(), "placement_animations");
     }
-
 
     @Override
     protected void apply(Map<ResourceLocation, JsonElement> jsons, ResourceManager resourceManager, ProfilerFiller profiler) {

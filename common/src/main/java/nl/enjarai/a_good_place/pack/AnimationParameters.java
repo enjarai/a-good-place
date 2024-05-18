@@ -14,7 +14,7 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTest;
 
 public record AnimationParameters(HolderSet<Block> targets, RuleTest predicate, int duration) {
 
-    public static final AnimationParameters DEFAULT = new AnimationParameters(null, AlwaysTrueTest.INSTANCE, 7);
+    public static final AnimationParameters DEFAULT = new AnimationParameters(null, AlwaysTrueTest.INSTANCE, 3);
 
     public static final Codec<AnimationParameters> CODEC = RecordCodecBuilder.create((instance) -> instance.group(
             RegistryCodecs.homogeneousList(Registries.BLOCK).fieldOf("targets").forGetter(AnimationParameters::targets),

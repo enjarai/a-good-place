@@ -27,6 +27,7 @@ public class WonkyBlocksManager {
 
     public static void addParticle(BlockState state, BlockPos pos, Level level, Direction face, Player player) {
         AnimationParameters param = AnimationManager.getAnimation(state, pos, level.random);
+        param = AnimationParameters.DEFAULT; //remove
         PARTICLES.put(pos, new OverEnineeredPlacingParticle((ClientLevel) level, pos, face, player, param));
         hideBlock(pos);
     }
