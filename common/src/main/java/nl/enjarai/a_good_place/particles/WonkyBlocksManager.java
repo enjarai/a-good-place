@@ -8,6 +8,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -22,8 +23,8 @@ public class WonkyBlocksManager {
     private static Set<BlockPos> hiddenBlocks = Set.of();
 
 
-    public static void addParticle(BlockState state, BlockPos pos, Level level, Direction face) {
-        PARTICLES.put(pos, new LegoAnimationPlacingParticle((ClientLevel) level, pos, face));
+    public static void addParticle(BlockState state, BlockPos pos, Level level, Direction face, Player player) {
+        PARTICLES.put(pos, new LegoAnimationPlacingParticle((ClientLevel) level, pos, face, player));
         hideBlock(pos);
     }
 

@@ -6,6 +6,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 
 public class LegoAnimationPlacingParticle extends PlacingBlockParticle{
@@ -19,10 +20,10 @@ public class LegoAnimationPlacingParticle extends PlacingBlockParticle{
     private float height;
     private float prevHeight;
 
-    public LegoAnimationPlacingParticle(ClientLevel world, BlockPos blockPos, Direction face) {
+    public LegoAnimationPlacingParticle(ClientLevel world, BlockPos blockPos, Direction face, Player placer) {
         super(world, blockPos, face);
 
-        facing = Minecraft.getInstance().player.getDirection();
+        facing = placer.getDirection();
         lifetime = 7;
 
         prevHeight = height = Mth.randomBetween(this.random,
@@ -60,7 +61,7 @@ public class LegoAnimationPlacingParticle extends PlacingBlockParticle{
         height -= step * 5f;
         height = Math.max(height, 0);
 
-        step *= 1.5678982f;
+        //step *= 1.5678982f;
     }
 
 
@@ -86,7 +87,7 @@ public class LegoAnimationPlacingParticle extends PlacingBlockParticle{
             case WEST -> new Vec3(translationAmount, translationAmount, -translationAmount);
             default -> new Vec3(0, 0, 0);
         };
-translate.multiply(0,0,0);
+        translate =translate.multiply(2,0,2);
         Vec3 smoothRot = prevRot.lerp(rot, partialTicks);
 
         //anim
