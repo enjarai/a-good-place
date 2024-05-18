@@ -123,7 +123,7 @@ public class PlacingBlockParticle extends Particle {
         float py = (float) (Mth.lerp(partialTicks, this.yo, this.y) - cameraPos.y());
         float pz = (float) (Mth.lerp(partialTicks, this.zo, this.z) - cameraPos.z());
 
-        poseStack.translate(px, py, pz);
+        poseStack.translate(px, py+1, pz);
 
 
         applyAnimation(poseStack, partialTicks);
