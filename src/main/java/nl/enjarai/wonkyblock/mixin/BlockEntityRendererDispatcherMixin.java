@@ -21,8 +21,7 @@ public class BlockEntityRendererDispatcherMixin {
     )
     private <E extends BlockEntity> void wonkyblock$cancelBlockEntityRenderer(
             E blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, CallbackInfo ci) {
-        if (WonkyBlocksManager.isBlockHidden(blockEntity.getBlockPos())) {
-            ci.cancel();
-        }
+        WonkyBlocksManager.modifyTilePosition(blockEntity.getBlockPos(), poseStack, partialTick);
+
     }
 }

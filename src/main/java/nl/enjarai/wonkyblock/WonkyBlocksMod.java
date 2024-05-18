@@ -22,6 +22,8 @@ public class WonkyBlocksMod implements ClientModInitializer {
         ClientTickEvents.END_WORLD_TICK.register((clientWorld) -> {
             WonkyBlocksManager.tickParticles();
         });
+
+        //clear on level change
     }
 
     public static ResourceLocation id(String path) {

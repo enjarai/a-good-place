@@ -19,12 +19,14 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
+import org.lwjgl.system.windows.POINT;
 
 import java.util.Random;
 
@@ -35,16 +37,12 @@ public class PlacingBlockParticle extends Particle {
 
     private final BlockPos pos;
     private final BlockState blockState;
-    @Nullable
-    private BlockEntity tileEntity;
     private final BakedModel model;
     private Direction facing;
 
     private Vec3 prevRot;
     private Vec3 rot;
 
-    private float startingHeight;
-    private float startingAngle;
     private float step = 0.00275f;
 
     private float height;
@@ -61,13 +59,12 @@ public class PlacingBlockParticle extends Particle {
 
         pos = BlockPos.containing(x, y, z);
         blockState = world.getBlockState(pos);
-        tileEntity = world.getBlockEntity(pos);
         model = client.getBlockRenderer().getBlockModel(blockState);
 
         facing = client.player.getDirection();
 
-        prevHeight = height = startingHeight = (float) RANDOM.nextDouble(0.065, 0.115);
-        startingAngle = (float) RANDOM.nextDouble(0.03125, 0.0635);
+        prevHeight = height = (float) RANDOM.nextDouble(0.065, 0.115);
+        float startingAngle = (float) RANDOM.nextDouble(0.03125, 0.0635);
 
         prevRot = new Vec3(0, 0, 0);
 
@@ -108,6 +105,7 @@ public class PlacingBlockParticle extends Particle {
         };
 
         height -= step * 5f;
+        height = Math.max(height, 0);
 
         step *= 1.5678982f;
     }
@@ -119,6 +117,30 @@ public class PlacingBlockParticle extends Particle {
     @Override
     public void render(VertexConsumer buffer, Camera camera, float partialTicks) {
 
+        PoseStack poseStack = new PoseStack();
+
+
+        var cameraPos = camera.getPosition();
+        float px = (float) (Mth.lerp(partialTicks, this.xo, this.x) - cameraPos.x());
+        float py = (float) (Mth.lerp(partialTicks, this.yo, this.y) - cameraPos.y());
+        float pz = (float) (Mth.lerp(partialTicks, this.zo, this.z) - cameraPos.z());
+
+        poseStack.translate(px, py, pz);
+
+
+        applyAnimation(poseStack, partialTicks);
+
+        MultiBufferSource.BufferSource bufferSource = client.renderBuffers().bufferSource();
+        var blockVertexConsumer = bufferSource.getBuffer(ItemBlockRenderTypes.getMovingBlockRenderType(blockState));
+
+        renderBlock(level, model, blockState, pos, poseStack,
+                blockVertexConsumer, false, MC_RANDOM, blockState.getSeed(pos));
+
+
+    }
+
+
+    public void applyAnimation(PoseStack poseStack, float partialTicks) {
         var tRot = switch (facing) {
             case EAST -> new Vec3(1, 0, -1);
             case NORTH -> new Vec3(-1, 0, -1);
@@ -140,48 +162,21 @@ public class PlacingBlockParticle extends Particle {
             default -> new Vec3(0, 0, 0);
         };
 
-        var smoothRot = prevRot.lerp(rot, partialTicks);
+        Vec3 smoothRot = prevRot.lerp(rot, partialTicks);
 
-        var renderLayer = ItemBlockRenderTypes.getMovingBlockRenderType(blockState);
-        MultiBufferSource.BufferSource bufferSource = client.renderBuffers().bufferSource();
-        var blockVertexConsumer = bufferSource.getBuffer(renderLayer);
-
-        RenderSystem.enableCull();
-
-        PoseStack poseStack = new PoseStack();
-        poseStack.pushPose();
-
-        var cameraPos = camera.getPosition();
-        float px = (float) (Mth.lerp(partialTicks, this.xo, this.x) - cameraPos.x());
-        float py = (float) (Mth.lerp(partialTicks, this.yo, this.y) - cameraPos.y());
-        float pz = (float) (Mth.lerp(partialTicks, this.zo, this.z) - cameraPos.z());
-
-        poseStack.translate(px, py, pz);
-
+        //anim
         poseStack.translate(tRot.x, tRot.y, tRot.z);
 
-        poseStack.mulPose(Axis.YP.rotation((float) smoothRot.x));
-        poseStack.mulPose(Axis.ZP.rotation((float) smoothRot.z));
+        //  poseStack.mulPose(Axis.YP.rotation((float) smoothRot.x));
+        //   poseStack.mulPose(Axis.ZP.rotation((float) smoothRot.z));
 
         poseStack.translate(-tRot.x, -tRot.y, -tRot.z);
 
         poseStack.translate(translate.x, translate.y, translate.z);
-
-        renderBlock(level, model, blockState, pos, poseStack,
-                blockVertexConsumer, false, MC_RANDOM, blockState.getSeed(pos));
-        bufferSource.endBatch();
-
-
-        if (tileEntity != null && blockState.getRenderShape() != RenderShape.INVISIBLE) {
-            Lighting.setupLevel(new Matrix4f());
-            client.getBlockEntityRenderDispatcher().render(tileEntity, partialTicks, poseStack, bufferSource);
-            bufferSource.endBatch();
-            Lighting.setupFor3DItems();
-        }
-        poseStack.pushPose();
     }
 
-    private void renderBlock(BlockAndTintGetter world, BakedModel model, BlockState state, BlockPos pos, PoseStack matrices, VertexConsumer vertexConsumer, boolean cull, RandomSource random, long seed) {
+    private void renderBlock(BlockAndTintGetter world, BakedModel model, BlockState state, BlockPos pos,
+                             PoseStack matrices, VertexConsumer vertexConsumer, boolean cull, RandomSource random, long seed) {
         client.getBlockRenderer().getModelRenderer().tesselateBlock(
                 world, model, state, pos, matrices, vertexConsumer,
                 cull, random, seed, OverlayTexture.NO_OVERLAY);
