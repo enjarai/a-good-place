@@ -1,6 +1,7 @@
 package nl.enjarai.a_good_place.particles;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -23,6 +24,8 @@ public class OverEnineeredPlacingParticle extends PlacingBlockParticle {
     // these are all starting values. They all have to end up at 0 (or 1 for scale) since it needs to match the placed block
     private final Vec3 slideStart;
     private final Vec3 rotStart;
+    private final float scaleStart;
+    private final float heightStart;
 
     public OverEnineeredPlacingParticle(ClientLevel world, BlockPos blockPos, Direction face,
                                         Player placer, AnimationParameters params) {
@@ -30,19 +33,22 @@ public class OverEnineeredPlacingParticle extends PlacingBlockParticle {
 
         settings = params;
         lifetime = 4;//params.duration();
-        extraLifeTicks = 2;
+        extraLifeTicks = 1;
+
+        //config here
+        scaleStart = 0.3f;
 
 
         // Slide animation
         // slide in animation. We would like to slide in the block so it looks like it comes from the player hand
         //actually we use the real look dir so we wont snap to directions. Possibly a config here
-        Vector3f playerHorizLook = placer.getLookAngle().toVector3f().mul(-1,0,-1).normalize();
+        Vector3f playerHorizLook = placer.getLookAngle().toVector3f().mul(-1, 0, -1).normalize();
         //another config here. rotate slide toward hand instead of directly toward player
         Vector3f slideDir = playerHorizLook.rotateY(Mth.HALF_PI / 2);
         // also adds a y component
         if (placer.getXRot() > 0) {
             //add back
-          //  slideDir.add(0, 1, 0);
+            slideDir.add(0, 1, 0);
         } else slideDir.add(0, -1, 0);
 
         slideDir = adjustDirectionBasedOnNeighbors(world, placer, slideDir);
@@ -52,18 +58,18 @@ public class OverEnineeredPlacingParticle extends PlacingBlockParticle {
         slideDir.normalize().mul(slidePow);
 
         slideStart = new Vec3(slideDir);
-
+        heightStart = 0;
 
         // Rotation animation
 
         // config here
         float startingAngle = Mth.randomBetween(this.random,
-                0.03125f, 0.0635f);
+                0.05f, 0.1f);
 
         //perpendicular vector on y plane
-        rotStart = new Vec3(slideStart.z() * startingAngle, 0, -slideStart.x() * startingAngle);
+        rotStart = new Vec3(slideStart.z(), 0, -slideStart.x()).normalize()
+                .scale(startingAngle);
     }
-
 
 
     @Override
@@ -73,7 +79,7 @@ public class OverEnineeredPlacingParticle extends PlacingBlockParticle {
 
 
         //tralsate toward move direciton on block edge
-       Vec3 tRot = slideStart.multiply(1, 0, 1).normalize().scale(0.5f);
+        Vec3 tRot = slideStart.multiply(1, 0, 1).normalize().scale(0.5f);
         //rotate from up part of the block
         tRot = tRot.add(0, slideStart.y < 0 ? 0.5 : -0.5, 0);
 
@@ -102,15 +108,19 @@ public class OverEnineeredPlacingParticle extends PlacingBlockParticle {
         poseStack.translate(tRot.x, tRot.y, tRot.z);
 
         // original anim also had some y ais rotation...
-        // poseStack.mulPose(Axis.YP.rotation((float) rotation.x));
+        //poseStack.mulPose(Axis.YP.rotation((float) rotation.x));
         // another config. determines if they are rotated toward moving dir or opposite
         boolean invert = false;
-        if(invert)rotation = rotation.scale(-1);
-        //poseStack.mulPose(Axis.ZP.rotation((float) -rotation.z));
-        //poseStack.mulPose(Axis.XP.rotation((float) -rotation.x));
+        if (invert) rotation = rotation.scale(-1);
+        poseStack.mulPose(Axis.ZP.rotation((float) -rotation.z));
+        poseStack.mulPose(Axis.XP.rotation((float) -rotation.x));
 
         poseStack.translate(-tRot.x, -tRot.y, -tRot.z);
 
+
+        float a = exponent(time, -1.01f);
+        float scale = scaleStart + (1 - scaleStart) * a;
+        poseStack.scale(scale, scale, scale);
 
         poseStack.translate(-0.5, -0.5, -0.5);
     }
@@ -126,6 +136,29 @@ public class OverEnineeredPlacingParticle extends PlacingBlockParticle {
     //just an exponent between 0 and 1
     private float exponent(float t, float base) {
         return (float) (base * Math.pow(1 / base + 1, t) - base);
+    }
+
+    // 0 to 1 makes it curve up, -1 to 0 curve down. 0 is a line
+
+    /**
+     * An exponent function.
+     * @param t time
+     * @param curve determines the "curve" of the exponent graph.
+     *              0 will be a line
+     *              from 0 to 1 will curve with increasing severity (edge cases with vertical line at 1, which is not a valid input)
+     *              from 0 to -1 will curve downwards in the same manner
+     *              This parameter essentially controls the base of the exponent
+     *              0.55 happens to map to a base close to Euler's number
+     */
+    private float fancyExponent(float t, float curve) {
+        if (curve == 0) return t;
+        float base;
+        if (curve > 0) {
+            base = (float) -Math.log(curve);
+        } else {
+            base = (float) (Math.log(-curve) - 1);
+        }
+        return exponent(t, base);
     }
 
 
