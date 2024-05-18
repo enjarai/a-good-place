@@ -1,11 +1,11 @@
-package nl.enjarai.wonkyblock.mixin;
+package nl.enjarai.a_good_place.mixin;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import nl.enjarai.wonkyblock.particle.WonkyBlocksManager;
+import nl.enjarai.a_good_place.particles.WonkyBlocksManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

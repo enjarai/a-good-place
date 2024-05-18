@@ -1,10 +1,7 @@
-package nl.enjarai.wonkyblock.particle;
+package nl.enjarai.a_good_place.particles;
 
-import com.mojang.blaze3d.platform.Lighting;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -12,6 +9,7 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
@@ -19,26 +17,21 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
-import org.joml.Matrix4f;
-import org.lwjgl.system.windows.POINT;
-
-import java.util.Random;
+import nl.enjarai.a_good_place.AGoodPlace;
 
 // we use a non registered particle because this is a client only mod and we need to render from event anyways
 public class PlacingBlockParticle extends Particle {
-    private static final Random RANDOM = new Random();
-    private static final RandomSource MC_RANDOM = RandomSource.create();
 
     private final BlockPos pos;
     private final BlockState blockState;
-    private final BakedModel model;
     private Direction facing;
+
+    //for block renderer
+    private final BakedModel model;
+    private final long seed;
+    private final BlockRenderDispatcher renderer;
 
     private Vec3 prevRot;
     private Vec3 rot;
@@ -60,11 +53,15 @@ public class PlacingBlockParticle extends Particle {
         pos = BlockPos.containing(x, y, z);
         blockState = world.getBlockState(pos);
         model = client.getBlockRenderer().getBlockModel(blockState);
+        seed = blockState.getSeed(pos);
+        renderer = client.getBlockRenderer();
 
         facing = client.player.getDirection();
 
-        prevHeight = height = (float) RANDOM.nextDouble(0.065, 0.115);
-        float startingAngle = (float) RANDOM.nextDouble(0.03125, 0.0635);
+        prevHeight = height = Mth.randomBetween(this.random,
+                0.065f, 0.115f);
+        float startingAngle =  Mth.randomBetween(this.random,
+                0.03125f, 0.0635f);
 
         prevRot = new Vec3(0, 0, 0);
 
@@ -132,10 +129,8 @@ public class PlacingBlockParticle extends Particle {
         applyAnimation(poseStack, partialTicks);
 
         MultiBufferSource.BufferSource bufferSource = client.renderBuffers().bufferSource();
-        var blockVertexConsumer = bufferSource.getBuffer(ItemBlockRenderTypes.getMovingBlockRenderType(blockState));
 
-        renderBlock(level, model, blockState, pos, poseStack,
-                blockVertexConsumer, true, MC_RANDOM, blockState.getSeed(pos));
+        AGoodPlace. renderBlock(model,seed, poseStack, bufferSource, blockState, level, pos, renderer);
 
 
     }
@@ -174,13 +169,6 @@ public class PlacingBlockParticle extends Particle {
         poseStack.translate(-tRot.x, -tRot.y, -tRot.z);
 
         poseStack.translate(translate.x, translate.y, translate.z);
-    }
-
-    private void renderBlock(BlockAndTintGetter world, BakedModel model, BlockState state, BlockPos pos,
-                             PoseStack matrices, VertexConsumer vertexConsumer, boolean cull, RandomSource random, long seed) {
-        client.getBlockRenderer().getModelRenderer().tesselateBlock(
-                world, model, state, pos, matrices, vertexConsumer,
-                cull, random, seed, OverlayTexture.NO_OVERLAY);
     }
 
     @Override

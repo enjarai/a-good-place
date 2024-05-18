@@ -1,11 +1,11 @@
-package nl.enjarai.wonkyblock.mixin.sodium;
+package nl.enjarai.a_good_place.mixin.sodium;
 
 import me.jellysquid.mods.sodium.client.render.chunk.compile.pipeline.BlockOcclusionCache;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.state.BlockState;
-import nl.enjarai.wonkyblock.particle.WonkyBlocksManager;
+import nl.enjarai.a_good_place.particles.WonkyBlocksManager;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;

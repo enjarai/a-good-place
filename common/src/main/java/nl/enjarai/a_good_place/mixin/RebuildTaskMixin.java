@@ -1,4 +1,4 @@
-package nl.enjarai.wonkyblock.mixin;
+package nl.enjarai.a_good_place.mixin;
 
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -9,7 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
-import nl.enjarai.wonkyblock.particle.WonkyBlocksManager;
+import nl.enjarai.a_good_place.particles.WonkyBlocksManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 

@@ -1,10 +1,10 @@
-package nl.enjarai.wonkyblock.mixin;
+package nl.enjarai.a_good_place.mixin;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import nl.enjarai.wonkyblock.particle.WonkyBlocksManager;
+import nl.enjarai.a_good_place.particles.WonkyBlocksManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

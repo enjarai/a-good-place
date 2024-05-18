@@ -1,7 +1,7 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "nl.enjarai.wonkyblock.mixin",
+  "package": "nl.enjarai.a_good_place.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "BlockBehaviorMixin",
