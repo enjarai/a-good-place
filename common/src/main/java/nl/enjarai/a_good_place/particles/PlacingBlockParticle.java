@@ -14,9 +14,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
 import nl.enjarai.a_good_place.AGoodPlace;
 
+// this ideally could be used for some sort of mod api so mods can create their own particles
 // we use a non registered particle because this is a client only mod and we need to render from event anyways
 public abstract class PlacingBlockParticle extends Particle {
 
@@ -78,13 +78,17 @@ public abstract class PlacingBlockParticle extends Particle {
     }
 
 
-    public abstract void applyAnimation(PoseStack poseStack, float partialTicks);
+    public final void applyAnimation(PoseStack poseStack, float partialTicks) {
+        float t = (age + partialTicks) / (lifetime + 1); //from 0 to 1
+        applyAnimation(poseStack, t, partialTicks);
+    }
+
+    protected abstract void applyAnimation(PoseStack poseStack, float animationTime, float partialTicks);
 
     @Override
     public ParticleRenderType getRenderType() {
         return ParticleRenderType.CUSTOM;
     }
-
 
     private void setRemovedNextTick() {
         destinationReached = true;

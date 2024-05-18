@@ -7,23 +7,40 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
+import nl.enjarai.a_good_place.pack.AnimationParameters;
+import org.joml.Vector3f;
 
-public class LegoAnimationPlacingParticle extends PlacingBlockParticle {
+public class OverEnineeredPlacingParticle extends PlacingBlockParticle {
+
+    private final AnimationParameters settings;
+
+    private final float startX;
+    private final float startY;
+    private final float startZ;
 
     protected Direction facing;
-
     private Vec3 prevRot;
     private Vec3 rot;
     private float step = 0.00275f;
-
     private float height;
     private float prevHeight;
 
-    public LegoAnimationPlacingParticle(ClientLevel world, BlockPos blockPos, Direction face, Player placer) {
+    public OverEnineeredPlacingParticle(ClientLevel world, BlockPos blockPos, Direction face,
+                                        Player placer, AnimationParameters params) {
         super(world, blockPos, face);
 
-        facing = placer.getDirection();
-        lifetime = 7;
+        settings = params;
+        lifetime = params.duration();
+
+        Direction playerFacing = placer.getDirection();
+
+        // slide in animation. We would like to slide in the block so it looks like it comes from the player hand
+        Vector3f handDir = playerFacing.getOpposite().step().rotateY(Mth.HALF_PI);
+        startX = handDir.x();
+        startY = handDir.y();
+        startZ = handDir.z();
+
+
 
         prevHeight = height = Mth.randomBetween(this.random,
                 0.065f, 0.115f);
@@ -39,6 +56,8 @@ public class LegoAnimationPlacingParticle extends PlacingBlockParticle {
             case WEST -> new Vec3(startingAngle, 0, startingAngle);
             default -> new Vec3(0, 0, 0);
         };
+
+        facing = placer.getDirection();
 
     }
 
@@ -65,7 +84,7 @@ public class LegoAnimationPlacingParticle extends PlacingBlockParticle {
 
 
     @Override
-    public void applyAnimation(PoseStack poseStack, float partialTicks) {
+    public void applyAnimation(PoseStack poseStack, float time, float partialTicks) {
         var tRot = switch (facing) {
             case EAST -> new Vec3(1, 0, -1);
             case NORTH -> new Vec3(-1, 0, -1);

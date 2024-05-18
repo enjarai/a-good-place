@@ -12,6 +12,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import nl.enjarai.a_good_place.pack.AnimationManager;
+import nl.enjarai.a_good_place.pack.AnimationParameters;
 
 import java.util.*;
 
@@ -24,7 +26,8 @@ public class WonkyBlocksManager {
 
 
     public static void addParticle(BlockState state, BlockPos pos, Level level, Direction face, Player player) {
-        PARTICLES.put(pos, new LegoAnimationPlacingParticle((ClientLevel) level, pos, face, player));
+        AnimationParameters param = AnimationManager.getAnimation(state, pos, level.random);
+        PARTICLES.put(pos, new OverEnineeredPlacingParticle((ClientLevel) level, pos, face, player, param));
         hideBlock(pos);
     }
 
