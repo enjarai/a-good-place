@@ -19,7 +19,7 @@ public class AGoodPlaceForge {
 
     @SubscribeEvent
     public void onRenderWorld(RenderLevelStageEvent event) {
-        if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
+        if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_ENTITIES) {
             WonkyBlocksManager.renderParticles(event.getPoseStack(), event.getPartialTick());
         }
     }

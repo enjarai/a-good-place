@@ -11,7 +11,7 @@ public class AGoodPlaceFabric implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        WorldRenderEvents.AFTER_TRANSLUCENT.register((context) -> {
+        WorldRenderEvents.AFTER_ENTITIES.register((context) -> {
             WonkyBlocksManager.renderParticles(context.matrixStack(), context.tickDelta());
         });
 

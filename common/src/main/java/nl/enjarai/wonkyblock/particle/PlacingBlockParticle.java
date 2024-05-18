@@ -111,6 +111,7 @@ public class PlacingBlockParticle extends Particle {
     }
 
     private void setRemovedNextTick() {
+        destinationReached = true;
     }
 
 
@@ -134,7 +135,7 @@ public class PlacingBlockParticle extends Particle {
         var blockVertexConsumer = bufferSource.getBuffer(ItemBlockRenderTypes.getMovingBlockRenderType(blockState));
 
         renderBlock(level, model, blockState, pos, poseStack,
-                blockVertexConsumer, false, MC_RANDOM, blockState.getSeed(pos));
+                blockVertexConsumer, true, MC_RANDOM, blockState.getSeed(pos));
 
 
     }

@@ -15,7 +15,7 @@ loom {
         convertAccessWideners = true
         extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
 
-        mixinConfig  "polytone.mixins.json"
+        mixinConfig  "a_good_place.mixins.json"
         mixinConfig  "a_good_place-common.mixins.json"
     }
 }

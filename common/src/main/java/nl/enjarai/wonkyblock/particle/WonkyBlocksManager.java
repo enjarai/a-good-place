@@ -20,7 +20,6 @@ public class WonkyBlocksManager {
     private static final Map<BlockPos, PlacingBlockParticle> PARTICLES = new HashMap<>();
     //replace each time so its thread safe. Supposedly faster than a concurrent set
     private static Set<BlockPos> hiddenBlocks = Set.of();
-    private static boolean isRenderingParticles = false;
 
 
     public static void addParticle(BlockPos pos, Level level) {
@@ -58,18 +57,27 @@ public class WonkyBlocksManager {
 
 
     public static void tickParticles() {
-        PARTICLES.values().forEach(PlacingBlockParticle::tick);
+        var iterator = PARTICLES.entrySet().iterator();
+        while (iterator.hasNext()) {
+            var entry = iterator.next();
+            var p = entry.getValue();
+            p.tick();
+            if(p.reachedDestination()){
+                unHideBlock(entry.getKey());
+            }
+            if (!p.isAlive()) {
+                iterator.remove();
+            }
+        }
+
     }
 
     public static void renderParticles(PoseStack poseStack, float tickDelta) {
-        isRenderingParticles = true;
-
         Minecraft mc = Minecraft.getInstance();
         Camera camera = mc.gameRenderer.getMainCamera();
-        Vec3 cameraPos = camera.getPosition();
         MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
 
-       // lightTexture.turnOnLightLayer();
+        // lightTexture.turnOnLightLayer();
         RenderSystem.enableDepthTest();
         PoseStack poseStack2 = RenderSystem.getModelViewStack();
         poseStack2.pushPose();
@@ -86,15 +94,13 @@ public class WonkyBlocksManager {
         RenderSystem.applyModelViewMatrix();
         RenderSystem.depthMask(true);
         RenderSystem.disableBlend();
-       // lightTexture.turnOffLightLayer();
-
-        isRenderingParticles = false;
+        // lightTexture.turnOffLightLayer();
     }
 
     public static void modifyTilePosition(BlockPos pos, PoseStack pose, float partialTicks) {
         // we are on render thread here so we can just check if we are rendering particles
         var particle = PARTICLES.get(pos);
-        if(particle != null){
+        if (particle != null) {
             particle.applyAnimation(pose, partialTicks);
         }
     }
