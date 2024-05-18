@@ -1,8 +1,10 @@
 package nl.enjarai.a_good_place.mixin;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import nl.enjarai.a_good_place.particles.WonkyBlocksManager;
@@ -14,12 +16,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(BlockItem.class)
 public abstract class BlockItemMixin {
     @Inject(
-            method = "updateBlockStateFromTag",
-            at = @At("HEAD")
+            method = "place",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/BlockItem;updateBlockStateFromTag(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/level/block/state/BlockState;)Lnet/minecraft/world/level/block/state/BlockState;")
     )
-    private void wonkyblock$startPlaceAnimation(BlockPos pos, Level world, ItemStack stack, BlockState state, CallbackInfoReturnable<BlockState> cir) {
-        if (world.isClientSide) {
-            WonkyBlocksManager.addParticle(pos, world);
+    private void wonkyblock$startPlaceAnimation(BlockPlaceContext context, CallbackInfoReturnable<InteractionResult> cir,
+                                                @Local Level level, @Local BlockPos pos, @Local(ordinal = 1) BlockState state) {
+        if (level.isClientSide) {
+            WonkyBlocksManager.addParticle(state, pos, level, context.getClickedFace());
         }
     }
 }

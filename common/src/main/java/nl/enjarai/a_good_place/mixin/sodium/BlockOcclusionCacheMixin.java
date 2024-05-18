@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Pseudo
+@Pseudo //won't get loaded if mod isn't there
 @Mixin(BlockOcclusionCache.class)
 public abstract class BlockOcclusionCacheMixin {
 
