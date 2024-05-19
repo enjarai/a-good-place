@@ -98,7 +98,7 @@ public class OverEnineeredPlacingParticle extends PlacingBlockParticle {
         //slide
         Vec3 translate = slideStart.scale(translationAmount);
 
-        poseStack.translate(translate.x, translate.y, translate.z);
+      //  poseStack.translate(translate.x, translate.y, translate.z);
 
 
         // rotate
@@ -112,8 +112,8 @@ public class OverEnineeredPlacingParticle extends PlacingBlockParticle {
         // another config. determines if they are rotated toward moving dir or opposite
         boolean invert = false;
         if (invert) rotation = rotation.scale(-1);
-        poseStack.mulPose(Axis.ZP.rotation((float) -rotation.z));
-        poseStack.mulPose(Axis.XP.rotation((float) -rotation.x));
+       // poseStack.mulPose(Axis.ZP.rotation((float) -rotation.z));
+       // poseStack.mulPose(Axis.XP.rotation((float) -rotation.x));
 
         poseStack.translate(-tRot.x, -tRot.y, -tRot.z);
 
@@ -122,7 +122,15 @@ public class OverEnineeredPlacingParticle extends PlacingBlockParticle {
         float scale = scaleStart + (1 - scaleStart) * a;
         poseStack.scale(scale, scale, scale);
 
+        poseStack.translate(0,-0.5, 0);
+        poseStack.scale(1,scale, 1);
+        poseStack.translate(0,0.5f, 0);
+
+
         poseStack.translate(-0.5, -0.5, -0.5);
+
+
+
     }
 
 

@@ -8,9 +8,15 @@ import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
+import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
@@ -19,14 +25,22 @@ import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.data.loading.DatagenModLoader;
+import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.forgespi.locating.IModFile;
+import net.minecraftforge.resource.PathPackResources;
 import nl.enjarai.a_good_place.AGoodPlace;
 import nl.enjarai.a_good_place.pack.AnimationManager;
 import nl.enjarai.a_good_place.particles.WonkyBlocksManager;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -39,6 +53,11 @@ public class AGoodPlaceImpl {
     public AGoodPlaceImpl() {
         //todo : clear on level change
         addClientReloadListener(AnimationManager::new, new ResourceLocation(MOD_ID, "animations"));
+    }
+
+    @SubscribeEvent
+    public static void onLevelUnload(LevelEvent.Unload event) {
+        WonkyBlocksManager.clear();
     }
 
     @SubscribeEvent
@@ -70,5 +89,46 @@ public class AGoodPlaceImpl {
             event.registerReloadListener(listener.get());
         };
         FMLJavaModLoadingContext.get().getModEventBus().addListener(eventConsumer);
+    }
+
+    public static void registerOptionalTexturePack(ResourceLocation folderName, Component displayName, boolean defaultEnabled) {
+        registerResourcePack(PackType.CLIENT_RESOURCES,
+                () -> {
+                    IModFile file = ModList.get().getModFileById(folderName.getNamespace()).getFile();
+                    try (PathPackResources pack = new PathPackResources(
+                            folderName.toString(),
+                            true,
+                            file.findResource("resourcepacks/" + folderName.getPath()))) {
+                        var metadata = Objects.requireNonNull(pack.getMetadataSection(PackMetadataSection.TYPE));
+                        return Pack.create(
+                                folderName.toString(),
+                                displayName,
+                                defaultEnabled,
+                                (s) -> pack,
+                                new Pack.Info(metadata.getDescription(), metadata.getPackFormat(), FeatureFlagSet.of()),
+                                PackType.CLIENT_RESOURCES,
+                                Pack.Position.TOP,
+                                false,
+                                PackSource.BUILT_IN);
+                    } catch (Exception ee) {
+                        if (!DatagenModLoader.isRunningDataGen()) ee.printStackTrace();
+                    }
+                    return null;
+                }
+        );
+    }
+
+    public static void registerResourcePack(PackType packType, @Nullable Supplier<Pack> packSupplier) {
+        if (packSupplier == null) return;
+        var bus = FMLJavaModLoadingContext.get().getModEventBus();
+        Consumer<AddPackFindersEvent> consumer = event -> {
+            if (event.getPackType() == packType) {
+                var p = packSupplier.get();
+                if (p != null) {
+                    event.addRepositorySource(infoConsumer -> infoConsumer.accept(packSupplier.get()));
+                }
+            }
+        };
+        bus.addListener(consumer);
     }
 }
