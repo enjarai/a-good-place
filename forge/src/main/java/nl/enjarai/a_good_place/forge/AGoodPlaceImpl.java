@@ -10,7 +10,6 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.network.ServerPlayerConnection;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
 import net.minecraft.server.packs.repository.Pack;
@@ -21,20 +20,17 @@ import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.RenderTypeHelper;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.data.loading.DatagenModLoader;
 import net.minecraftforge.event.AddPackFindersEvent;
-import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -59,23 +55,25 @@ public class AGoodPlaceImpl {
         //todo : clear on level change
         addClientReloadListener(AnimationManager::new, new ResourceLocation(MOD_ID, "animations"));
 
-        AGoodPlace.copySamplePackIfNotPresent();
 
-        if(FMLEnvironment.dist == Dist.CLIENT){
+        if (FMLEnvironment.dist == Dist.CLIENT) {
+            AGoodPlace.copySamplePackIfNotPresent();
             MinecraftForge.EVENT_BUS.register(this);
+
+            registerOptionalTexturePack(new ResourceLocation(MOD_ID, "a_good_place_default_animations"),
+                    Component.nullToEmpty("Default Place Animations"), false);
         }
+
     }
 
     @SubscribeEvent
-    public void onLevelLoad(LevelEvent.Load event) {
-        if(event.getLevel().isClientSide()) {
-            AnimationManager.populateTags(event.getLevel().registryAccess());
-        }
+    public void onLevelLoad(ClientPlayerNetworkEvent.LoggingIn event) {
+        AnimationManager.populateTags(event.getPlayer().level().registryAccess());
     }
 
     @SubscribeEvent
     public void onLevelUnload(LevelEvent.Unload event) {
-        if(event.getLevel().isClientSide()) {
+        if (event.getLevel().isClientSide()) {
             WonkyBlocksManager.clear();
         }
     }

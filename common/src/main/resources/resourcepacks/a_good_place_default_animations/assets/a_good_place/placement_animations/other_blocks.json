@@ -1,14 +1,15 @@
 {
   "targets": "*",
   "priority": 0,
-  "duration": 6,
-  "scale": 1,
-  "scale_curve": 0.5,
-  "translation": 0,
-  "translation_curve": 0.5,
-  "rotation": 0,
-  "rotation_curve": 0.5,
+  "duration": 4,
+  "scale": 0.8,
+  "scale_curve": -0.7,
+  "translation": 0.25,
+  "translation_curve": 0.9,
+  "rotation": -0.1,
+  "rotation_curve": 0.2,
+  "rotation_y": 0,
   "height": 1,
-  "height_curve": 0.5,
-  "translation_angle": 0
+  "height_curve": 0,
+  "translation_angle": 0.6
 }

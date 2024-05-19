@@ -28,6 +28,15 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
                                          Player placer, AnimationParameters settings) {
         super(world, blockPos, face);
 
+        /*
+        settings  = new AnimationParameters(null,
+                0, null, 4,
+                0.8f, -0.7f,
+                0.25f, 0.9f,
+                -0.1f, 0.2f, 0.1f,
+                1, 0, 0.6f);
+        */
+
         params = settings;
         lifetime = params.duration();
         extraLifeTicks = 1;
@@ -73,7 +82,7 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
         //slide
         {
             float progress = fancyExponent(time, params.translationCurve());
-            Vec3 translate = slideStart.scale(progress);
+            Vec3 translate = slideStart.scale(1 - progress);
 
             poseStack.translate(translate.x, translate.y, translate.z);
         }
@@ -81,7 +90,7 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
         // rotate
         {
             float progress = fancyExponent(time, params.rotationCurve());
-            Vec3 rotation = rotStart.scale(progress);
+            Vec3 rotation = rotStart.scale(1 - progress);
 
             //tralsate toward move direciton on block edge
             Vec3 tRot = slideStart.multiply(1, 0, 1).normalize().scale(0.5f);
@@ -91,7 +100,7 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
             poseStack.translate(tRot.x, tRot.y, tRot.z);
 
             // original anim also had some y ais rotation...
-            //poseStack.mulPose(Axis.YP.rotation((float) rotation.x));
+            poseStack.mulPose(Axis.YP.rotation((1 - progress) * params.rotationY()));
             // another config. determines if they are rotated toward moving dir or opposite
             poseStack.mulPose(Axis.ZP.rotation((float) -rotation.z));
             poseStack.mulPose(Axis.XP.rotation((float) -rotation.x));

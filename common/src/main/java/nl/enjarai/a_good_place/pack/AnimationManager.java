@@ -49,6 +49,7 @@ public class AnimationManager extends SimpleJsonResourceReloadListener {
         }
     }
 
+
     @Nullable
     public static AnimationParameters getAnimation(BlockState blockState, BlockPos pos, RandomSource random) {
         for (var animation : ANIMATIONS) {

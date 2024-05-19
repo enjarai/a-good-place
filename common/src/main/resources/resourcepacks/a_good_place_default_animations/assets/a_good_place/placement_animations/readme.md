@@ -3,11 +3,11 @@
 Here below is the syntax for the json file that defines the animations for the placement of the blocks.
 All fields except for `targets` are optional.
 
-
 | name                | default value | explanation                                                                                                                                                             |
 |---------------------|---------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `targets`           | `"*"`         | Affected blocks. Accepts a holder set (tag or list of ids) or `"*"` to affect all blocks`                                                                               |
 | `priority`          | `0`           | Priority of this file. Higher ones will be applied over ones with lower priority.                                                                                       |
+| `predicate`         | `always_true` | Rule test predicate. Used to filter blocks better.                                                                                                                      |
 | `duration`          | `4`           | Duration of the animation in ticks.                                                                                                                                     |
 | `scale`             | `1`           | The initial scale of the block when it is placed.                                                                                                                       |
 | `scale_curve`       | `0.5`         | Controls the animation of the scale parameter.                                                                                                                          |
@@ -16,6 +16,7 @@ All fields except for `targets` are optional.
 | `translation_angle` | `0.78`        | Controls the direction of the translation animation by adding an angle to the player look direction.<br/>Default is 45 degrees to look like its coming from player hand |
 | `rotation`          | `0`           | The initial rotation of the block when it is placed. Rotation direction depends on player direction                                                                     |
 | `rotation_curve`    | `0.5`         | Controls the animation of the rotation parameter.                                                                                                                       |
+| `rotation_y`        | `0`           | Controls Y component of the rotation. Normally not affected by above ones.                                                                                              |
 | `scale`             | `1`           | The scale of the block when it is placed.                                                                                                                               |
 
 The animation always ends up at the block normal dimension.
@@ -33,7 +34,11 @@ Below follows an example of a pop in animation
 
 # About "curve"
 
-All parameter that use the keyword `_curve` control the base of an exponential function used to calculate the curve othe animation.
+All parameter that use the keyword `_curve` control the base of an exponential function used to calculate the curve othe
+animation.
+
 - A value of 0 will result in a linear "curve", smoothly interpolating from start to finish.
-- A value approaching 1 will make the exponent function have upward concavity, making it steeper and steeper toward the end. This results in a slow change at the beginning and a fast one as time goes on. 1 is NOT a valid value.
-- A value approaching -1 will make the exponent function have downward concavity, making it steeper and steeper toward the beginning. This results in a fast change at the beginning and a slow one as time goes on. -1 is NOT a valid value.
+- A value approaching 1 will make the exponent function have upward concavity, making it steeper and steeper toward the
+  end. This results in a slow change at the beginning and a fast one as time goes on. 1 is NOT a valid value.
+- A value approaching -1 will make the exponent function have downward concavity, making it steeper and steeper toward
+  the beginning. This results in a fast change at the beginning and a slow one as time goes on. -1 is NOT a valid value.
