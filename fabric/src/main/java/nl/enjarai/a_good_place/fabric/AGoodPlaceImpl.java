@@ -6,6 +6,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
@@ -27,6 +28,8 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTest;
+import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTestType;
 import nl.enjarai.a_good_place.AGoodPlace;
 import nl.enjarai.a_good_place.pack.AnimationManager;
 import nl.enjarai.a_good_place.particles.WonkyBlocksManager;
@@ -48,9 +51,16 @@ public class AGoodPlaceImpl implements ClientModInitializer {
 
         ClientTickEvents.END_WORLD_TICK.register(WonkyBlocksManager::tickParticles);
 
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
+            AnimationManager.populateTags(client.getConnection().registryAccess());
+        });
+
         //todo: clear on level change
 
+        AGoodPlace.copySamplePackIfNotPresent();
         addClientReloadListener(AnimationManager::new, new ResourceLocation(MOD_ID, "animations"));
+        registerOptionalTexturePack(new ResourceLocation(MOD_ID, "a_good_place_default_animations"),
+                Component.nullToEmpty("A Good Place Default Animation"), true);
     }
 
     public static void renderBlock(BakedModel model, long seed, PoseStack poseStack, MultiBufferSource buffer, BlockState state, Level level, BlockPos pos, BlockRenderDispatcher blockRenderer) {

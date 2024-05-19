@@ -3,7 +3,9 @@ package nl.enjarai.a_good_place.pack;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -39,6 +41,12 @@ public class AnimationManager extends SimpleJsonResourceReloadListener {
 
             ANIMATIONS.add(effect);
         }
+        ANIMATIONS.sort((a, b) -> Integer.compare(b.priority(), a.priority()));
+
+        var level = Minecraft.getInstance().level;
+        if (level != null) {
+            populateTags(level.registryAccess());
+        }
     }
 
     @Nullable
@@ -49,5 +57,11 @@ public class AnimationManager extends SimpleJsonResourceReloadListener {
             }
         }
         return null;
+    }
+
+    public static void populateTags(RegistryAccess registryAccess) {
+        for (var animation : ANIMATIONS) {
+            animation.targets().populate(registryAccess);
+        }
     }
 }

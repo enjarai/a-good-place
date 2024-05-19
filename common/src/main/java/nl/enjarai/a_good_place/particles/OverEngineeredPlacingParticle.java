@@ -5,7 +5,6 @@ import com.mojang.math.Axis;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -17,26 +16,21 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class OverEnineeredPlacingParticle extends PlacingBlockParticle {
+public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
 
-    private final AnimationParameters settings;
+    private final AnimationParameters params;
 
     // these are all starting values. They all have to end up at 0 (or 1 for scale) since it needs to match the placed block
     private final Vec3 slideStart;
     private final Vec3 rotStart;
-    private final float scaleStart;
-    private final float heightStart;
 
-    public OverEnineeredPlacingParticle(ClientLevel world, BlockPos blockPos, Direction face,
-                                        Player placer, AnimationParameters params) {
+    public OverEngineeredPlacingParticle(ClientLevel world, BlockPos blockPos, Direction face,
+                                         Player placer, AnimationParameters settings) {
         super(world, blockPos, face);
 
-        settings = params;
-        lifetime = 4;//params.duration();
+        params = settings;
+        lifetime = params.duration();
         extraLifeTicks = 1;
-
-        //config here
-        scaleStart = 0.3f;
 
 
         // Slide animation
@@ -44,7 +38,8 @@ public class OverEnineeredPlacingParticle extends PlacingBlockParticle {
         //actually we use the real look dir so we wont snap to directions. Possibly a config here
         Vector3f playerHorizLook = placer.getLookAngle().toVector3f().mul(-1, 0, -1).normalize();
         //another config here. rotate slide toward hand instead of directly toward player
-        Vector3f slideDir = playerHorizLook.rotateY(Mth.HALF_PI / 2);
+        float angleTowardHand = params.rightTranslationAngle();
+        Vector3f slideDir = playerHorizLook.rotateY(angleTowardHand);
         // also adds a y component
         if (placer.getXRot() > 0) {
             //add back
@@ -54,20 +49,18 @@ public class OverEnineeredPlacingParticle extends PlacingBlockParticle {
         slideDir = adjustDirectionBasedOnNeighbors(world, placer, slideDir);
 
         //config here
-        float slidePow = Mth.randomBetween(this.random, 0.1f, 0.14f);
-        slideDir.normalize().mul(slidePow);
+        Vec3 normalizedSlideDir = new Vec3(slideDir.normalize());
 
-        slideStart = new Vec3(slideDir);
-        heightStart = 0;
+        float slidePow = addSomeRandom(params.translationStart());
+        slideStart = normalizedSlideDir.scale(slidePow);
 
         // Rotation animation
 
         // config here
-        float startingAngle = Mth.randomBetween(this.random,
-                0.05f, 0.1f);
+        float startingAngle = addSomeRandom(params.rotationStart());
 
         //perpendicular vector on y plane
-        rotStart = new Vec3(slideStart.z(), 0, -slideStart.x()).normalize()
+        rotStart = new Vec3(normalizedSlideDir.z(), 0, -normalizedSlideDir.x()).normalize()
                 .scale(startingAngle);
     }
 
@@ -77,59 +70,56 @@ public class OverEnineeredPlacingParticle extends PlacingBlockParticle {
 
         poseStack.translate(0.5, 0.5, 0.5);
 
+        //slide
+        {
+            float progress = fancyExponent(time, params.translationCurve());
+            Vec3 translate = slideStart.scale(progress);
 
-        //tralsate toward move direciton on block edge
-        Vec3 tRot = slideStart.multiply(1, 0, 1).normalize().scale(0.5f);
-        //rotate from up part of the block
-        tRot = tRot.add(0, slideStart.y < 0 ? 0.5 : -0.5, 0);
-
-
-        float translationAmount;// = Mth.lerp(partialTicks, prevHeight, height);
-
-
-        // translationAmount = 1 - parabula(time, 2, 0.4f);
-
-        translationAmount = 1 - exponent(time, 0.01f);
-
-        if (translationAmount < 0) {
-            translationAmount = 0;
+            poseStack.translate(translate.x, translate.y, translate.z);
         }
 
-        //slide
-        Vec3 translate = slideStart.scale(translationAmount);
-
-      //  poseStack.translate(translate.x, translate.y, translate.z);
-
-
         // rotate
-        Vec3 rotation = rotStart.scale(translationAmount);
+        {
+            float progress = fancyExponent(time, params.rotationCurve());
+            Vec3 rotation = rotStart.scale(progress);
+
+            //tralsate toward move direciton on block edge
+            Vec3 tRot = slideStart.multiply(1, 0, 1).normalize().scale(0.5f);
+            //rotate from up part of the block //TODO:bug when slie is 0
+            tRot = tRot.add(0, slideStart.y < 0 ? 0.5 : -0.5, 0);
+
+            poseStack.translate(tRot.x, tRot.y, tRot.z);
+
+            // original anim also had some y ais rotation...
+            //poseStack.mulPose(Axis.YP.rotation((float) rotation.x));
+            // another config. determines if they are rotated toward moving dir or opposite
+            poseStack.mulPose(Axis.ZP.rotation((float) -rotation.z));
+            poseStack.mulPose(Axis.XP.rotation((float) -rotation.x));
+
+            poseStack.translate(-tRot.x, -tRot.y, -tRot.z);
+        }
 
 
-        poseStack.translate(tRot.x, tRot.y, tRot.z);
-
-        // original anim also had some y ais rotation...
-        //poseStack.mulPose(Axis.YP.rotation((float) rotation.x));
-        // another config. determines if they are rotated toward moving dir or opposite
-        boolean invert = false;
-        if (invert) rotation = rotation.scale(-1);
-       // poseStack.mulPose(Axis.ZP.rotation((float) -rotation.z));
-       // poseStack.mulPose(Axis.XP.rotation((float) -rotation.x));
-
-        poseStack.translate(-tRot.x, -tRot.y, -tRot.z);
+        // scale
+        {
+            float progress = fancyExponent(time, params.scaleCurve());
+            float scaleStart = params.scaleStart();
+            float scale = scaleStart + (1 - scaleStart) * progress;
+            poseStack.scale(scale, scale, scale);
+        }
 
 
-        float a = exponent(time, -1.01f);
-        float scale = scaleStart + (1 - scaleStart) * a;
-        poseStack.scale(scale, scale, scale);
-
-        poseStack.translate(0,-0.5, 0);
-        poseStack.scale(1,scale, 1);
-        poseStack.translate(0,0.5f, 0);
-
+        // height scale
+        {
+            float progress = fancyExponent(time, params.heightCurve());
+            float heightStart = params.heightStart();
+            float height = heightStart + (1 - heightStart) * progress;
+            poseStack.translate(0, -0.5, 0);
+            poseStack.scale(1, height, 1);
+            poseStack.translate(0, 0.5f, 0);
+        }
 
         poseStack.translate(-0.5, -0.5, -0.5);
-
-
 
     }
 
@@ -150,7 +140,8 @@ public class OverEnineeredPlacingParticle extends PlacingBlockParticle {
 
     /**
      * An exponent function.
-     * @param t time
+     *
+     * @param t     time
      * @param curve determines the "curve" of the exponent graph.
      *              0 will be a line
      *              from 0 to 1 will curve with increasing severity (edge cases with vertical line at 1, which is not a valid input)
@@ -169,6 +160,9 @@ public class OverEnineeredPlacingParticle extends PlacingBlockParticle {
         return exponent(t, base);
     }
 
+    private float addSomeRandom(float t) {
+        return t;//+ Mth.randomBetween(this.random, -random, random);
+    }
 
     public static List<Direction> getAffectedDirections(float x, float y, float z) {
         List<Direction> list = new ArrayList<>();
@@ -217,5 +211,6 @@ public class OverEnineeredPlacingParticle extends PlacingBlockParticle {
         }
         return slideDir;
     }
+
 
 }

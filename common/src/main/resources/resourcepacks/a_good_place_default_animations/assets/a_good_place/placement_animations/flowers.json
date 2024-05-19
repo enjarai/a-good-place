@@ -1,0 +1,5 @@
+{
+  "targets": "#minecraft:flowers",
+  "priority": 0,
+  "duration": 15
+}
