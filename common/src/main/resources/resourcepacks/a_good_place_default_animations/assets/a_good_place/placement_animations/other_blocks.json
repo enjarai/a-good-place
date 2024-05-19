@@ -1,6 +1,6 @@
 {
   "targets": "*",
-  "priority": 1,
+  "priority": 0,
   "duration": 6,
   "scale": 1,
   "scale_curve": 0.5,

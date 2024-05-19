@@ -1,5 +1,9 @@
 {
   "targets": "#minecraft:flowers",
-  "priority": 0,
-  "duration": 15
+  "priority": 1,
+  "duration": 4,
+  "height": 0.2,
+  "height_curve_": 0.7,
+  "scale": 0.8,
+  "scale_curve": 0.7
 }

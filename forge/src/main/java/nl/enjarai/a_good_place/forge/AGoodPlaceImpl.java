@@ -21,6 +21,7 @@ import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.RenderTypeHelper;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
@@ -33,9 +34,11 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.resource.PathPackResources;
 import nl.enjarai.a_good_place.AGoodPlace;
@@ -48,7 +51,6 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 
-@Mod.EventBusSubscriber(modid = AGoodPlace.MOD_ID, value = Dist.CLIENT)
 @Mod(AGoodPlaceImpl.MOD_ID)
 public class AGoodPlaceImpl {
     public static final String MOD_ID = AGoodPlace.MOD_ID;
@@ -56,17 +58,26 @@ public class AGoodPlaceImpl {
     public AGoodPlaceImpl() {
         //todo : clear on level change
         addClientReloadListener(AnimationManager::new, new ResourceLocation(MOD_ID, "animations"));
+
+        AGoodPlace.copySamplePackIfNotPresent();
+
+        if(FMLEnvironment.dist == Dist.CLIENT){
+            MinecraftForge.EVENT_BUS.register(this);
+        }
     }
 
     @SubscribeEvent
-    public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
-        AnimationManager.populateTags(event.getEntity().level().registryAccess());
-
+    public void onLevelLoad(LevelEvent.Load event) {
+        if(event.getLevel().isClientSide()) {
+            AnimationManager.populateTags(event.getLevel().registryAccess());
+        }
     }
 
     @SubscribeEvent
-    public static void onLevelUnload(LevelEvent.Unload event) {
-        WonkyBlocksManager.clear();
+    public void onLevelUnload(LevelEvent.Unload event) {
+        if(event.getLevel().isClientSide()) {
+            WonkyBlocksManager.clear();
+        }
     }
 
     @SubscribeEvent
@@ -78,7 +89,7 @@ public class AGoodPlaceImpl {
 
     @SubscribeEvent
     public void onClientTick(TickEvent.LevelTickEvent tickEvent) {
-        if (tickEvent.phase == TickEvent.Phase.END) {
+        if (tickEvent.phase == TickEvent.Phase.END && tickEvent.level.isClientSide) {
             WonkyBlocksManager.tickParticles((ClientLevel) tickEvent.level);
         }
     }
