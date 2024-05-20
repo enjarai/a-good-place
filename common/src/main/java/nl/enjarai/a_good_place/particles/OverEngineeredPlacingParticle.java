@@ -27,9 +27,9 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
     private final Vec3 rotStart;
 
 
-    public OverEngineeredPlacingParticle(ClientLevel world, BlockPos blockPos, Direction face,
+    public OverEngineeredPlacingParticle(ClientLevel level, BlockPos blockPos, Direction face,
                                          Player placer, AnimationParameters settings) {
-        super(world, blockPos, face);
+        super(level, blockPos, face);
 
         /*
 
@@ -74,7 +74,7 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
             slideDir.add(0, 1, 0);
         } else slideDir.add(0, -1, 0);
 
-        slideDir = adjustDirectionBasedOnNeighbors(world, placer, slideDir);
+        slideDir = adjustDirectionBasedOnNeighbors(level, placer, slideDir);
 
         //config here
         Vec3 animationDirection = new Vec3(slideDir.normalize());
