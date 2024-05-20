@@ -43,7 +43,7 @@ Below follows an example of a pop in animation
 }
 ```
 
-# About "curve"
+### About "curve"
 
 All parameter that use the keyword `_curve` control the base of an exponential function used to calculate the curve othe
 animation.

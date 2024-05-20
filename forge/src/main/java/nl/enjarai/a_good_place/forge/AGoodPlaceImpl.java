@@ -52,9 +52,7 @@ public class AGoodPlaceImpl {
     public static final String MOD_ID = AGoodPlace.MOD_ID;
 
     public AGoodPlaceImpl() {
-        //todo : clear on level change
         addClientReloadListener(AnimationManager::new, new ResourceLocation(MOD_ID, "animations"));
-
 
         if (FMLEnvironment.dist == Dist.CLIENT) {
             AGoodPlace.copySamplePackIfNotPresent();
