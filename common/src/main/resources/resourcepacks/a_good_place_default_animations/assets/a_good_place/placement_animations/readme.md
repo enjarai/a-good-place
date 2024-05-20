@@ -14,13 +14,21 @@ All fields except for `targets` are optional.
 | `translation`       | `0`           | The initial translation of the block when it is placed. Translation direction depends on player direction                                                               |
 | `translation_curve` | `0.5`         | Controls the animation of the translation parameter.                                                                                                                    |
 | `translation_angle` | `0.78`        | Controls the direction of the translation animation by adding an angle to the player look direction.<br/>Default is 45 degrees to look like its coming from player hand |
-| `rotation`          | `0`           | The initial rotation of the block when it is placed. Rotation direction depends on player direction                                                                     |
+| `rotation_amount`   | `0`           | The initial rotation amount of the block when it is placed. Rotation direction depends on player direction                                                              |
+| `rotation_angle`    | `0`           | The angle of the rotation vector relative to the player direction.                                                                                                      |
 | `rotation_curve`    | `0.5`         | Controls the animation of the rotation parameter.                                                                                                                       |
 | `rotation_y`        | `0`           | Controls Y component of the rotation. Normally not affected by above ones.                                                                                              |
 | `scale`             | `1`           | The scale of the block when it is placed.                                                                                                                               |
 
 The animation always ends up at the block normal dimension.
 For example `scale` is the initial scale of the block while its final scale will obviously be 1.
+
+Regarding `scale`. Internally it is a vector of 3 components. 
+it will be calculated as follows:
+Vec3 rot = player_direction.rotateY(`rotation_angle`) * `rotation_amount`;
+rot.y = `rotation_y`;
+
+All angles are in degrees.
 
 Below follows an example of a pop in animation
 

@@ -22,6 +22,7 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
 
     // these are all starting values. They all have to end up at 0 (or 1 for scale) since it needs to match the placed block
     private final Vec3 slideStart;
+    private final Vec3 normalizedSlideDir;
     private final Vec3 rotStart;
 
     public OverEngineeredPlacingParticle(ClientLevel world, BlockPos blockPos, Direction face,
@@ -48,16 +49,16 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
         settings = new AnimationParameters(null, 0, null, 300,
                 0.8f, 0.2f,
                 0.5f, -0.9f,
-                0, 0, 0,
+                0, 0, 0, 0,
                 1, 0,
                 0);
 
         settings  = new AnimationParameters(null,
                 0, null, 4,
                 1, -0.7f,
-                0*0.25f, 0.9f,
-                -0.1f, 0.2f, 2f,
-                1, 0, 40);
+                0.25f, 0.9f,
+                0.3f, 0,0.2f, -0.3f,
+                1, 0, 0);
 
         params = settings;
         lifetime = params.duration();
@@ -80,7 +81,7 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
         slideDir = adjustDirectionBasedOnNeighbors(world, placer, slideDir);
 
         //config here
-        Vec3 normalizedSlideDir = new Vec3(slideDir.normalize());
+        normalizedSlideDir = new Vec3(slideDir.normalize());
 
         float slidePow = addSomeRandom(params.translationStart());
         slideStart = normalizedSlideDir.scale(slidePow);
@@ -91,8 +92,8 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
         float startingAngle = addSomeRandom(params.rotationStart());
 
         //perpendicular vector on y plane
-        rotStart = new Vec3(normalizedSlideDir.z(), 0, -normalizedSlideDir.x()).normalize()
-                .scale(startingAngle);
+        rotStart = new Vec3(normalizedSlideDir.x(), 0, normalizedSlideDir.z()).normalize()
+                .scale(-startingAngle).yRot(params.rotationAngle());
     }
 
 
@@ -115,9 +116,10 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
             Vec3 rotation = rotStart.scale(1 - progress);
 
             //tralsate toward move direciton on block edge
-            Vec3 tRot = slideStart.multiply(1, 0, 1).normalize().scale(0.5f);
-            //rotate from up part of the block //TODO:bug when slide is 0
-            tRot = tRot.add(0, slideStart.y < 0 ? 0.5 : -0.5, 0);
+            Vec3 tRot = normalizedSlideDir.multiply(1, 0, 1).normalize().scale(0.5f);
+            //also add perpendicular compoent so we are on the angle
+            //aaand vertical one
+            tRot = tRot.add(-tRot.z, slideStart.y < 0 ? 0.5 : -0.5, tRot.x);
 
             poseStack.translate(tRot.x, tRot.y, tRot.z);
 
