@@ -29,6 +29,8 @@ public record AnimationParameters(LazyHolderSet<?> targets, int priority,
                                   float rightTranslationAngle) {
 
     private static final Codec<Float> FLOAT_CODEC = floatRangeExclusive(-1, 1);
+    private static final Codec<Float> DEG_TO_RAD_CODEC = Codec.floatRange(-180, 180)
+            .xmap(d -> (float) Math.toRadians(d), r -> (float) Math.toDegrees(r));
 
     public static final Codec<AnimationParameters> CODEC = RecordCodecBuilder.create((instance) -> instance.group(
             Codec.PASSTHROUGH.xmap(LazyHolderSet::new, a -> a.toDecode).fieldOf("targets").forGetter(a -> null),
@@ -39,12 +41,12 @@ public record AnimationParameters(LazyHolderSet<?> targets, int priority,
             StrOpt.of(FLOAT_CODEC, "scale_curve", 0.5f).forGetter(AnimationParameters::scaleCurve),
             StrOpt.of(Codec.floatRange(-10, 10), "translation", 0f).forGetter(AnimationParameters::translationStart),
             StrOpt.of(FLOAT_CODEC, "translation_curve", 0.5f).forGetter(AnimationParameters::translationCurve),
-            StrOpt.of(Codec.floatRange(-Mth.PI, Mth.PI), "rotation", 0f).forGetter(AnimationParameters::rotationStart),
+            StrOpt.of(DEG_TO_RAD_CODEC, "rotation", 0f).forGetter(AnimationParameters::rotationStart),
             StrOpt.of(FLOAT_CODEC, "rotation_curve", 0.5f).forGetter(AnimationParameters::rotationCurve),
-            StrOpt.of(Codec.floatRange(-Mth.PI, Mth.PI), "rotation_y", 0f).forGetter(AnimationParameters::rotationY),
+            StrOpt.of(DEG_TO_RAD_CODEC, "rotation_y", 0f).forGetter(AnimationParameters::rotationY),
             StrOpt.of(Codec.floatRange(0, 10), "height", 1f).forGetter(AnimationParameters::heightStart),
             StrOpt.of(FLOAT_CODEC, "height_curve", 0.5f).forGetter(AnimationParameters::heightCurve),
-            StrOpt.of(Codec.floatRange(-Mth.PI, Mth.PI), "translation_angle", Mth.HALF_PI / 2).forGetter(AnimationParameters::rightTranslationAngle)
+            StrOpt.of(DEG_TO_RAD_CODEC, "translation_angle", 45f).forGetter(AnimationParameters::rightTranslationAngle)
     ).apply(instance, AnimationParameters::new));
 
     public boolean matches(BlockState blockState, BlockPos pos, RandomSource random) {

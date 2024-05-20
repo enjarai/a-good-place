@@ -29,13 +29,35 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
         super(world, blockPos, face);
 
         /*
+
+        */
+
+        /*
+
+        {
+  "targets": "*",
+  "scale": 1.2,
+  "scale_curve": 0.2,
+  "translation": 0.5,
+  "translation_curve": -0.9,
+  "translation_angle": 3,
+  "duration": 3
+}
+         */
+
+        settings = new AnimationParameters(null, 0, null, 300,
+                0.8f, 0.2f,
+                0.5f, -0.9f,
+                0, 0, 0,
+                1, 0,
+                0);
+
         settings  = new AnimationParameters(null,
                 0, null, 4,
-                0.8f, -0.7f,
-                0.25f, 0.9f,
-                -0.1f, 0.2f, 0.1f,
-                1, 0, 0.6f);
-        */
+                1, -0.7f,
+                0*0.25f, 0.9f,
+                -0.1f, 0.2f, 2f,
+                1, 0, 40);
 
         params = settings;
         lifetime = params.duration();
@@ -94,7 +116,7 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
 
             //tralsate toward move direciton on block edge
             Vec3 tRot = slideStart.multiply(1, 0, 1).normalize().scale(0.5f);
-            //rotate from up part of the block //TODO:bug when slie is 0
+            //rotate from up part of the block //TODO:bug when slide is 0
             tRot = tRot.add(0, slideStart.y < 0 ? 0.5 : -0.5, 0);
 
             poseStack.translate(tRot.x, tRot.y, tRot.z);
