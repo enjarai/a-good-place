@@ -22,7 +22,7 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
 
     // these are all starting values. They all have to end up at 0 (or 1 for scale) since it needs to match the placed block
     private final Vec3 slideStart;
-    private final Vec3 normalizedSlideDir;
+    private final Vec3 animationDirection; //we could have probably just rotated everything in slide direction and make everything relative to it...
     private final Vec3 rotStart;
 
     public OverEngineeredPlacingParticle(ClientLevel world, BlockPos blockPos, Direction face,
@@ -31,7 +31,7 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
 
         /*
 
-        */
+         */
 
         /*
 
@@ -49,16 +49,16 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
         settings = new AnimationParameters(null, 0, null, 300,
                 0.8f, 0.2f,
                 0.5f, -0.9f,
-                0, 0, 0, 0,
+                0, 0, 0, 0, false,
                 1, 0,
                 0);
 
-        settings  = new AnimationParameters(null,
+        settings = new AnimationParameters(null,
                 0, null, 4,
-                1, -0.7f,
-                0.25f, 0.9f,
-                0.3f, 0,0.2f, -0.3f,
-                1, 0, 0);
+                1.7f, -0.7f,
+                0.35f, 0.9f,
+                0.3f, 0, 0.2f, -0.3f, false,
+                1, 0, 40);
 
         params = settings;
         lifetime = params.duration();
@@ -81,10 +81,10 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
         slideDir = adjustDirectionBasedOnNeighbors(world, placer, slideDir);
 
         //config here
-        normalizedSlideDir = new Vec3(slideDir.normalize());
+        animationDirection = new Vec3(slideDir.normalize());
 
         float slidePow = addSomeRandom(params.translationStart());
-        slideStart = normalizedSlideDir.scale(slidePow);
+        slideStart = animationDirection.scale(slidePow);
 
         // Rotation animation
 
@@ -92,7 +92,7 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
         float startingAngle = addSomeRandom(params.rotationStart());
 
         //perpendicular vector on y plane
-        rotStart = new Vec3(normalizedSlideDir.x(), 0, normalizedSlideDir.z()).normalize()
+        rotStart = new Vec3(animationDirection.x(), 0, animationDirection.z()).normalize()
                 .scale(-startingAngle).yRot(params.rotationAngle());
     }
 
@@ -116,12 +116,17 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
             Vec3 rotation = rotStart.scale(1 - progress);
 
             //tralsate toward move direciton on block edge
-            Vec3 tRot = normalizedSlideDir.multiply(1, 0, 1).normalize().scale(0.5f);
-            //also add perpendicular compoent so we are on the angle
-            //aaand vertical one
-            tRot = tRot.add(-tRot.z, slideStart.y < 0 ? 0.5 : -0.5, tRot.x);
+            Vec3 rotationPivot;
+            if (params.rotateOnCenter()) {
+                rotationPivot = Vec3.ZERO;
+            } else {
+                rotationPivot = animationDirection.multiply(1, 0, 1).normalize().scale(0.5f);
+                //also add perpendicular compoent so we are on the angle
+                //aaand vertical one
+                rotationPivot = rotationPivot.add(-rotationPivot.z, slideStart.y < 0 ? 0.5 : -0.5, rotationPivot.x);
+            }
 
-            poseStack.translate(tRot.x, tRot.y, tRot.z);
+            poseStack.translate(rotationPivot.x, rotationPivot.y, rotationPivot.z);
 
             // original anim also had some y ais rotation...
             poseStack.mulPose(Axis.YP.rotation((1 - progress) * params.rotationY()));
@@ -129,7 +134,7 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
             poseStack.mulPose(Axis.ZP.rotation((float) -rotation.z));
             poseStack.mulPose(Axis.XP.rotation((float) -rotation.x));
 
-            poseStack.translate(-tRot.x, -tRot.y, -tRot.z);
+            poseStack.translate(-rotationPivot.x, -rotationPivot.y, -rotationPivot.z);
         }
 
 

@@ -24,7 +24,7 @@ public record AnimationParameters(LazyHolderSet<?> targets, int priority,
                                   RuleTest predicate, int duration,
                                   float scaleStart, float scaleCurve,
                                   float translationStart, float translationCurve,
-                                  float rotationStart, float rotationAngle, float rotationCurve, float rotationY,
+                                  float rotationStart, float rotationAngle, float rotationCurve, float rotationY, boolean rotateOnCenter,
                                   float heightStart, float heightCurve,
                                   float rightTranslationAngle) {
 
@@ -45,6 +45,7 @@ public record AnimationParameters(LazyHolderSet<?> targets, int priority,
             StrOpt.of(DEG_TO_RAD_CODEC, "rotation_angle", 0f).forGetter(AnimationParameters::rotationStart),
             StrOpt.of(FLOAT_CODEC, "rotation_curve", 0.5f).forGetter(AnimationParameters::rotationCurve),
             StrOpt.of(DEG_TO_RAD_CODEC, "rotation_y", 0f).forGetter(AnimationParameters::rotationY),
+            StrOpt.of(Codec.BOOL, "rotate_on_center", false).forGetter(AnimationParameters::rotateOnCenter),
             StrOpt.of(Codec.floatRange(0, 10), "height", 1f).forGetter(AnimationParameters::heightStart),
             StrOpt.of(FLOAT_CODEC, "height_curve", 0.5f).forGetter(AnimationParameters::heightCurve),
             StrOpt.of(DEG_TO_RAD_CODEC, "translation_angle", 45f).forGetter(AnimationParameters::rightTranslationAngle)

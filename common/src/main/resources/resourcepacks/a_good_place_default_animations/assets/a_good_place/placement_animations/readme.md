@@ -18,6 +18,7 @@ All fields except for `targets` are optional.
 | `rotation_angle`    | `0`           | The angle of the rotation vector relative to the player direction.                                                                                                      |
 | `rotation_curve`    | `0.5`         | Controls the animation of the rotation parameter.                                                                                                                       |
 | `rotation_y`        | `0`           | Controls Y component of the rotation. Normally not affected by above ones.                                                                                              |
+| `rotate_on_center`  | `false`       | If pivot of the rotation should be center of the block instead of upper left corner.                                                                                    |
 | `scale`             | `1`           | The scale of the block when it is placed.                                                                                                                               |
 
 The animation always ends up at the block normal dimension.
@@ -27,6 +28,8 @@ Regarding `scale`. Internally it is a vector of 3 components.
 it will be calculated as follows:
 Vec3 rot = player_direction.rotateY(`rotation_angle`) * `rotation_amount`;
 rot.y = `rotation_y`;
+
+This rotation will then be either applied with pivot the center of the block or its upper left corner (relative to move direction), depending on config
 
 All angles are in degrees.
 
