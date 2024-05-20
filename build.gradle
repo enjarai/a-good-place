@@ -68,6 +68,7 @@ subprojects {
 
                 if (modLoader == "forge") {
                     addGameVersion("NeoForge")
+                    addGameVersion("Forge")
                 } else addGameVersion modLoader.capitalize()
 
                 mainArtifact(tasks.remapJar)

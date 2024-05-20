@@ -88,6 +88,10 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
     public void applyAnimation(PoseStack poseStack, float time, float partialTicks) {
 
         poseStack.translate(0.5, 0.5, 0.5);
+        Vec3 offset = blockState.getOffset(level, pos);
+
+        poseStack.translate(offset.x, offset.y, offset.z);
+
         //All animations are relative to the move direciton
         poseStack.mulPose(Axis.YP.rotation(yAngle));
 
@@ -125,6 +129,7 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
         }
 
 
+
         // scale
         {
             float progress = fancyExponent(time, params.scaleCurve());
@@ -142,11 +147,15 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
             poseStack.translate(0, -0.5, 0);
             poseStack.scale(1, height, 1);
             poseStack.translate(0, 0.5f, 0);
+
         }
 
 
         //reset so block renders straight
         poseStack.mulPose(Axis.YP.rotation(-yAngle));
+
+        poseStack.translate(-offset.x, -offset.y, -offset.z);
+
         poseStack.translate(-0.5, -0.5, -0.5);
     }
 

@@ -1,1 +1,1 @@
-fixed some issues with sodium & company for fabric and forge
+animation now considers block offset
