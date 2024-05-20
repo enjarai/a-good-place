@@ -2,14 +2,14 @@
   "targets": "*",
   "priority": 0,
   "duration": 4,
-  "scale": 0.8,
+  "scale": 1.1,
   "scale_curve": -0.7,
   "translation": 0.25,
   "translation_curve": 0.9,
-  "rotation": -0.1,
+  "rotation_amount": -0.08,
   "rotation_curve": 0.2,
-  "rotation_y": 0,
+  "rotation_y": -0.08,
   "height": 1,
   "height_curve": 0,
-  "translation_angle": 0.6
+  "translation_angle": 40
 }

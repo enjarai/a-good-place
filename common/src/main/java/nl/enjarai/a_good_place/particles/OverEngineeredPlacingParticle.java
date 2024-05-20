@@ -54,11 +54,11 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
                 0);
 
         settings = new AnimationParameters(null,
-                0, null, 4,
-                1.7f, -0.7f,
-                0.35f, 0.9f,
-                0.3f, 0, 0.2f, -0.3f, false,
-                1, 0, 40);
+                0, null, 400,
+                1.1f, -0.7f,
+                0.25f, 0.9f,
+                0.08f, 0, 0.2f, -0.08f, false,
+                1, 0, 0.7f);
 
         params = settings;
         lifetime = params.duration();
