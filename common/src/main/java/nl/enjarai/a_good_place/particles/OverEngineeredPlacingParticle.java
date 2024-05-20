@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import nl.enjarai.a_good_place.pack.AnimationParameters;
 import org.jetbrains.annotations.NotNull;
@@ -21,30 +22,16 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
     private final AnimationParameters params;
 
     // these are all starting values. They all have to end up at 0 (or 1 for scale) since it needs to match the placed block
-    private final Vec3 slideStart;
-    private final Vec3 animationDirection; //we could have probably just rotated everything in slide direction and make everything relative to it...
+    private final float yAngle;
+    private final Vec2 slideStart; // z and y values. This will be relative to yAngle
     private final Vec3 rotStart;
+
 
     public OverEngineeredPlacingParticle(ClientLevel world, BlockPos blockPos, Direction face,
                                          Player placer, AnimationParameters settings) {
         super(world, blockPos, face);
 
         /*
-
-         */
-
-        /*
-
-        {
-  "targets": "*",
-  "scale": 1.2,
-  "scale_curve": 0.2,
-  "translation": 0.5,
-  "translation_curve": -0.9,
-  "translation_angle": 3,
-  "duration": 3
-}
-         */
 
         settings = new AnimationParameters(null, 0, null, 300,
                 0.8f, 0.2f,
@@ -57,8 +44,17 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
                 0, null, 400,
                 1.1f, -0.7f,
                 0.25f, 0.9f,
-                0.08f, 0, 0.2f, -0.08f, false,
+                0.08f, 0.2f, 0.2f, -0.08f, false,
                 1, 0, 0.7f);
+
+
+        settings = new AnimationParameters(null,
+                0, null, 4,
+                1, -0.7f,
+                0.25f, 0.9f,
+                0f, 0.1f, 0.1f, -0.08f, false,
+                1, 0, .7f);
+         */
 
         params = settings;
         lifetime = params.duration();
@@ -81,19 +77,16 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
         slideDir = adjustDirectionBasedOnNeighbors(world, placer, slideDir);
 
         //config here
-        animationDirection = new Vec3(slideDir.normalize());
-
+        Vec3 animationDirection = new Vec3(slideDir.normalize());
+        //get relative components and angle
+        yAngle = (float) Math.atan2(slideDir.x(), slideDir.z());
+        var temp = animationDirection.yRot(-yAngle);
         float slidePow = addSomeRandom(params.translationStart());
-        slideStart = animationDirection.scale(slidePow);
+        slideStart = new Vec2((float) temp.z, (float) temp.y).scale(slidePow);
 
-        // Rotation animation
-
-        // config here
-        float startingAngle = addSomeRandom(params.rotationStart());
-
-        //perpendicular vector on y plane
-        rotStart = new Vec3(animationDirection.x(), 0, animationDirection.z()).normalize()
-                .scale(-startingAngle).yRot(params.rotationAngle());
+        //float startingAngle = addSomeRandom(params.rotationAmount());
+        //rotation. Relative to move direction
+        rotStart = new Vec3(params.rotationX(), params.rotationY(), params.rotationZ());
     }
 
 
@@ -101,13 +94,16 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
     public void applyAnimation(PoseStack poseStack, float time, float partialTicks) {
 
         poseStack.translate(0.5, 0.5, 0.5);
+        //All animations are relative to the move direciton
+        poseStack.mulPose(Axis.YP.rotation(yAngle));
+
 
         //slide
         {
             float progress = fancyExponent(time, params.translationCurve());
-            Vec3 translate = slideStart.scale(1 - progress);
+            Vec2 translate = slideStart.scale(1 - progress);
 
-            poseStack.translate(translate.x, translate.y, translate.z);
+            poseStack.translate(0, translate.y, translate.x);
         }
 
         // rotate
@@ -120,19 +116,16 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
             if (params.rotateOnCenter()) {
                 rotationPivot = Vec3.ZERO;
             } else {
-                rotationPivot = animationDirection.multiply(1, 0, 1).normalize().scale(0.5f);
-                //also add perpendicular compoent so we are on the angle
-                //aaand vertical one
-                rotationPivot = rotationPivot.add(-rotationPivot.z, slideStart.y < 0 ? 0.5 : -0.5, rotationPivot.x);
+                rotationPivot = new Vec3(-0.5, slideStart.y < 0 ? 0.5 : -0.5, 0.5);
             }
 
             poseStack.translate(rotationPivot.x, rotationPivot.y, rotationPivot.z);
 
-            // original anim also had some y ais rotation...
-            poseStack.mulPose(Axis.YP.rotation((1 - progress) * params.rotationY()));
+            //no clue if these arein the right order
+            poseStack.mulPose(Axis.YP.rotation((float)rotation.y));
             // another config. determines if they are rotated toward moving dir or opposite
-            poseStack.mulPose(Axis.ZP.rotation((float) -rotation.z));
-            poseStack.mulPose(Axis.XP.rotation((float) -rotation.x));
+            poseStack.mulPose(Axis.ZP.rotation((float) rotation.z));
+            poseStack.mulPose(Axis.XP.rotation((float) rotation.x));
 
             poseStack.translate(-rotationPivot.x, -rotationPivot.y, -rotationPivot.z);
         }
@@ -157,8 +150,10 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
             poseStack.translate(0, 0.5f, 0);
         }
 
-        poseStack.translate(-0.5, -0.5, -0.5);
 
+        //reset so block renders straight
+        poseStack.mulPose(Axis.YP.rotation(-yAngle));
+        poseStack.translate(-0.5, -0.5, -0.5);
     }
 
 

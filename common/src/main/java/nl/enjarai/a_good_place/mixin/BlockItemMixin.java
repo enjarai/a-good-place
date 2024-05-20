@@ -21,9 +21,11 @@ public abstract class BlockItemMixin {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/BlockItem;updateBlockStateFromTag(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/level/block/state/BlockState;)Lnet/minecraft/world/level/block/state/BlockState;")
     )
     private void wonkyblock$startPlaceAnimation(BlockPlaceContext context, CallbackInfoReturnable<InteractionResult> cir,
-                                                @Local Level level, @Local BlockPos pos, @Local(ordinal = 1) BlockState state,
+                                                @Local Level level, @Local BlockPos pos,
+                                                @Local(ordinal = 0) BlockState oldState,
+                                                @Local(ordinal = 1) BlockState state,
                                                 @Local Player player) {
-        if (level.isClientSide) {
+        if (level.isClientSide && oldState.is(state.getBlock())) {
             WonkyBlocksManager.addParticle(state, pos, level, context.getClickedFace(), player);
         }
     }

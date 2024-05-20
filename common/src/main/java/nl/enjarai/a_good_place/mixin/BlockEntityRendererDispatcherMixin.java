@@ -16,12 +16,10 @@ public class BlockEntityRendererDispatcherMixin {
     @Inject(
             method = "render",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/blockentity/BlockEntityRenderer;shouldRender(Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/phys/Vec3;)Z",
-                    shift = At.Shift.AFTER),
-            cancellable = true
+                    shift = At.Shift.AFTER)
     )
-    private <E extends BlockEntity> void wonkyblock$cancelBlockEntityRenderer(
+    private <E extends BlockEntity> void wonkyblock$modifyRendererLocation(
             E blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, CallbackInfo ci) {
         WonkyBlocksManager.modifyTilePosition(blockEntity.getBlockPos(), poseStack, partialTick);
-
     }
 }

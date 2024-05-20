@@ -9,9 +9,14 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.level.block.ChestBlock;
+import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.ChestType;
+import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTestType;
 import nl.enjarai.a_good_place.AGoodPlace;
 import org.jetbrains.annotations.Nullable;
 
@@ -52,6 +57,11 @@ public class AnimationManager extends SimpleJsonResourceReloadListener {
 
     @Nullable
     public static AnimationParameters getAnimation(BlockState blockState, BlockPos pos, RandomSource random) {
+        //early nukes beds and double plants. Not optimal should be moved in the animation
+        if(blockState.is(BlockTags.BEDS) || blockState.getBlock() instanceof DoublePlantBlock ||
+                (blockState.hasProperty(ChestBlock.TYPE) && blockState.getValue(ChestBlock.TYPE) != ChestType.SINGLE)){
+            return null;
+        }
         for (var animation : ANIMATIONS) {
             if (animation.matches(blockState, pos, random)) {
                 return animation;
