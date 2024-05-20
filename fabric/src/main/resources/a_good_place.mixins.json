@@ -2,10 +2,12 @@
   "minVersion": "0.8",
   "required": true,
   "compatibilityLevel": "JAVA_17",
-  "package": "nl.enjarai.a_good_place.mixin.fabric",
+  "package": "nl.enjarai.a_good_place.mixins.fabric",
   "mixins": [
   ],
   "client": [
+    "sodium.BlockOcclusionCacheMixin",
+    "sodium.BlockRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

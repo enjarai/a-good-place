@@ -27,6 +27,13 @@ public class WonkyBlocksManager {
 
     public static void addParticle(BlockState state, BlockPos pos, Level level, Direction face, Player player) {
         AnimationParameters param = AnimationManager.getAnimation(state, pos, level.random);
+        /*
+        param = new AnimationParameters(null,
+                0, null, 4,
+                1, -0.7f,
+                0.25f, 0.9f,
+                0f, 0.1f, 0.1f, -0.08f, false,
+                1, 0, .7f);*/
         if(param != null) {
             PARTICLES.put(pos, new OverEngineeredPlacingParticle((ClientLevel) level, pos, face, player, param));
             hideBlock(pos);

@@ -1,5 +1,6 @@
-package nl.enjarai.a_good_place.mixin.sodium;
+package nl.enjarai.a_good_place.mixins.fabric.sodium;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.pipeline.BlockOcclusionCache;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -18,9 +19,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(BlockOcclusionCache.class)
 public abstract class BlockOcclusionCacheMixin {
 
-
-    @Shadow @Final private BlockPos.MutableBlockPos cpos;
-
     @Inject(
             method = "shouldDrawSide",
             at = @At(value = "INVOKE",
@@ -29,7 +27,8 @@ public abstract class BlockOcclusionCacheMixin {
             remap = false,
             cancellable = true
     )
-    private void wonkyblock$overrideCulling(BlockState selfState, BlockGetter view, BlockPos pos, Direction facing, CallbackInfoReturnable<Boolean> cir) {
+    private void wonkyblock$overrideCulling(BlockState selfState, BlockGetter view, BlockPos pos, Direction facing, CallbackInfoReturnable<Boolean> cir,
+                                            @Local BlockPos.MutableBlockPos cpos) {
         if (WonkyBlocksManager.isBlockHidden(cpos)){
             cir.setReturnValue(true);
         }

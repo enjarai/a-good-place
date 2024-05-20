@@ -47,18 +47,12 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
                 0.08f, 0.2f, 0.2f, -0.08f, false,
                 1, 0, 0.7f);
 
+        */
 
-        settings = new AnimationParameters(null,
-                0, null, 4,
-                1, -0.7f,
-                0.25f, 0.9f,
-                0f, 0.1f, 0.1f, -0.08f, false,
-                1, 0, .7f);
-         */
 
         params = settings;
         lifetime = params.duration();
-        extraLifeTicks = 1;
+        extraLifeTicks = 2;
 
 
         // Slide animation
@@ -135,7 +129,7 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
         {
             float progress = fancyExponent(time, params.scaleCurve());
             float scaleStart = params.scaleStart();
-            float scale = scaleStart + (1 - scaleStart) * progress;
+            float scale = scaleStart + (0.999f - scaleStart) * progress; //slightly below 1 so we dont have potential clipping when block appears
             poseStack.scale(scale, scale, scale);
         }
 
