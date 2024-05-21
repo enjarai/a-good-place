@@ -1,4 +1,1 @@
-- rotation and translations are now some Vec3 in the config
-- added pivot point config
-- targets was removed. Instead predicates was added
-- animation now depends on player use hand and main hand
+1.19 port
