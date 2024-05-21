@@ -51,7 +51,7 @@ public record AnimationParameters(List<RuleTest> predicates, int priority, int d
             StrOpt.of(FLOAT_CODEC, "scale_curve", 0.5f).forGetter(AnimationParameters::scaleCurve),
             StrOpt.of(VEC_CODEC, "translation", Vec3.ZERO).forGetter(AnimationParameters::translation),
             StrOpt.of(FLOAT_CODEC, "translation_curve", 0.5f).forGetter(AnimationParameters::translationCurve),
-            StrOpt.of(ANGLE_VEC_CODEC, "rotation_x", Vec3.ZERO).forGetter(AnimationParameters::rotation),
+            StrOpt.of(ANGLE_VEC_CODEC, "rotation", Vec3.ZERO).forGetter(AnimationParameters::rotation),
             StrOpt.of(VEC_CODEC, "rotation_pivot", Vec3.ZERO).forGetter(AnimationParameters::pivot),
             StrOpt.of(FLOAT_CODEC, "rotation_curve", 0.5f).forGetter(AnimationParameters::rotationCurve),
             StrOpt.of(Codec.floatRange(0, 10), "height", 1f).forGetter(AnimationParameters::heightStart),

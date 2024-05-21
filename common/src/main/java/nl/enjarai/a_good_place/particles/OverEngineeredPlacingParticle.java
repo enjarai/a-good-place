@@ -5,6 +5,8 @@ import com.mojang.math.Axis;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec2;
@@ -29,7 +31,7 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
 
 
     public OverEngineeredPlacingParticle(ClientLevel level, BlockPos blockPos, Direction face,
-                                         Player placer, AnimationParameters settings) {
+                                         Player placer, InteractionHand hand, AnimationParameters settings) {
         super(level, blockPos, face);
 
         /*
@@ -61,7 +63,11 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
         //actually we use the real look dir so we wont snap to directions. Possibly a config here
         Vector3f playerHorizLook = placer.getLookAngle().toVector3f().mul(-1, 0, -1).normalize();
         //translation relative to player look
-        Matrix3f changeOfBasis = new Matrix3f(new Vector3f(playerHorizLook.z, 0, playerHorizLook.x), new Vector3f(0, 1, 0), playerHorizLook);
+        int rightHandMul = placer.getMainArm() == HumanoidArm.RIGHT ? 1 : -1;
+        if (hand != InteractionHand.MAIN_HAND) rightHandMul *= -1;
+        Vector3f xVec = new Vector3f(playerHorizLook.z, 0, -playerHorizLook.x).mul(rightHandMul);
+
+        Matrix3f changeOfBasis = new Matrix3f(xVec, new Vector3f(0, 1, 0), playerHorizLook);
 
         Vector3f tr = params.translation().toVector3f();
         float slidePow = tr.length();

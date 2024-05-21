@@ -26,7 +26,7 @@ public abstract class BlockItemMixin {
                                                 @Local(ordinal = 1) BlockState state,
                                                 @Local Player player) {
         if (level.isClientSide && oldState.is(state.getBlock())) {
-            WonkyBlocksManager.addParticle(state, pos, level, context.getClickedFace(), player);
+            WonkyBlocksManager.addParticle(state, pos, level, context.getClickedFace(), player, context.getHand());
         }
     }
 }

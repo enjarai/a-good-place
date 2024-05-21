@@ -8,6 +8,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -25,7 +26,7 @@ public class WonkyBlocksManager {
     private static Set<BlockPos> hiddenBlocks = Set.of();
 
 
-    public static void addParticle(BlockState state, BlockPos pos, Level level, Direction face, Player player) {
+    public static void addParticle(BlockState state, BlockPos pos, Level level, Direction face, Player player, InteractionHand hand) {
         AnimationParameters param = AnimationManager.getAnimation(state, pos, level.random);
         /*
         param = new AnimationParameters(null,
@@ -35,7 +36,7 @@ public class WonkyBlocksManager {
                 0f, 0.1f, 0.1f, -0.08f, false,
                 1, 0, .7f);*/
         if(param != null) {
-            PARTICLES.put(pos, new OverEngineeredPlacingParticle((ClientLevel) level, pos, face, player, param));
+            PARTICLES.put(pos, new OverEngineeredPlacingParticle((ClientLevel) level, pos, face, player, hand, param));
             hideBlock(pos);
         }
     }

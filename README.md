@@ -15,27 +15,25 @@ To start just go in your resource packs folder, you'll find a pre made sample pa
 You'll find a `placement_animations` folder. Here you'll be able to place one or more json files, each of which will
 target a set of blocks and give them a specific animation. You can name them however you please.
 
-In short animations are composed of 4 separate animations: scale, translation, rotation and height scale.
-
 Here below is the syntax for the json file that defines the animations for the placement of the blocks.
 All fields are optional.
 
-| name                           | default value           | explanation                                                                                                                                                                    |
-|--------------------------------|-------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `predicates`                   | `[]"`                   | A list of Rule Tests (predicates) used to filter the affected blocks.`                                                                                                         |
-| `priority`                     | `0`                     | Priority of this file. Higher ones will be applied over ones with lower priority.                                                                                              |
-| `duration`                     | `4`                     | Duration of the animation in ticks.                                                                                                                                            |
-| `scale`                        | `1`                     | The initial scale of the block when it is placed.                                                                                                                              |
-| `scale_curve`                  | `0.5`                   | Controls the animation of the scale parameter.                                                                                                                                 |
-| `translation`                  | `0`                     | The initial translation of the block when it is placed. Translation direction depends on player direction                                                                      |
-| `translation_curve`            | `0.5`                   | Controls the animation of the translation parameter.                                                                                                                           |
-| `translation_angle_horizontal` | `45`                    | Controls the horizontal angle of the translation animation by adding an angle to the player look direction.<br/>Default is 45 degrees to look like its coming from player hand |
-| `translation_angle_vertical`   | `45`                    | Controls the vertical angle of the translation animation by adding an angle to the player look direction.<br/>Default is 45 degrees to look like its coming from above a bit   |
-| `rotation`                     | `{"x":0, "y":0, "z":0}` | A vector of 3 components `x`, `y` and `z`, each representing the angle in DEGREES relative to the player look direction at which the animation will start.                     |
-| `rotation_curve`               | `0.5`                   | Controls the animation of the rotation parameter.                                                                                                                              |
-| `rotation_pivot`               | `{"x":0, "y":0, "z":0}` | A vector of 3 components `x`, `y` and `z`, each representing the pivot point of the rotation operation, relative to the block center.                                          |
-| `height`                       | `1`                     | The Y scale of the block when it is placed.                                                                                                                                    |
-| `height_curve`                 | `0.5`                   | Controls the animation of the height parameter.                                                                                                                                |
+In short animations are composed of 4 separate animations: scale, translation, rotation and height scale.
+
+| name                | default value           | explanation                                                                                                                                                                                      |
+|---------------------|-------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `predicates`        | `[]"`                   | A list of Rule Tests (predicates) used to filter the affected blocks.`                                                                                                                           |
+| `priority`          | `0`                     | Priority of this file. Higher ones will be applied over ones with lower priority.                                                                                                                |
+| `duration`          | `4`                     | Duration of the animation in ticks.                                                                                                                                                              |
+| `scale`             | `1`                     | The initial scale of the block when it is placed.                                                                                                                                                |
+| `scale_curve`       | `0.5`                   | Controls the animation of the scale parameter.                                                                                                                                                   |
+| `translation`       | `0`                     | A vector of 3 components `x`, `y` and `z` representing the intensity of the translation animation relative to the player direction. If you just set z to 1 it will be exactly toward the player. |
+| `translation_curve` | `0.5`                   | Controls the animation of the translation parameter.                                                                                                                                             |
+| `rotation`          | `{"x":0, "y":0, "z":0}` | A vector of 3 components `x`, `y` and `z`, each representing the angle in DEGREES relative to the player look direction at which the animation will start.                                       |
+| `rotation_curve`    | `0.5`                   | Controls the animation of the rotation parameter.                                                                                                                                                |
+| `rotation_pivot`    | `{"x":0, "y":0, "z":0}` | A vector of 3 components `x`, `y` and `z`, each representing the pivot point of the rotation operation, relative to the block center.                                                            |
+| `height`            | `1`                     | The Y scale of the block when it is placed.                                                                                                                                                      |
+| `height_curve`      | `0.5`                   | Controls the animation of the height parameter.                                                                                                                                                  |
 
 The animation always ends up at the block normal dimension.
 For example `scale` is the initial scale of the block while its final scale will obviously be 1.
