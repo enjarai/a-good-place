@@ -18,6 +18,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
@@ -95,7 +96,7 @@ public class AGoodPlaceImpl implements ClientModInitializer {
 
     public static <T extends RuleTest> Supplier<RuleTestType<T>> registerRuleTest(String id, Codec<T> codec) {
         RuleTestType<T> t = () -> codec;
-        var obj = Registry.register(Registry.RULE_TEST, new ResourceLocation(MOD_ID, id), t);
+        var obj = Registry.register(BuiltInRegistries.RULE_TEST, new ResourceLocation(MOD_ID, id), t);
         return () -> obj;
     }
 }
