@@ -56,8 +56,8 @@ public class AnimationManager extends SimpleJsonResourceReloadListener {
 
         if (false) return new AnimationParameters(List.of(), 0, 4,
                 1f, -0.7f,
-                new Vec3(0.1, 0.1, 0.1), 0.9f,
-                new Vec3(0.1, 0, -0),
+                new Vec3(0.1, 0,0.1), 0.9f,
+                new Vec3(0, 0, -0),
                 new Vec3(0.5, -0.5, -0.5), -0.08f,
                 1, 0);
 

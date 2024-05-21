@@ -20,7 +20,7 @@ public class SolidTest extends RuleTest {
 
     @Override
     public boolean test(BlockState state, RandomSource random) {
-        return solid ^ state.isSolid();
+        return solid ^ state.getMaterial().isSolid();
     }
 
     @Override

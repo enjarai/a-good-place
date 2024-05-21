@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -90,11 +91,13 @@ public class WonkyBlocksManager {
     }
 
     public static void renderParticles(PoseStack poseStack, float tickDelta) {
+        poseStack.pushPose();
         Minecraft mc = Minecraft.getInstance();
         Camera camera = mc.gameRenderer.getMainCamera();
         MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
 
         // lightTexture.turnOnLightLayer();
+        //lightTexture.turnOnLightLayer();
         RenderSystem.enableDepthTest();
         PoseStack poseStack2 = RenderSystem.getModelViewStack();
         poseStack2.pushPose();
@@ -112,6 +115,8 @@ public class WonkyBlocksManager {
         RenderSystem.depthMask(true);
         RenderSystem.disableBlend();
         // lightTexture.turnOffLightLayer();
+
+        poseStack.popPose();
     }
 
     public static void modifyTilePosition(BlockPos pos, PoseStack pose, float partialTicks) {

@@ -9,16 +9,16 @@ import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
 import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.repository.PackCompatibility;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTest;
@@ -58,7 +58,7 @@ import java.util.function.Supplier;
 public class AGoodPlaceImpl {
     public static final String MOD_ID = AGoodPlace.MOD_ID;
 
-    private static final DeferredRegister<RuleTestType<?>> RULE_TESTS = DeferredRegister.create(Registries.RULE_TEST, MOD_ID);
+    private static final DeferredRegister<RuleTestType<?>> RULE_TESTS = DeferredRegister.create(Registry.RULE_TEST_REGISTRY, MOD_ID);
 
     public AGoodPlaceImpl() {
         addClientReloadListener(AnimationManager::new, new ResourceLocation(MOD_ID, "animations"));
@@ -79,7 +79,7 @@ public class AGoodPlaceImpl {
 
     @SubscribeEvent
     public void onLevelLoad(ClientPlayerNetworkEvent.LoggingIn event) {
-        AnimationManager.populateTags(event.getPlayer().level().registryAccess());
+        AnimationManager.populateTags(event.getPlayer().level.registryAccess());
     }
 
     @SubscribeEvent
@@ -91,7 +91,7 @@ public class AGoodPlaceImpl {
 
     @SubscribeEvent
     public void onRenderWorld(RenderLevelStageEvent event) {
-        if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_ENTITIES) {
+        if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_CUTOUT_BLOCKS) {
             WonkyBlocksManager.renderParticles(event.getPoseStack(), event.getPartialTick());
         }
     }
@@ -126,18 +126,17 @@ public class AGoodPlaceImpl {
                     IModFile file = ModList.get().getModFileById(folderName.getNamespace()).getFile();
                     try (PathPackResources pack = new PathPackResources(
                             folderName.toString(),
-                            true,
                             file.findResource("resourcepacks/" + folderName.getPath()))) {
-                        var metadata = Objects.requireNonNull(pack.getMetadataSection(PackMetadataSection.TYPE));
-                        return Pack.create(
-                                folderName.toString(),
-                                displayName,
-                                defaultEnabled,
-                                (s) -> pack,
-                                new Pack.Info(metadata.getDescription(), metadata.getPackFormat(), FeatureFlagSet.of()),
-                                PackType.CLIENT_RESOURCES,
+                        //var metadata = Objects.requireNonNull(pack.getMetadataSection(PackMetadataSection.SERIALIZER));
+                        return     new Pack(
+                                folderName.toString(),    // id
+                                defaultEnabled,    // required -- this MAY need to be true for the pack to be enabled by default
+                                () -> pack, // pack supplier
+                                displayName, // title
+                                Component.literal("A good place default animations"), // description
+                                PackCompatibility.COMPATIBLE,
                                 Pack.Position.TOP,
-                                false,
+                                false, // fixed position? no
                                 PackSource.BUILT_IN);
                     } catch (Exception ee) {
                         if (!DatagenModLoader.isRunningDataGen()) ee.printStackTrace();
@@ -147,15 +146,12 @@ public class AGoodPlaceImpl {
         );
     }
 
-    public static void registerResourcePack(PackType packType, @Nullable Supplier<Pack> packSupplier) {
-        if (packSupplier == null) return;
+    public static void registerResourcePack(PackType packType, Supplier<Pack> packSupplier) {
         var bus = FMLJavaModLoadingContext.get().getModEventBus();
         Consumer<AddPackFindersEvent> consumer = event -> {
             if (event.getPackType() == packType) {
-                var p = packSupplier.get();
-                if (p != null) {
-                    event.addRepositorySource(infoConsumer -> infoConsumer.accept(packSupplier.get()));
-                }
+                event.addRepositorySource((infoConsumer, packFactory) ->
+                        infoConsumer.accept(packSupplier.get()));
             }
         };
         bus.addListener(consumer);

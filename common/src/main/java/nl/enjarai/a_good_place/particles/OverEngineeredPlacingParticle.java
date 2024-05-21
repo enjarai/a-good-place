@@ -1,7 +1,9 @@
 package nl.enjarai.a_good_place.particles;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
+import com.mojang.math.Matrix3f;
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -13,8 +15,6 @@ import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import nl.enjarai.a_good_place.pack.AnimationParameters;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Matrix3f;
-import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -55,33 +55,47 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
 
         params = settings;
         lifetime = params.duration();
-        extraLifeTicks = 2;
+        extraLifeTicks = 1;
 
 
         // Slide animation
         // slide in animation. We would like to slide in the block so it looks like it comes from the player hand
         //actually we use the real look dir so we wont snap to directions. Possibly a config here
-        Vector3f playerHorizLook = placer.getLookAngle().toVector3f().mul(-1, 0, -1).normalize();
+        Vector3f playerHorizLook = new Vector3f( placer.getLookAngle());
+        playerHorizLook.mul(-1, 0, -1);
         //translation relative to player look
         int rightHandMul = placer.getMainArm() == HumanoidArm.RIGHT ? 1 : -1;
         if (hand != InteractionHand.MAIN_HAND) rightHandMul *= -1;
-        Vector3f xVec = new Vector3f(playerHorizLook.z, 0, -playerHorizLook.x).mul(rightHandMul);
+        Vector3f xVec = new Vector3f(playerHorizLook.z(), 0, -playerHorizLook.x());
+        xVec.mul(rightHandMul);
 
-        Matrix3f changeOfBasis = new Matrix3f(xVec, new Vector3f(0, 1, 0), playerHorizLook);
+        Matrix3f changeOfBasis = new Matrix3f();
+        //changeOfBasis =  new Matrix3f(xVec, new Vector3f(0, 1, 0), playerHorizLook)
+        changeOfBasis.set(0, 0, xVec.x());
+        changeOfBasis.set(0, 1, xVec.y());
+        changeOfBasis.set(0, 2, xVec.z());
+        changeOfBasis.set(1, 0, 0);
+        changeOfBasis.set(1, 1, 1);
+        changeOfBasis.set(1, 2, 0);
+        changeOfBasis.set(2, 0, playerHorizLook.x());
+        changeOfBasis.set(2, 1, playerHorizLook.y());
+        changeOfBasis.set(2, 2, playerHorizLook.z());
 
-        Vector3f tr = params.translation().toVector3f();
-        float slidePow = tr.length();
+        Vector3f tr = new Vector3f( params.translation());
+        float slidePow = (float) params.translation().length();
         if (placer.getXRot() > 0) {
             tr.mul(1, 1, 1);
         } else {
             tr.mul(1, -1, 1);
         }
-        Vector3f slideDir = tr.mul(changeOfBasis);
+        tr.transform(changeOfBasis);
+        Vector3f slideDir =tr ;
 
         slideDir = adjustDirectionBasedOnNeighbors(level, placer, slideDir);
 
         //config here
-        Vec3 animationDirection = new Vec3(slideDir.normalize());
+        slideDir.normalize();
+        Vec3 animationDirection = new Vec3(slideDir);
         //get relative components and angle
         yAngle = (float) Math.atan2(slideDir.x(), slideDir.z());
         var temp = animationDirection.yRot(-yAngle);
@@ -103,7 +117,7 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
         poseStack.translate(offset.x, offset.y, offset.z);
 
         //All animations are relative to the move direciton
-        poseStack.mulPose(Axis.YP.rotation(yAngle));
+        poseStack.mulPose(Vector3f.YP.rotation(yAngle));
 
 
         //slide
@@ -128,10 +142,10 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
             poseStack.translate(rotationPivot.x, rotationPivot.y, rotationPivot.z);
 
             //no clue if these arein the right order
-            poseStack.mulPose(Axis.YP.rotation((float) rotation.y));
+            poseStack.mulPose(Vector3f.YP.rotation((float) rotation.y));
             // another config. determines if they are rotated toward moving dir or opposite
-            poseStack.mulPose(Axis.ZP.rotation((float) rotation.z));
-            poseStack.mulPose(Axis.XP.rotation((float) rotation.x));
+            poseStack.mulPose(Vector3f.ZP.rotation((float) rotation.z));
+            poseStack.mulPose(Vector3f.XP.rotation((float) rotation.x));
 
             poseStack.translate(-rotationPivot.x, -rotationPivot.y, -rotationPivot.z);
         }
@@ -159,7 +173,7 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
 
 
         //reset so block renders straight
-        poseStack.mulPose(Axis.YP.rotation(-yAngle));
+        poseStack.mulPose(Vector3f.YP.rotation(-yAngle));
 
         poseStack.translate(-offset.x, -offset.y, -offset.z);
 
@@ -242,11 +256,15 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
         for (var d : affectedDir) {
             if (!emptyDirections.contains(d)) {
                 //remove component in this dir. Yes ths crappy code does that
-                slideDir.sub(d.step().mul(d.step()).mul(slideDir));
+                Vector3f s = d.step();
+                s.mul(d.step().x(), d.step().y(), d.step().z());
+                s.mul(slideDir.x(), slideDir.y(), slideDir.z());
+                slideDir.sub(s);
             }
         }
 
-        if (slideDir.length() == 0 && !emptyDirections.isEmpty()) {
+
+        if (new Vec3(slideDir).length() == 0 && !emptyDirections.isEmpty()) {
             //get nearest direction of the one that are empty
             var nearest = List.of(Direction.orderedByNearest(placer));
             emptyDirections.sort(Comparator.comparingInt(nearest::indexOf));

@@ -1,7 +1,7 @@
 package nl.enjarai.a_good_place.mixins.forge.sodium;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import me.jellysquid.mods.sodium.client.render.chunk.compile.pipeline.BlockOcclusionCache;
+import me.jellysquid.mods.sodium.client.render.occlusion.BlockOcclusionCache;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.DyeableLeatherItem;

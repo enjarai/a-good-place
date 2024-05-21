@@ -35,7 +35,7 @@ public abstract class PlacingBlockParticle extends Particle {
 
         var client = Minecraft.getInstance();
 
-        pos = BlockPos.containing(x, y, z);
+        pos = new BlockPos(x, y, z);
         blockState = world.getBlockState(pos);
         model = client.getBlockRenderer().getBlockModel(blockState);
         seed = blockState.getSeed(pos);

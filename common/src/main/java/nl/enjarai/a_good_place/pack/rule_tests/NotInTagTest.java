@@ -1,9 +1,7 @@
 package nl.enjarai.a_good_place.pack.rule_tests;
 
 import com.mojang.serialization.Codec;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.Registry;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
@@ -12,7 +10,7 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTest;
 import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTestType;
 
 public class NotInTagTest extends RuleTest {
-    public static final Codec<NotInTagTest> CODEC = TagKey.codec(Registries.BLOCK)
+    public static final Codec<NotInTagTest> CODEC = TagKey.codec(Registry.BLOCK_REGISTRY)
             .fieldOf("tag").xmap(NotInTagTest::new, t -> t.tag).codec();
 
     public NotInTagTest(TagKey<Block> tag) {

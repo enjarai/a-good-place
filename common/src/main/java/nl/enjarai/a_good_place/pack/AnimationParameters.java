@@ -4,11 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderSet;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.RegistryCodecs;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.*;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
@@ -73,7 +69,7 @@ public record AnimationParameters(List<RuleTest> predicates, int priority, int d
             if (value.compareTo(minExclusive) > 0 && value.compareTo(maxExclusive) < 0) {
                 return DataResult.success(value);
             }
-            return DataResult.error(() -> "Value " + value + " outside of range (" + minExclusive + ":" + maxExclusive + ")", value);
+            return DataResult.error("Value " + value + " outside of range (" + minExclusive + ":" + maxExclusive + ")", value);
         };
     }
 
@@ -97,7 +93,7 @@ public record AnimationParameters(List<RuleTest> predicates, int priority, int d
             if (stringParse.result().isPresent() && stringParse.result().get().equals("*")) {
                 alwaysTrue = true;
             } else {
-                var res = RegistryCodecs.homogeneousList(Registries.BLOCK)
+                var res = RegistryCodecs.homogeneousList(Registry.BLOCK_REGISTRY)
                         .decode(RegistryOps.create(toDecode.getOps(), registryAccess), toDecode.getValue());
                 try {
                     instance = res.getOrThrow(false, s -> {
