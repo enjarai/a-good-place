@@ -9,13 +9,9 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraft.world.level.block.ChestBlock;
-import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.phys.Vec3;
 import nl.enjarai.a_good_place.AGoodPlace;
 import org.jetbrains.annotations.Nullable;
@@ -58,13 +54,12 @@ public class AnimationManager extends SimpleJsonResourceReloadListener {
     @Nullable
     public static AnimationParameters getAnimation(BlockState blockState, BlockPos pos, RandomSource random) {
 
-        if(false)return  new AnimationParameters(null, 0, 4,
+        if (true) return new AnimationParameters(List.of(), 0, 4,
                 1f, -0.7f,
-                0.22f, 0.9f,
+                new Vec3(0, 0, 4), 0.9f,
                 new Vec3(0, 0.07f, 0.07f),
-                new Vec3(-0.5, -0.5, -0.5),-0.08f,
-                1, 0,
-                0.0f, 0f);
+                new Vec3(-0.5, -0.5, -0.5), -0.08f,
+                1, 0);
 
         for (var animation : ANIMATIONS) {
             if (animation.matches(blockState, pos, random)) {

@@ -11,6 +11,7 @@ import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import nl.enjarai.a_good_place.pack.AnimationParameters;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Matrix3f;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
@@ -59,13 +60,17 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
         // slide in animation. We would like to slide in the block so it looks like it comes from the player hand
         //actually we use the real look dir so we wont snap to directions. Possibly a config here
         Vector3f playerHorizLook = placer.getLookAngle().toVector3f().mul(-1, 0, -1).normalize();
-        //another config here. rotate slide toward hand instead of directly toward player
-        float angleTowardHand = params.rightTranslationAngle();
-        Vector3f slideDir = playerHorizLook.rotateY(angleTowardHand);
-        // also adds a y component
+        //translation relative to player look
+        Matrix3f changeOfBasis = new Matrix3f(new Vector3f(playerHorizLook.z, 0, playerHorizLook.x), new Vector3f(0, 1, 0), playerHorizLook);
+
+        Vector3f tr = params.translation().toVector3f();
+        float slidePow = tr.length();
         if (placer.getXRot() > 0) {
-            slideDir.rotateX(params.topTranslationAngle());
-        } else slideDir.rotateX(-params.topTranslationAngle());
+            tr.mul(1, 1, 1);
+        } else {
+            tr.mul(1, -1, 1);
+        }
+        Vector3f slideDir = tr.mul(changeOfBasis);
 
         slideDir = adjustDirectionBasedOnNeighbors(level, placer, slideDir);
 
@@ -74,7 +79,7 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
         //get relative components and angle
         yAngle = (float) Math.atan2(slideDir.x(), slideDir.z());
         var temp = animationDirection.yRot(-yAngle);
-        float slidePow = addSomeRandom(params.translationStart());
+
         slideStart = new Vec2((float) temp.z, (float) temp.y).scale(slidePow);
 
         //float startingAngle = addSomeRandom(params.rotationAmount());
