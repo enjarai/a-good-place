@@ -54,11 +54,11 @@ public class AnimationManager extends SimpleJsonResourceReloadListener {
     @Nullable
     public static AnimationParameters getAnimation(BlockState blockState, BlockPos pos, RandomSource random) {
 
-        if (true) return new AnimationParameters(List.of(), 0, 20,
+        if (false) return new AnimationParameters(List.of(), 0, 4,
                 1f, -0.7f,
-                new Vec3(2, 0, 0), 0.9f,
-                new Vec3(0, 0, 0),
-                new Vec3(-0.5, -0.5, -0.5), -0.08f,
+                new Vec3(0.1, 0.1, 0.1), 0.9f,
+                new Vec3(0.1, 0, -0),
+                new Vec3(0.5, -0.5, -0.5), -0.08f,
                 1, 0);
 
         for (var animation : ANIMATIONS) {

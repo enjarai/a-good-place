@@ -1,3 +1,4 @@
-animation now considers block offsets
-improved default pack activation on forge
-maybe a fix on a weird crash on forge?
+- rotation and translations are now some Vec3 in the config
+- added pivot point config
+- targets was removed. Instead predicates was added
+- animation now depends on player use hand and main hand
