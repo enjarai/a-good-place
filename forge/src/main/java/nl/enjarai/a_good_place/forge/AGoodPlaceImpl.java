@@ -2,12 +2,14 @@ package nl.enjarai.a_good_place.forge;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.serialization.Codec;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
@@ -19,6 +21,8 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTest;
+import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTestType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.RenderTypeHelper;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
@@ -36,9 +40,12 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.forgespi.locating.IModFile;
+import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.resource.PathPackResources;
 import nl.enjarai.a_good_place.AGoodPlace;
 import nl.enjarai.a_good_place.pack.AnimationManager;
+import nl.enjarai.a_good_place.pack.rule_tests.ModRuleTests;
+import nl.enjarai.a_good_place.pack.rule_tests.NotInTagTest;
 import nl.enjarai.a_good_place.particles.WonkyBlocksManager;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,15 +58,21 @@ import java.util.function.Supplier;
 public class AGoodPlaceImpl {
     public static final String MOD_ID = AGoodPlace.MOD_ID;
 
+    private static final DeferredRegister<RuleTestType<?>> RULE_TESTS = DeferredRegister.create(Registries.RULE_TEST, MOD_ID);
+
     public AGoodPlaceImpl() {
         addClientReloadListener(AnimationManager::new, new ResourceLocation(MOD_ID, "animations"));
 
         if (FMLEnvironment.dist == Dist.CLIENT) {
-            AGoodPlace.copySamplePackIfNotPresent();
+            boolean firstInstall = AGoodPlace.copySamplePackIfNotPresent();
             MinecraftForge.EVENT_BUS.register(this);
 
-            registerOptionalTexturePack(new ResourceLocation(MOD_ID, "a_good_place_default_animations"),
-                    Component.nullToEmpty("Default Place Animations"), false);
+            registerOptionalTexturePack(new ResourceLocation(MOD_ID, "default_animations"),
+                    Component.nullToEmpty("Default Place Animations"), firstInstall);
+
+            RULE_TESTS.register(FMLJavaModLoadingContext.get().getModEventBus());
+
+            ModRuleTests.init();
         }
 
     }
@@ -146,5 +159,9 @@ public class AGoodPlaceImpl {
             }
         };
         bus.addListener(consumer);
+    }
+
+    public static <T extends RuleTest> Supplier<RuleTestType<T>> registerRuleTest(String id, Codec<T> codec) {
+        return RULE_TESTS.register(id, () -> () -> codec);
     }
 }

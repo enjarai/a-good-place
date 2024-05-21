@@ -1,14 +1,20 @@
 {
-  "targets": "*",
+  "predicates": [
+    {
+      "predicate_type": "a_good_place:no_double_blocks"
+    }
+  ],
   "priority": 0,
   "duration": 4,
   "scale": 1.1,
   "scale_curve": -0.7,
   "translation": 0.22,
   "translation_curve": 0.9,
-  "rotation_0": 0,
-  "rotation_y": 0.1,
-  "rotation_z": 0.1,
+  "rotation": {
+    "x": 0,
+    "y": 0.1,
+    "z": 0.1
+  },
   "rotation_curve": -0.08,
   "height": 1,
   "height_curve": 0,

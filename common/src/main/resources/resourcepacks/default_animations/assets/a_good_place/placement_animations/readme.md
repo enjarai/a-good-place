@@ -1,24 +1,9 @@
-# A Good Place
-
-Minecraft mod that adds block placement animations.
-
-The mod contains a default animation that will be applied to all suitable blocks (excluding ones like double flowers and
-bets).
-It also works on tile entities!
-
-The mod is fully customizable via Resource Packs.
-
-## Customization
-
-To start just go in your resource packs folder, you'll find a pre made sample pack there.
-
-You'll find a `placement_animations` folder. Here you'll be able to place one or more json files, each of which will
-target a set of blocks and give them a specific animation. You can name them however you please.
-
-In short animations are composed of 4 separate animations: scale, translation, rotation and height scale.
+### Json format syntax:
 
 Here below is the syntax for the json file that defines the animations for the placement of the blocks.
 All fields are optional.
+
+In short animations are composed of 4 separate animations: scale, translation, rotation and height scale.
 
 | name                           | default value           | explanation                                                                                                                                                                    |
 |--------------------------------|-------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|

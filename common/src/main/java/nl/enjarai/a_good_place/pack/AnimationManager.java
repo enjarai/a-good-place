@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.ChestType;
-import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTestType;
+import net.minecraft.world.phys.Vec3;
 import nl.enjarai.a_good_place.AGoodPlace;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,11 +57,15 @@ public class AnimationManager extends SimpleJsonResourceReloadListener {
 
     @Nullable
     public static AnimationParameters getAnimation(BlockState blockState, BlockPos pos, RandomSource random) {
-        //early nukes beds and double plants. Not optimal should be moved in the animation
-        if(blockState.is(BlockTags.BEDS) || blockState.getBlock() instanceof DoublePlantBlock ||
-                (blockState.hasProperty(ChestBlock.TYPE) && blockState.getValue(ChestBlock.TYPE) != ChestType.SINGLE)){
-            return null;
-        }
+
+        if(false)return  new AnimationParameters(null, 0, 4,
+                1f, -0.7f,
+                0.22f, 0.9f,
+                new Vec3(0, 0.07f, 0.07f),
+                new Vec3(-0.5, -0.5, -0.5),-0.08f,
+                1, 0,
+                0.0f, 0f);
+
         for (var animation : ANIMATIONS) {
             if (animation.matches(blockState, pos, random)) {
                 return animation;
@@ -71,8 +75,5 @@ public class AnimationManager extends SimpleJsonResourceReloadListener {
     }
 
     public static void populateTags(RegistryAccess registryAccess) {
-        for (var animation : ANIMATIONS) {
-            animation.targets().populate(registryAccess);
-        }
     }
 }

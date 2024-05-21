@@ -64,9 +64,8 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
         Vector3f slideDir = playerHorizLook.rotateY(angleTowardHand);
         // also adds a y component
         if (placer.getXRot() > 0) {
-            //add back
-            slideDir.add(0, 1, 0);
-        } else slideDir.add(0, -1, 0);
+            slideDir.rotateX(params.topTranslationAngle());
+        } else slideDir.rotateX(-params.topTranslationAngle());
 
         slideDir = adjustDirectionBasedOnNeighbors(level, placer, slideDir);
 
@@ -80,7 +79,7 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
 
         //float startingAngle = addSomeRandom(params.rotationAmount());
         //rotation. Relative to move direction
-        rotStart = new Vec3(params.rotationX(), params.rotationY(), params.rotationZ());
+        rotStart = params.rotation();
     }
 
 
@@ -110,24 +109,21 @@ public class OverEngineeredPlacingParticle extends PlacingBlockParticle {
             Vec3 rotation = rotStart.scale(1 - progress);
 
             //tralsate toward move direciton on block edge
-            Vec3 rotationPivot;
-            if (params.rotateOnCenter()) {
-                rotationPivot = Vec3.ZERO;
-            } else {
-                rotationPivot = new Vec3(-0.5, slideStart.y < 0 ? 0.5 : -0.5, 0.5);
+            Vec3 rotationPivot = params.pivot();
+            if (slideStart.y < 0) {
+                rotationPivot = rotationPivot.multiply(1, -1, 1);
             }
 
             poseStack.translate(rotationPivot.x, rotationPivot.y, rotationPivot.z);
 
             //no clue if these arein the right order
-            poseStack.mulPose(Axis.YP.rotation((float)rotation.y));
+            poseStack.mulPose(Axis.YP.rotation((float) rotation.y));
             // another config. determines if they are rotated toward moving dir or opposite
             poseStack.mulPose(Axis.ZP.rotation((float) rotation.z));
             poseStack.mulPose(Axis.XP.rotation((float) rotation.x));
 
             poseStack.translate(-rotationPivot.x, -rotationPivot.y, -rotationPivot.z);
         }
-
 
 
         // scale

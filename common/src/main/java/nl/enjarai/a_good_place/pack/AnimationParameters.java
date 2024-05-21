@@ -9,54 +9,63 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.RegistryCodecs;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.HolderSetCodec;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.AlwaysTrueTest;
+import net.minecraft.world.level.levelgen.structure.templatesystem.BlockStateMatchTest;
 import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTest;
+import net.minecraft.world.phys.Vec3;
 import nl.enjarai.a_good_place.AGoodPlace;
 
+import java.util.List;
 import java.util.function.Function;
 
-public record AnimationParameters(LazyHolderSet<?> targets, int priority,
-                                  RuleTest predicate, int duration,
+public record AnimationParameters(List<RuleTest> predicates, int priority, int duration,
                                   float scaleStart, float scaleCurve,
                                   float translationStart, float translationCurve,
-                                  float rotationX, float rotationY,float rotationZ,
-                                  float rotationCurve, boolean rotateOnCenter,
+                                  Vec3 rotation, Vec3 pivot,
+                                  float rotationCurve,
                                   float heightStart, float heightCurve,
-                                  float rightTranslationAngle) {
+                                  float rightTranslationAngle,
+                                  float topTranslationAngle
+) {
 
     private static final Codec<Float> FLOAT_CODEC = floatRangeExclusive(-1, 1);
     private static final Codec<Float> DEG_TO_RAD_CODEC = Codec.floatRange(-180, 180)
             .xmap(d -> (float) Math.toRadians(d), r -> (float) Math.toDegrees(r));
+    public static final Codec<Vec3> ANGLE_VEC_CODEC = RecordCodecBuilder.create((instance) -> instance.group(
+            DEG_TO_RAD_CODEC.fieldOf("x").forGetter(o -> (float) o.x()),
+            DEG_TO_RAD_CODEC.fieldOf("y").forGetter(o -> (float) o.y()),
+            DEG_TO_RAD_CODEC.fieldOf("z").forGetter(o -> (float) o.z())
+    ).apply(instance, Vec3::new));
+    public static final Codec<Vec3> VEC_CODEC = RecordCodecBuilder.create((instance) -> instance.group(
+            Codec.DOUBLE.fieldOf("x").forGetter(Vec3::x),
+            Codec.DOUBLE.fieldOf("y").forGetter(Vec3::y),
+            Codec.DOUBLE.fieldOf("z").forGetter(Vec3::z)
+    ).apply(instance, Vec3::new));
 
     public static final Codec<AnimationParameters> CODEC = RecordCodecBuilder.create((instance) -> instance.group(
-            Codec.PASSTHROUGH.xmap(LazyHolderSet::new, a -> a.toDecode).fieldOf("targets").forGetter(a -> null),
+            StrOpt.of(RuleTest.CODEC.listOf(), "predicates", List.of(AlwaysTrueTest.INSTANCE)).forGetter(AnimationParameters::predicates),
             StrOpt.of(Codec.INT, "priority", 0).forGetter(AnimationParameters::priority), // not used
-            StrOpt.of(RuleTest.CODEC, "predicate", AlwaysTrueTest.INSTANCE).forGetter(AnimationParameters::predicate),
             StrOpt.of(Codec.intRange(0, 300), "duration", 4).forGetter(AnimationParameters::duration),
             StrOpt.of(Codec.floatRange(0, 10), "scale", 1f).forGetter(AnimationParameters::scaleStart),
             StrOpt.of(FLOAT_CODEC, "scale_curve", 0.5f).forGetter(AnimationParameters::scaleCurve),
             StrOpt.of(Codec.floatRange(-10, 10), "translation", 0f).forGetter(AnimationParameters::translationStart),
             StrOpt.of(FLOAT_CODEC, "translation_curve", 0.5f).forGetter(AnimationParameters::translationCurve),
-            StrOpt.of(DEG_TO_RAD_CODEC, "rotation_x", 0f).forGetter(AnimationParameters::rotationX),
-            StrOpt.of(DEG_TO_RAD_CODEC, "rotation_y", 0f).forGetter(AnimationParameters::rotationY),
-            StrOpt.of(DEG_TO_RAD_CODEC, "rotation_z", 0f).forGetter(AnimationParameters::rotationZ),
+            StrOpt.of(ANGLE_VEC_CODEC, "rotation_x", Vec3.ZERO).forGetter(AnimationParameters::rotation),
+            StrOpt.of(VEC_CODEC, "rotation_pivot", Vec3.ZERO).forGetter(AnimationParameters::pivot),
             StrOpt.of(FLOAT_CODEC, "rotation_curve", 0.5f).forGetter(AnimationParameters::rotationCurve),
-            StrOpt.of(Codec.BOOL, "rotate_on_center", false).forGetter(AnimationParameters::rotateOnCenter),
             StrOpt.of(Codec.floatRange(0, 10), "height", 1f).forGetter(AnimationParameters::heightStart),
             StrOpt.of(FLOAT_CODEC, "height_curve", 0.5f).forGetter(AnimationParameters::heightCurve),
-            StrOpt.of(DEG_TO_RAD_CODEC, "translation_angle", 45f).forGetter(AnimationParameters::rightTranslationAngle)
+            StrOpt.of(DEG_TO_RAD_CODEC, "translation_angle_horizontal", 45f).forGetter(AnimationParameters::rightTranslationAngle),
+            StrOpt.of(DEG_TO_RAD_CODEC, "translation_angle_vertical", 45f).forGetter(AnimationParameters::topTranslationAngle)
     ).apply(instance, AnimationParameters::new));
 
     public boolean matches(BlockState blockState, BlockPos pos, RandomSource random) {
-        if (targets == null) return true;
-        return targets.matches(blockState) && predicate.test(blockState, random);
+        return predicates.stream().allMatch(p -> p.test(blockState, random));
     }
-
 
     static Codec<Float> floatRangeExclusive(final float minExclusive, final float maxExclusive) {
         final Function<Float, DataResult<Float>> checker = checkRange(minExclusive, maxExclusive);
