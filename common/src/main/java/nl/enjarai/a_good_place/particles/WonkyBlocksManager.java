@@ -90,6 +90,10 @@ public class WonkyBlocksManager {
     }
 
     public static void renderParticles(PoseStack poseStack, float tickDelta) {
+        if(PARTICLES.isEmpty()) return;
+
+        poseStack.pushPose();
+
         Minecraft mc = Minecraft.getInstance();
         Camera camera = mc.gameRenderer.getMainCamera();
         MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
@@ -112,6 +116,8 @@ public class WonkyBlocksManager {
         RenderSystem.depthMask(true);
         RenderSystem.disableBlend();
         // lightTexture.turnOffLightLayer();
+
+        poseStack.popPose();
     }
 
     public static void modifyTilePosition(BlockPos pos, PoseStack pose, float partialTicks) {
