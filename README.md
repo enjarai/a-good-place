@@ -1,6 +1,6 @@
 # A Good Place
 
-Minecraft mod that adds block placement animations.
+A client-side mod that adds block placement animations.
 
 The mod contains a default animation that will be applied to all suitable blocks (excluding ones like double flowers and
 bets).
@@ -22,7 +22,7 @@ In short animations are composed of 4 separate animations: scale, translation, r
 
 | name                | default value           | explanation                                                                                                                                                                                      |
 |---------------------|-------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `predicates`        | `[]"`                   | A list of Rule Tests (predicates) used to filter the affected blocks.`                                                                                                                           |
+| `predicates`        | `[]`                    | A list of Rule Tests (predicates) used to filter the affected blocks.`                                                                                                                           |
 | `priority`          | `0`                     | Priority of this file. Higher ones will be applied over ones with lower priority.                                                                                                                |
 | `duration`          | `4`                     | Duration of the animation in ticks.                                                                                                                                                              |
 | `scale`             | `1`                     | The initial scale of the block when it is placed.                                                                                                                                                |
@@ -34,6 +34,7 @@ In short animations are composed of 4 separate animations: scale, translation, r
 | `rotation_pivot`    | `{"x":0, "y":0, "z":0}` | A vector of 3 components `x`, `y` and `z`, each representing the pivot point of the rotation operation, relative to the block center.                                                            |
 | `height`            | `1`                     | The Y scale of the block when it is placed.                                                                                                                                                      |
 | `height_curve`      | `0.5`                   | Controls the animation of the height parameter.                                                                                                                                                  |
+| `sound`             | `<empty>`               | Additional sound to play when the animation starts (ID of sound event).                                                                                                                          |
 
 The animation always ends up at the block normal dimension.
 For example `scale` is the initial scale of the block while its final scale will obviously be 1.

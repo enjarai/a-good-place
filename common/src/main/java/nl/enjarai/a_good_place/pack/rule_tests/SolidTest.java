@@ -20,7 +20,7 @@ public class SolidTest extends RuleTest {
 
     @Override
     public boolean test(BlockState state, RandomSource random) {
-        return solid ^ state.isSolid();
+        return solid ^ state.isSolid(); //i wish i could check collision shape here but these rule test dont have pos. Maybe i should have used BlockPredicate but those get the block from level every time
     }
 
     @Override

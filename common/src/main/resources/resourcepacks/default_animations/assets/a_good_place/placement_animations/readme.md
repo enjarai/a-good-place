@@ -19,6 +19,7 @@ In short animations are composed of 4 separate animations: scale, translation, r
 | `rotation_pivot`    | `{"x":0, "y":0, "z":0}` | A vector of 3 components `x`, `y` and `z`, each representing the pivot point of the rotation operation, relative to the block center.                                                            |
 | `height`            | `1`                     | The Y scale of the block when it is placed.                                                                                                                                                      |
 | `height_curve`      | `0.5`                   | Controls the animation of the height parameter.                                                                                                                                                  |
+| `sound`             | `<empty>`               | Additional sound to play when the animation starts (ID of sound event).                                                                                                                          |
 
 The animation always ends up at the block normal dimension.
 For example `scale` is the initial scale of the block while its final scale will obviously be 1.

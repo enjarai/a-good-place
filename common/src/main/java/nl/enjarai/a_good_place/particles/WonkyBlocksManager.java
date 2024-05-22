@@ -36,7 +36,7 @@ public class WonkyBlocksManager {
                 0f, 0.1f, 0.1f, -0.08f, false,
                 1, 0, .7f);*/
         if(param != null) {
-            PARTICLES.put(pos, new OverEngineeredPlacingParticle((ClientLevel) level, pos, face, player, hand, param));
+            PARTICLES.put(pos, new ConfiguredPlacingParticle((ClientLevel) level, pos, face, player, hand, param));
             hideBlock(pos);
         }
     }

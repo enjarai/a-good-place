@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 public class ModRuleTests {
 
 
-    public static void init(){};
+    public static void init(){}
 
     public static final Supplier<RuleTestType<NotInTagTest>> NOT_IN_TAG = AGoodPlace.registerRuleTest("not_in_tag", NotInTagTest.CODEC);
     public static final Supplier<RuleTestType<SolidTest>> SOLID = AGoodPlace.registerRuleTest("solid", SolidTest.CODEC);

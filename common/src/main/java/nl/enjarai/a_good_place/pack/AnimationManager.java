@@ -19,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class AnimationManager extends SimpleJsonResourceReloadListener {
 
@@ -37,7 +38,8 @@ public class AnimationManager extends SimpleJsonResourceReloadListener {
             var id = j.getKey();
 
             AnimationParameters effect = AnimationParameters.CODEC.decode(JsonOps.INSTANCE, json)
-                    .getOrThrow(false, errorMsg -> AGoodPlace.LOGGER.warn("Could not decode Biome Special Effect with json id {} - error: {}", id, errorMsg))
+                    .getOrThrow(false, errorMsg ->
+                            AGoodPlace.LOGGER.warn("Could not decode Block Placement Animation with json id {} - error: {} - json: {}", id, errorMsg, j))
                     .getFirst();
 
             ANIMATIONS.add(effect);
@@ -54,12 +56,13 @@ public class AnimationManager extends SimpleJsonResourceReloadListener {
     @Nullable
     public static AnimationParameters getAnimation(BlockState blockState, BlockPos pos, RandomSource random) {
 
+        //for testing
         if (false) return new AnimationParameters(List.of(), 0, 4,
                 1f, -0.7f,
                 new Vec3(0.1, 0.1, 0.1), 0.9f,
                 new Vec3(0.1, 0, -0),
                 new Vec3(0.5, -0.5, -0.5), -0.08f,
-                1, 0);
+                1, 0, Optional.empty());
 
         for (var animation : ANIMATIONS) {
             if (animation.matches(blockState, pos, random)) {

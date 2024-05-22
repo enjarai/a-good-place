@@ -4,12 +4,10 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderSet;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.RegistryCodecs;
+import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.RegistryOps;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -19,6 +17,7 @@ import net.minecraft.world.phys.Vec3;
 import nl.enjarai.a_good_place.AGoodPlace;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 public record AnimationParameters(List<RuleTest> predicates, int priority, int duration,
@@ -26,7 +25,8 @@ public record AnimationParameters(List<RuleTest> predicates, int priority, int d
                                   Vec3 translation, float translationCurve,
                                   Vec3 rotation, Vec3 pivot,
                                   float rotationCurve,
-                                  float heightStart, float heightCurve
+                                  float heightStart, float heightCurve,
+                                  Optional<Holder<SoundEvent>> sound
 ) {
 
     private static final Codec<Float> FLOAT_CODEC = floatRangeExclusive(-1, 1);
@@ -37,6 +37,7 @@ public record AnimationParameters(List<RuleTest> predicates, int priority, int d
             DEG_TO_RAD_CODEC.fieldOf("y").forGetter(o -> (float) o.y()),
             DEG_TO_RAD_CODEC.fieldOf("z").forGetter(o -> (float) o.z())
     ).apply(instance, Vec3::new));
+    //normal vector codec is just an array. This is a bit more readable
     public static final Codec<Vec3> VEC_CODEC = RecordCodecBuilder.create((instance) -> instance.group(
             Codec.DOUBLE.fieldOf("x").forGetter(Vec3::x),
             Codec.DOUBLE.fieldOf("y").forGetter(Vec3::y),
@@ -55,7 +56,8 @@ public record AnimationParameters(List<RuleTest> predicates, int priority, int d
             StrOpt.of(VEC_CODEC, "rotation_pivot", Vec3.ZERO).forGetter(AnimationParameters::pivot),
             StrOpt.of(FLOAT_CODEC, "rotation_curve", 0.5f).forGetter(AnimationParameters::rotationCurve),
             StrOpt.of(Codec.floatRange(0, 10), "height", 1f).forGetter(AnimationParameters::heightStart),
-            StrOpt.of(FLOAT_CODEC, "height_curve", 0.5f).forGetter(AnimationParameters::heightCurve)
+            StrOpt.of(FLOAT_CODEC, "height_curve", 0.5f).forGetter(AnimationParameters::heightCurve),
+            StrOpt.of(SoundEvent.CODEC, "sound").forGetter(AnimationParameters::sound)
     ).apply(instance, AnimationParameters::new));
 
     public boolean matches(BlockState blockState, BlockPos pos, RandomSource random) {
