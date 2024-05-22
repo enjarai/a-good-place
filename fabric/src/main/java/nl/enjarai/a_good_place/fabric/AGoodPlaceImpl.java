@@ -33,7 +33,6 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTestType;
 import nl.enjarai.a_good_place.AGoodPlace;
 import nl.enjarai.a_good_place.pack.AnimationManager;
 import nl.enjarai.a_good_place.pack.rule_tests.ModRuleTests;
-import nl.enjarai.a_good_place.pack.rule_tests.NotInTagTest;
 import nl.enjarai.a_good_place.particles.WonkyBlocksManager;
 
 import java.util.concurrent.CompletableFuture;
@@ -60,8 +59,8 @@ public class AGoodPlaceImpl implements ClientModInitializer {
         //todo: clear on level change
 
         AGoodPlace.copySamplePackIfNotPresent();
-        addClientReloadListener(AnimationManager::new, new ResourceLocation(MOD_ID, "animations"));
-        registerOptionalTexturePack(new ResourceLocation(MOD_ID, "default_animations"),
+        addClientReloadListener(AnimationManager::new, AGoodPlace.res("animations"));
+        registerOptionalTexturePack(AGoodPlace.res("default_animations"),
                 Component.nullToEmpty("A Good Place Default Animation"), true);
 
         ModRuleTests.init();
@@ -96,7 +95,7 @@ public class AGoodPlaceImpl implements ClientModInitializer {
 
     public static <T extends RuleTest> Supplier<RuleTestType<T>> registerRuleTest(String id, Codec<T> codec) {
         RuleTestType<T> t = () -> codec;
-        var obj = Registry.register(BuiltInRegistries.RULE_TEST, new ResourceLocation(MOD_ID, id), t);
+        var obj = Registry.register(BuiltInRegistries.RULE_TEST, AGoodPlace.res(id), t);
         return () -> obj;
     }
 }

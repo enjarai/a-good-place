@@ -26,6 +26,9 @@ public class AGoodPlace {
 
     public static final Logger LOGGER = LogManager.getLogger("A Good Place");
 
+    public static ResourceLocation res(String path) {
+        return new ResourceLocation(MOD_ID, path);
+    }
 
     @ExpectPlatform
     public static <T extends RuleTest> Supplier<RuleTestType<T>> registerRuleTest(String id, Codec<T> codec) {

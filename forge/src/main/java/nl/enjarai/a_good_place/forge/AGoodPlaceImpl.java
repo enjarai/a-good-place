@@ -61,20 +61,20 @@ public class AGoodPlaceImpl {
     private static final DeferredRegister<RuleTestType<?>> RULE_TESTS = DeferredRegister.create(Registries.RULE_TEST, MOD_ID);
 
     public AGoodPlaceImpl() {
-        addClientReloadListener(AnimationManager::new, new ResourceLocation(MOD_ID, "animations"));
-
         if (FMLEnvironment.dist == Dist.CLIENT) {
+
+            addClientReloadListener(AnimationManager::new, AGoodPlace.res("animations"));
+
             boolean firstInstall = AGoodPlace.copySamplePackIfNotPresent();
             MinecraftForge.EVENT_BUS.register(this);
 
-            registerOptionalTexturePack(new ResourceLocation(MOD_ID, "default_animations"),
+            registerOptionalTexturePack(AGoodPlace.res("default_animations"),
                     Component.nullToEmpty("Default Place Animations"), firstInstall);
 
             RULE_TESTS.register(FMLJavaModLoadingContext.get().getModEventBus());
 
             ModRuleTests.init();
         }
-
     }
 
     @SubscribeEvent
