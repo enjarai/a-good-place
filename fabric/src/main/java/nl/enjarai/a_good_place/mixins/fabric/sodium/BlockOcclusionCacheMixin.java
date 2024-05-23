@@ -6,11 +6,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.state.BlockState;
-import nl.enjarai.a_good_place.particles.WonkyBlocksManager;
-import org.spongepowered.asm.mixin.Final;
+import nl.enjarai.a_good_place.particles.BlocksParticlesManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -30,7 +28,7 @@ public abstract class BlockOcclusionCacheMixin {
     )
     private void wonkyblock$overrideCulling(BlockState selfState, BlockGetter view, BlockPos pos, Direction facing, CallbackInfoReturnable<Boolean> cir,
                                             @Local BlockPos.MutableBlockPos cpos) {
-        if (WonkyBlocksManager.isBlockHidden(cpos)){
+        if (BlocksParticlesManager.isBlockHidden(cpos)){
             cir.setReturnValue(true);
         }
     }

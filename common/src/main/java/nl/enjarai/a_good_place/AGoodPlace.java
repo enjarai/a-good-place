@@ -25,6 +25,7 @@ public class AGoodPlace {
     public static final String MOD_ID = "a_good_place";
 
     public static final Logger LOGGER = LogManager.getLogger("A Good Place");
+    public static final boolean RENDER_AS_VANILLA_PARTICLES = true;
 
     public static ResourceLocation res(String path) {
         return new ResourceLocation(MOD_ID, path);

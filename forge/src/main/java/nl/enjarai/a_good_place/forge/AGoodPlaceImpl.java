@@ -43,10 +43,9 @@ import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.resource.PathPackResources;
 import nl.enjarai.a_good_place.AGoodPlace;
-import nl.enjarai.a_good_place.pack.AnimationManager;
+import nl.enjarai.a_good_place.pack.AnimationsManager;
 import nl.enjarai.a_good_place.pack.rule_tests.ModRuleTests;
-import nl.enjarai.a_good_place.pack.rule_tests.NotInTagTest;
-import nl.enjarai.a_good_place.particles.WonkyBlocksManager;
+import nl.enjarai.a_good_place.particles.BlocksParticlesManager;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -63,7 +62,7 @@ public class AGoodPlaceImpl {
     public AGoodPlaceImpl() {
         if (FMLEnvironment.dist == Dist.CLIENT) {
 
-            addClientReloadListener(AnimationManager::new, AGoodPlace.res("animations"));
+            addClientReloadListener(AnimationsManager::new, AGoodPlace.res("animations"));
 
             boolean firstInstall = AGoodPlace.copySamplePackIfNotPresent();
             MinecraftForge.EVENT_BUS.register(this);
@@ -79,27 +78,27 @@ public class AGoodPlaceImpl {
 
     @SubscribeEvent
     public void onLevelLoad(ClientPlayerNetworkEvent.LoggingIn event) {
-        AnimationManager.populateTags(event.getPlayer().level().registryAccess());
+        AnimationsManager.populateTags(event.getPlayer().level().registryAccess());
     }
 
     @SubscribeEvent
     public void onLevelUnload(LevelEvent.Unload event) {
         if (event.getLevel().isClientSide()) {
-            WonkyBlocksManager.clear();
+            BlocksParticlesManager.clear();
         }
     }
 
     @SubscribeEvent
     public void onRenderWorld(RenderLevelStageEvent event) {
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_ENTITIES) {
-            WonkyBlocksManager.renderParticles(event.getPoseStack(), event.getPartialTick());
+            BlocksParticlesManager.renderParticles(event.getPoseStack(), event.getPartialTick());
         }
     }
 
     @SubscribeEvent
     public void onClientTick(TickEvent.LevelTickEvent tickEvent) {
         if (tickEvent.phase == TickEvent.Phase.END && tickEvent.level.isClientSide) {
-            WonkyBlocksManager.tickParticles((ClientLevel) tickEvent.level);
+            BlocksParticlesManager.tickParticles((ClientLevel) tickEvent.level);
         }
     }
 

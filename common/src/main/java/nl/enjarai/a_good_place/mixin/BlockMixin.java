@@ -5,7 +5,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import nl.enjarai.a_good_place.particles.WonkyBlocksManager;
+import nl.enjarai.a_good_place.particles.BlocksParticlesManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -19,7 +19,7 @@ public abstract class BlockMixin {
             cancellable = true
     )
     private static void wonkyblock$overrideCulling(BlockState state, BlockGetter level, BlockPos otherPos, Direction face, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
-        if (WonkyBlocksManager.isBlockHidden(pos)) {
+        if (BlocksParticlesManager.isBlockHidden(pos)) {
             cir.setReturnValue(true);
         }
     }

@@ -10,24 +10,24 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import nl.enjarai.a_good_place.pack.AnimationManager;
+import nl.enjarai.a_good_place.AGoodPlace;
 import nl.enjarai.a_good_place.pack.AnimationParameters;
+import nl.enjarai.a_good_place.pack.AnimationsManager;
 
 import java.util.*;
 
 // static class so we have 1 less method call for get instance as isHidden will be called a lot
-public class WonkyBlocksManager {
+public class BlocksParticlesManager {
 
-    private static final Map<BlockPos, PlacingBlockParticle> PARTICLES = new HashMap<>();
+    protected static final Map<BlockPos, PlacingBlockParticle> PARTICLES = new HashMap<>();
     //replace each time so its thread safe. Supposedly faster than a concurrent set
     private static Set<BlockPos> hiddenBlocks = Set.of();
 
 
-    public static void addParticle(BlockState state, BlockPos pos, Level level, Direction face, Player player, InteractionHand hand) {
-        AnimationParameters param = AnimationManager.getAnimation(state, pos, level.random);
+    public static void addParticle(BlockState state, BlockPos pos, ClientLevel level, Direction face, Player player, InteractionHand hand) {
+        AnimationParameters param = AnimationsManager.getAnimation(state, pos, level.random);
         /*
         param = new AnimationParameters(null,
                 0, null, 4,
@@ -35,9 +35,16 @@ public class WonkyBlocksManager {
                 0.25f, 0.9f,
                 0f, 0.1f, 0.1f, -0.08f, false,
                 1, 0, .7f);*/
-        if(param != null) {
-            PARTICLES.put(pos, new ConfiguredPlacingParticle((ClientLevel) level, pos, face, player, hand, param));
-            hideBlock(pos);
+
+        if (param != null) {
+            Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+
+            if (camera.getPosition().distanceToSqr(pos.getCenter()) <= 1024.0) {
+                var p = new ConfiguredPlacingParticle(level, pos, face, player, hand, param);
+                if (AGoodPlace.RENDER_AS_VANILLA_PARTICLES) {
+                    Minecraft.getInstance().particleEngine.add(p);
+                }
+            }
         }
     }
 
@@ -70,27 +77,22 @@ public class WonkyBlocksManager {
     }
 
 
+    //tick manually just to be safe
     public static void tickParticles(ClientLevel level) {
+        if (AGoodPlace.RENDER_AS_VANILLA_PARTICLES) return;
 
         var iterator = PARTICLES.entrySet().iterator();
         while (iterator.hasNext()) {
             var entry = iterator.next();
             var p = entry.getValue();
             p.tick();
-            BlockPos pos = entry.getKey();
-            if (p.finishedAnimation()) {
-                unHideBlock(pos);
-            }
-            if (!p.isAlive() || level.getBlockState(pos) != p.blockState) {
-                iterator.remove();
-                unHideBlock(pos); //just incase
-            }
+            if (!p.isAlive()) iterator.remove();
         }
 
     }
 
     public static void renderParticles(PoseStack poseStack, float tickDelta) {
-        if(PARTICLES.isEmpty()) return;
+        if (AGoodPlace.RENDER_AS_VANILLA_PARTICLES || PARTICLES.isEmpty()) return;
 
         poseStack.pushPose();
 

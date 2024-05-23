@@ -89,3 +89,4 @@ In addition to the vanilla rule test types, A Good Place adds 2 new test types:
   field.
 - `a_good_place:solid`: This test checks if the block is solid or not. The `solid` field determines the polarity of the
   test.
+- `a_good_place:no_double_blocks`: This test checks if the block is a double block or not (hardcoded list of stuff like double flowers, beds and double chests)

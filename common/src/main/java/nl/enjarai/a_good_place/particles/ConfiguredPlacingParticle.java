@@ -5,13 +5,10 @@ import com.mojang.math.Axis;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
@@ -37,6 +34,8 @@ public class ConfiguredPlacingParticle extends PlacingBlockParticle {
     public ConfiguredPlacingParticle(ClientLevel level, BlockPos blockPos, Direction face,
                                      Player placer, InteractionHand hand, AnimationParameters settings) {
         super(level, blockPos, face);
+        BlocksParticlesManager.PARTICLES.put(pos, this);
+        BlocksParticlesManager.hideBlock(pos);
 
         settings.sound().ifPresent(sound -> level.playLocalSound(blockPos,
                 sound.value(), SoundSource.PLAYERS, 1, 1, false));

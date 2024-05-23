@@ -21,11 +21,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class AnimationManager extends SimpleJsonResourceReloadListener {
+public class AnimationsManager extends SimpleJsonResourceReloadListener {
 
     private static final List<AnimationParameters> ANIMATIONS = new ArrayList<>();
 
-    public AnimationManager() {
+    public AnimationsManager() {
         super(new Gson(), "placement_animations");
     }
 

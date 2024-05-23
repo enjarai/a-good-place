@@ -52,6 +52,14 @@ public abstract class PlacingBlockParticle extends Particle {
         if (age >= lifetime + extraLifeTicks) {
             remove();
         }
+
+        if (this.finishedAnimation()) {
+            BlocksParticlesManager.unHideBlock(pos);
+        }
+        if (level.getBlockState(pos) != this.blockState) {
+            this.remove();
+            BlocksParticlesManager.unHideBlock(pos); //just incase
+        }
     }
 
 
@@ -71,11 +79,13 @@ public abstract class PlacingBlockParticle extends Particle {
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
 
         AGoodPlace.renderBlock(model, seed, poseStack, bufferSource, blockState, level, pos, renderer);
+
+        if (AGoodPlace.RENDER_AS_VANILLA_PARTICLES) Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
     }
 
 
     public final void applyAnimation(PoseStack poseStack, float partialTicks) {
-        float t = Math.min(1,(age + partialTicks) / (lifetime + 1)); //from 0 to 1
+        float t = Math.min(1, (age + partialTicks) / (lifetime + 1)); //from 0 to 1
         applyAnimation(poseStack, t, partialTicks);
     }
 

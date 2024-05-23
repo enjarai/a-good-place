@@ -31,9 +31,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTest;
 import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTestType;
 import nl.enjarai.a_good_place.AGoodPlace;
-import nl.enjarai.a_good_place.pack.AnimationManager;
+import nl.enjarai.a_good_place.pack.AnimationsManager;
 import nl.enjarai.a_good_place.pack.rule_tests.ModRuleTests;
-import nl.enjarai.a_good_place.particles.WonkyBlocksManager;
+import nl.enjarai.a_good_place.particles.BlocksParticlesManager;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -47,19 +47,19 @@ public class AGoodPlaceImpl implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         WorldRenderEvents.AFTER_ENTITIES.register((context) -> {
-            WonkyBlocksManager.renderParticles(context.matrixStack(), context.tickDelta());
+            BlocksParticlesManager.renderParticles(context.matrixStack(), context.tickDelta());
         });
 
-        ClientTickEvents.END_WORLD_TICK.register(WonkyBlocksManager::tickParticles);
+        ClientTickEvents.END_WORLD_TICK.register(BlocksParticlesManager::tickParticles);
 
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
-            AnimationManager.populateTags(client.getConnection().registryAccess());
+            AnimationsManager.populateTags(client.getConnection().registryAccess());
         });
 
         //todo: clear on level change
 
         AGoodPlace.copySamplePackIfNotPresent();
-        addClientReloadListener(AnimationManager::new, AGoodPlace.res("animations"));
+        addClientReloadListener(AnimationsManager::new, AGoodPlace.res("animations"));
         registerOptionalTexturePack(AGoodPlace.res("default_animations"),
                 Component.nullToEmpty("A Good Place Default Animation"), true);
 

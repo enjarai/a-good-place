@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import nl.enjarai.a_good_place.particles.WonkyBlocksManager;
+import nl.enjarai.a_good_place.particles.BlocksParticlesManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -20,6 +20,6 @@ public class BlockEntityRendererDispatcherMixin {
     )
     private <E extends BlockEntity> void wonkyblock$modifyRendererLocation(
             E blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, CallbackInfo ci) {
-        WonkyBlocksManager.modifyTilePosition(blockEntity.getBlockPos(), poseStack, partialTick);
+        BlocksParticlesManager.modifyTilePosition(blockEntity.getBlockPos(), poseStack, partialTick);
     }
 }
