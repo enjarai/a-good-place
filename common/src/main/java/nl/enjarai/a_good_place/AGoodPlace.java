@@ -25,7 +25,7 @@ public class AGoodPlace {
     public static final String MOD_ID = "a_good_place";
 
     public static final Logger LOGGER = LogManager.getLogger("A Good Place");
-    public static final boolean RENDER_AS_VANILLA_PARTICLES = true;
+    public static boolean RENDER_AS_VANILLA_PARTICLES = true;
 
     public static ResourceLocation res(String path) {
         return new ResourceLocation(MOD_ID, path);
@@ -41,6 +41,7 @@ public class AGoodPlace {
         throw new AssertionError();
     }
 
+    // copied from quark :skull:
     public static boolean copySamplePackIfNotPresent() {
         File file = new File(".", "resourcepacks");
         File target = new File(file, "A Good Place Sample Pack.zip");
@@ -52,8 +53,9 @@ public class AGoodPlace {
                 file.mkdirs();
                 byte[] buf = new byte[16384];
                 int len;
-                while ((len = in.read(buf)) > 0)
+                while ((len = in.read(buf)) > 0) {
                     out.write(buf, 0, len);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -5,18 +5,18 @@
     }
   ],
   "priority": 0,
-  "duration": 4,
+  "duration": 3,
   "scale": 1,
   "scale_curve": -0.7,
   "translation": {
-    "x": 0.1, "y": 0.1, "z": 0.1
+    "x": 0.1, "y": 0.2, "z": 0.2
   },
   "translation_curve": 0.9,
   "rotation": {
-    "x": 0, "y": 0.1, "z": 0.1
+    "x": 0, "y": 0.1, "z": -0.1
   },
   "rotation_pivot": {
-    "x": 0.5, "y": -0.5, "z": 0.5
+    "x": -0.5, "y": -0.5, "z": 0.5
   },
   "rotation_curve": -0.08,
   "height": 1,
