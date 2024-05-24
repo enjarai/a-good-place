@@ -127,6 +127,7 @@ public class ConfiguredPlacingParticle extends PlacingBlockParticle {
             Vec3 rotationPivot = params.pivot();
             if (slideStart.y < 0) {
                 rotationPivot = rotationPivot.multiply(1, -1, 1);
+                rotation = rotation.multiply(-1, 1,-1);
             }
 
             poseStack.translate(rotationPivot.x, rotationPivot.y, rotationPivot.z);

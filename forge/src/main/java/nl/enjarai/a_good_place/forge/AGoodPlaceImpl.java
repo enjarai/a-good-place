@@ -35,6 +35,7 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.resource.PathPackResources;
 import nl.enjarai.a_good_place.AGoodPlace;
@@ -64,6 +65,7 @@ public class AGoodPlaceImpl {
                     Component.nullToEmpty("Default Place Animations"), firstInstall);
 
             BlockStatePredicateType.init();
+            AGoodPlace.IS_DEV = !FMLLoader.isProduction();
         }
     }
 

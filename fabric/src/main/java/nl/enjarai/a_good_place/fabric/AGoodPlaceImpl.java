@@ -59,6 +59,8 @@ public class AGoodPlaceImpl implements ClientModInitializer {
                 Component.nullToEmpty("A Good Place Default Animation"), true);
 
         BlockStatePredicateType.init();
+
+        AGoodPlace.IS_DEV= FabricLoader.getInstance().isDevelopmentEnvironment();
     }
 
     public static void renderBlock(BakedModel model, long seed, PoseStack poseStack, MultiBufferSource buffer, BlockState state, Level level, BlockPos pos, BlockRenderDispatcher blockRenderer) {
