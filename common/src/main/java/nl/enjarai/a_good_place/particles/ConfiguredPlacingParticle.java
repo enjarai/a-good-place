@@ -34,8 +34,6 @@ public class ConfiguredPlacingParticle extends PlacingBlockParticle {
     public ConfiguredPlacingParticle(ClientLevel level, BlockPos blockPos, Direction face,
                                      Player placer, InteractionHand hand, AnimationParameters settings) {
         super(level, blockPos, face);
-        BlocksParticlesManager.PARTICLES.put(pos, this);
-        BlocksParticlesManager.hideBlock(pos);
 
         settings.sound().ifPresent(sound -> level.playLocalSound(blockPos,
                 sound.value(), SoundSource.PLAYERS, 1, 1, false));

@@ -4,23 +4,22 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.*;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.structure.templatesystem.AlwaysTrueTest;
-import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTest;
 import net.minecraft.world.phys.Vec3;
 import nl.enjarai.a_good_place.AGoodPlace;
+import nl.enjarai.a_good_place.pack.state_tests.BlockStatePredicate;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-public record AnimationParameters(List<RuleTest> predicates, int priority, int duration,
+public record AnimationParameters(LazyList<?, BlockStatePredicate> predicates, int priority, int duration,
                                   float scaleStart, float scaleCurve,
                                   Vec3 translation, float translationCurve,
                                   Vec3 rotation, Vec3 pivot,
@@ -45,7 +44,8 @@ public record AnimationParameters(List<RuleTest> predicates, int priority, int d
     ).apply(instance, Vec3::new));
 
     public static final Codec<AnimationParameters> CODEC = RecordCodecBuilder.create((instance) -> instance.group(
-            StrOpt.of(RuleTest.CODEC.listOf(), "predicates", List.of(AlwaysTrueTest.INSTANCE)).forGetter(AnimationParameters::predicates),
+            StrOpt.of(LazyList.codec(BlockStatePredicate.CODEC), "predicates", new LazyList<>(null, null))
+                    .forGetter(AnimationParameters::predicates),
             StrOpt.of(Codec.INT, "priority", 0).forGetter(AnimationParameters::priority), // not used
             StrOpt.of(Codec.intRange(0, 300), "duration", 4).forGetter(AnimationParameters::duration),
             StrOpt.of(Codec.floatRange(0, 10), "scale", 1f).forGetter(AnimationParameters::scaleStart),
@@ -60,8 +60,9 @@ public record AnimationParameters(List<RuleTest> predicates, int priority, int d
             StrOpt.of(SoundEvent.CODEC, "sound").forGetter(AnimationParameters::sound)
     ).apply(instance, AnimationParameters::new));
 
-    public boolean matches(BlockState blockState, BlockPos pos, RandomSource random) {
-        return predicates.stream().allMatch(p -> p.test(blockState, random));
+    public boolean matches(BlockState blockState, BlockPos pos, Level level) {
+        var pred = this.predicates.get();
+        return pred.stream().allMatch(p -> p.test(blockState, pos, level));
     }
 
     static Codec<Float> floatRangeExclusive(final float minExclusive, final float maxExclusive) {
@@ -79,34 +80,36 @@ public record AnimationParameters(List<RuleTest> predicates, int priority, int d
         };
     }
 
-    protected static class LazyHolderSet<T> {
+    protected static class LazyList<T, O> {
+        private final Codec<O> codec;
         private final Dynamic<T> toDecode;
-        private HolderSet<Block> instance;
-        private boolean alwaysTrue;
+        private List<O> objects = List.of();
 
-        public LazyHolderSet(Dynamic<T> toDecode) {
+        public LazyList(Dynamic<T> toDecode, Codec<O> codec) {
             this.toDecode = toDecode;
+            this.codec = codec;
         }
 
-        public boolean matches(BlockState blockState) {
-            return alwaysTrue || (instance != null && blockState.is(instance));
+        public static <H> Codec<LazyList<?, H>> codec(Codec<H> codec) {
+            return Codec.PASSTHROUGH.xmap(
+                    o -> new LazyList<>(o, codec),
+                    o -> o.toDecode
+            );
         }
 
-        protected void populate(RegistryAccess registryAccess) {
-            alwaysTrue = false;
-            instance = null;
-            var stringParse = toDecode.getOps().getStringValue(toDecode.getValue());
-            if (stringParse.result().isPresent() && stringParse.result().get().equals("*")) {
-                alwaysTrue = true;
-            } else {
-                var res = RegistryCodecs.homogeneousList(Registries.BLOCK)
-                        .decode(RegistryOps.create(toDecode.getOps(), registryAccess), toDecode.getValue());
-                try {
-                    instance = res.getOrThrow(false, s -> {
-                        AGoodPlace.LOGGER.error("Could not decode block list for placement animation - error: {}", s);
-                    }).getFirst();
-                } catch (Exception ignored) {
-                }
+        public List<O> get() {
+            return objects;
+        }
+
+        protected void lazyInit(RegistryAccess registryAccess) {
+            objects = null;
+
+            var res = codec.listOf().decode(RegistryOps.create(toDecode.getOps(), registryAccess), toDecode.getValue());
+            try {
+                objects = res.getOrThrow(false, s -> {
+                    AGoodPlace.LOGGER.error("Could not decode block list for placement animation - error: {}", s);
+                }).getFirst();
+            } catch (Exception ignored) {
             }
         }
     }

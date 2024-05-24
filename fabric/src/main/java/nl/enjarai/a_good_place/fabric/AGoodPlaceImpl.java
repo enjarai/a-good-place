@@ -2,7 +2,6 @@ package nl.enjarai.a_good_place.fabric;
 
 import com.google.common.base.Suppliers;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.serialization.Codec;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
@@ -17,8 +16,6 @@ import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
@@ -28,11 +25,9 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTest;
-import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTestType;
 import nl.enjarai.a_good_place.AGoodPlace;
 import nl.enjarai.a_good_place.pack.AnimationsManager;
-import nl.enjarai.a_good_place.pack.rule_tests.ModRuleTests;
+import nl.enjarai.a_good_place.pack.state_tests.BlockStatePredicateType;
 import nl.enjarai.a_good_place.particles.BlocksParticlesManager;
 
 import java.util.concurrent.CompletableFuture;
@@ -63,7 +58,7 @@ public class AGoodPlaceImpl implements ClientModInitializer {
         registerOptionalTexturePack(AGoodPlace.res("default_animations"),
                 Component.nullToEmpty("A Good Place Default Animation"), true);
 
-        ModRuleTests.init();
+        BlockStatePredicateType.init();
     }
 
     public static void renderBlock(BakedModel model, long seed, PoseStack poseStack, MultiBufferSource buffer, BlockState state, Level level, BlockPos pos, BlockRenderDispatcher blockRenderer) {
@@ -93,9 +88,4 @@ public class AGoodPlaceImpl implements ClientModInitializer {
         });
     }
 
-    public static <T extends RuleTest> Supplier<RuleTestType<T>> registerRuleTest(String id, Codec<T> codec) {
-        RuleTestType<T> t = () -> codec;
-        var obj = Registry.register(BuiltInRegistries.RULE_TEST, AGoodPlace.res(id), t);
-        return () -> obj;
-    }
 }

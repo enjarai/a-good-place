@@ -44,10 +44,15 @@ public abstract class PlacingBlockParticle extends Particle {
 
         hasPhysics = false;
         lifetime = 7;
+
+        setSize(1, 1);
     }
 
     @Override
     public void tick() {
+        if (this.removed){
+            return;
+        }
         age++;
         if (age >= lifetime + extraLifeTicks) {
             remove();

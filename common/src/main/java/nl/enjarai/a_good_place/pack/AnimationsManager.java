@@ -9,8 +9,8 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
-import net.minecraft.util.RandomSource;
 import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import nl.enjarai.a_good_place.AGoodPlace;
@@ -54,18 +54,23 @@ public class AnimationsManager extends SimpleJsonResourceReloadListener {
 
 
     @Nullable
-    public static AnimationParameters getAnimation(BlockState blockState, BlockPos pos, RandomSource random) {
+    public static AnimationParameters getAnimation(BlockState blockState, BlockPos pos, Level level) {
 
         //for testing
-        if (true) return new AnimationParameters(List.of(), 0, 3,
-                1f, -0.7f,
-                new Vec3(0.1, 0.2, 0.2), 0.9f,
-                new Vec3(0, 0.1, -0.1),
-                new Vec3(-0.5, -0.5, 0.5), -0.08f,
-                1, 0, Optional.empty());
-
+        if (true) {
+            var a = new AnimationParameters(new AnimationParameters.LazyList<>(null, null),
+                    0, 3,
+                    1f, -0.7f,
+                    new Vec3(0.1, 0.2, 0.2), 0.9f,
+                    new Vec3(0, 0.1, -0.1),
+                    new Vec3(-0.5, -0.5, 0.5), -0.08f,
+                    1, 0, Optional.empty());
+            if (a.matches(blockState, pos, level)) {
+                return a;
+            } else return null;
+        }
         for (var animation : ANIMATIONS) {
-            if (animation.matches(blockState, pos, random)) {
+            if (animation.matches(blockState, pos, level)) {
                 return animation;
             }
         }
@@ -73,5 +78,8 @@ public class AnimationsManager extends SimpleJsonResourceReloadListener {
     }
 
     public static void populateTags(RegistryAccess registryAccess) {
+        for (var v : ANIMATIONS) {
+            v.predicates().lazyInit(registryAccess);
+        }
     }
 }

@@ -7,7 +7,7 @@ In short animations are composed of 4 separate animations: scale, translation, r
 
 | name                | default value           | explanation                                                                                                                                                                                      |
 |---------------------|-------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `predicates`        | `[]"`                   | A list of Rule Tests (predicates) used to filter the affected blocks.`                                                                                                                           |
+| `predicates`        | `[]"`                   | A list of BlockStatePredicates used to filter the affected blocks.`                                                                                                                              |
 | `priority`          | `0`                     | Priority of this file. Higher ones will be applied over ones with lower priority.                                                                                                                |
 | `duration`          | `4`                     | Duration of the animation in ticks.                                                                                                                                                              |
 | `scale`             | `1`                     | The initial scale of the block when it is placed.                                                                                                                                                |
@@ -62,15 +62,55 @@ animation.
 
 ### About "predicates"
 
-As mentioned above predicate field is a list of rule test objects used to filter the blocks to which you want to apply
+As mentioned above predicate field is a list of block state predicate objects used to filter the blocks to which you
+want to apply
 your animation.
 
-Rule tests are a vanilla concept, usually used for worldgen stuff.
-If you are not familiar check that section on the official Minecraft wiki.
+This is a concept very similar to RuleTests and BlockPredicates, an existing vanilla concept used in worldgen.
+Here's a list of the ones that exist:
 
-In addition to the vanilla rule test types, A Good Place adds 2 new test types:
+- `block_match`: Contains a tag or a block list. True if the block matches the list.
+- `not`: Contains a predicate. True if the predicate is false.
+- `any_of`: Contains a list of predicates. True if any of the predicates are true.
+- `has_collision`: True if the block has collision.
+- `is_double_block`: True if the block is a double block (chest, flowers, beds...). Not exhaustive. You might want to
+  add some extra block matches predicates to exclude stuff from tags.
 
-- `a_good_place:not_in_tag`: This test checks if the block is NOT in a certain tag. The tag is specified in the `tag`
-  field.
-- `a_good_place:solid`: This test checks if the block is solid or not. The `solid` field determines the polarity of the
-  test.
+Here's an example using ALL of these predicates:
+
+```json
+{
+  "predicates": [
+    {
+      "predicate_type": "any_of",
+      "predicates": [
+        {
+          "predicate_type": "block_match",
+          "blocks": "#minecraft:flowers"
+        },
+        {
+          "predicate_type": "block_match",
+          "blocks": [
+            "minecraft:sweet_berry_bush"
+          ]
+        }
+      ]
+    },
+    {
+      "predicate_type": "not",
+      "predicate": {
+        "predicate_type": "is_double_block"
+      }
+    },
+    {
+      "predicate_type": "not",
+      "predicate": {
+        "predicate_type": "has_collision"
+      }
+    }
+  ]
+}
+```
+
+In this example we are selecting all flowers + sweet berry bush and excluding all blocks that are not double flowers and
+have collision

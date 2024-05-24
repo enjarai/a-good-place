@@ -1,7 +1,16 @@
 {
   "predicates": [
     {
-      "predicate_type": "a_good_place:no_double_blocks"
+      "type": "not",
+      "predicate": {
+        "type": "is_double_block"
+      }
+    },
+    {
+      "type": "not",
+      "predicate": {
+        "type": "has_collision"
+      }
     }
   ],
   "priority": 0,

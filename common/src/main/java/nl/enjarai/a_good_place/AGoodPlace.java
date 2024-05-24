@@ -10,6 +10,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
+import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicateType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTest;
 import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTestType;
 import org.apache.logging.log4j.LogManager;
@@ -29,11 +31,6 @@ public class AGoodPlace {
 
     public static ResourceLocation res(String path) {
         return new ResourceLocation(MOD_ID, path);
-    }
-
-    @ExpectPlatform
-    public static <T extends RuleTest> Supplier<RuleTestType<T>> registerRuleTest(String id, Codec<T> codec) {
-        throw new AssertionError();
     }
 
     @ExpectPlatform

@@ -27,7 +27,7 @@ public class BlocksParticlesManager {
 
 
     public static void addParticle(BlockState state, BlockPos pos, ClientLevel level, Direction face, Player player, InteractionHand hand) {
-        AnimationParameters param = AnimationsManager.getAnimation(state, pos, level.random);
+        AnimationParameters param = AnimationsManager.getAnimation(state, pos, level);
         /*
         param = new AnimationParameters(null,
                 0, null, 4,
@@ -41,6 +41,14 @@ public class BlocksParticlesManager {
 
             if (camera.getPosition().distanceToSqr(pos.getCenter()) <= 1024.0) {
                 var p = new ConfiguredPlacingParticle(level, pos, face, player, hand, param);
+
+                var old = BlocksParticlesManager.PARTICLES.put(pos, p);
+                if (old != null){
+                    old.remove();
+                }
+                BlocksParticlesManager.hideBlock(pos);
+
+
                 if (AGoodPlace.RENDER_AS_VANILLA_PARTICLES) {
                     Minecraft.getInstance().particleEngine.add(p);
                 }
