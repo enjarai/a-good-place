@@ -85,14 +85,15 @@ your animation.
 This is a concept very similar to RuleTests and BlockPredicates, an existing vanilla concept used in worldgen.
 Here's a list of the ones that exist:
 
-- `block_match`: Contains a tag or a block list. True if the block matches the list.
+- `matching_blocks`: Contains a tag or a block list. True if the block matches the list.
+- `matching_state`: Contains a blockstate definition. Just matches that specific blockstate.
 - `not`: Contains a predicate. True if the predicate is false.
 - `any_of`: Contains a list of predicates. True if any of the predicates are true.
 - `has_collision`: True if the block has collision.
 - `is_double_block`: True if the block is a double block (chest, flowers, beds...). Not exhaustive. You might want to
   add some extra block matches predicates to exclude stuff from tags.
 
-Here's an example using ALL of these predicates:
+Here's an example using most of these predicates:
 
 ```json
 {

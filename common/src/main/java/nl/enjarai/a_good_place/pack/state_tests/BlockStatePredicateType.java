@@ -32,6 +32,7 @@ public record BlockStatePredicateType<T extends BlockStatePredicate>(Codec<T> co
     public static final BlockStatePredicateType<Not> NOT = register("not", Not.CODEC);
     public static final BlockStatePredicateType<AnyOf> ANY_OF = register("any_of", AnyOf.CODEC);
     public static final BlockStatePredicateType<MatchingBlocks> MATCHING_BLOCKS = register("matching_blocks", MatchingBlocks.CODEC);
+    public static final BlockStatePredicateType<MatchingState> MATCHING_STATE = register("matching_state", MatchingState.CODEC);
 
     public static void init() {
     }
