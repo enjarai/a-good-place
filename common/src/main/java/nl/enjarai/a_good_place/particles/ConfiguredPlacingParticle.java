@@ -162,13 +162,13 @@ public class ConfiguredPlacingParticle extends PlacingBlockParticle {
 
         }
 
-
         //reset so block renders straight
         poseStack.mulPose(Axis.YP.rotation(-yAngle));
 
         poseStack.translate(-offset.x, -offset.y, -offset.z);
 
         poseStack.translate(-0.5, -0.5, -0.5);
+
     }
 
 

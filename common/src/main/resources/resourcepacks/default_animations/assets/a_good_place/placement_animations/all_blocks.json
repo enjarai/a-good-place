@@ -19,7 +19,7 @@
   },
   "translation_curve": 0.9,
   "rotation": {
-    "x": 0, "y": -0.1, "z": 0.1
+    "x": 0, "y": -5.7, "z": 5.7
   },
   "rotation_pivot": {
     "x": 0.5, "y": -0.5, "z": 0.5
