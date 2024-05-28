@@ -62,6 +62,9 @@ public record AnimationParameters(LazyList<?, BlockStatePredicate> predicates, i
 
     public boolean matches(BlockState blockState, BlockPos pos, Level level) {
         var pred = this.predicates.get();
+        if (pred == null) {
+            AGoodPlace.LOGGER.error("Predicates for block animations were not initialized! It could be that the animation json is invalid");
+        }
         return pred.stream().allMatch(p -> p.test(blockState, pos, level));
     }
 

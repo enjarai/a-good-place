@@ -8,7 +8,7 @@ import net.minecraft.world.level.block.state.BlockState;
 public record Not(BlockStatePredicate predicate) implements BlockStatePredicate {
 
     public static final Codec<Not> CODEC = BlockStatePredicate.CODEC
-            .fieldOf("predicates").xmap(Not::new, Not::predicate).codec();
+            .fieldOf("predicate").xmap(Not::new, Not::predicate).codec();
 
     @Override
     public BlockStatePredicateType<?> getType() {

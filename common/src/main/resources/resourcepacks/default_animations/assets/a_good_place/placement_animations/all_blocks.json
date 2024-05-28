@@ -7,10 +7,7 @@
       }
     },
     {
-      "type": "not",
-      "predicate": {
-        "type": "has_collision"
-      }
+      "type": "has_collision"
     }
   ],
   "priority": 0,
