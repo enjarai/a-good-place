@@ -2,12 +2,15 @@ package nl.enjarai.a_good_place;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.architectury.injectables.annotations.ExpectPlatform;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -56,5 +59,14 @@ public class AGoodPlace {
         return false;
     }
 
+    //only block that I know which already has an animation
+    private static Block bubbleBlock;
 
+    public static boolean isHardcodedBlackList(BlockState blockState) {
+        return blockState.getBlock() != bubbleBlock;
+    }
+
+    public static void onSetup(Minecraft minecraft) {
+        bubbleBlock = BuiltInRegistries.BLOCK.get(new ResourceLocation("supplementaries", "bubble_block"));
+    }
 }

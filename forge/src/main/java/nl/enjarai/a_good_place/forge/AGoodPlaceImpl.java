@@ -33,6 +33,7 @@ import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.FMLLoader;
@@ -56,6 +57,9 @@ public class AGoodPlaceImpl {
     public AGoodPlaceImpl() {
         if (FMLEnvironment.dist == Dist.CLIENT) {
 
+            FMLJavaModLoadingContext.get().getModEventBus()
+                            .addListener(this::onSetup);
+
             addClientReloadListener(AnimationsManager::new, AGoodPlace.res("animations"));
 
             boolean firstInstall = AGoodPlace.copySamplePackIfNotPresent();
@@ -67,6 +71,10 @@ public class AGoodPlaceImpl {
             BlockStatePredicateType.init();
             AGoodPlace.IS_DEV = !FMLLoader.isProduction();
         }
+    }
+
+    public void onSetup(FMLClientSetupEvent event) {
+       AGoodPlace.onSetup(null);
     }
 
     @SubscribeEvent

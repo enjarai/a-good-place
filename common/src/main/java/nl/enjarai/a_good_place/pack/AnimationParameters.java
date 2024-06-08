@@ -62,6 +62,7 @@ public record AnimationParameters(LazyList<?, BlockStatePredicate> predicates, i
 
     public boolean matches(BlockState blockState, BlockPos pos, Level level) {
         var pred = this.predicates.get();
+        if (AGoodPlace.isHardcodedBlackList(blockState)) return false;
         return pred.stream().allMatch(p -> p.test(blockState, pos, level));
     }
 

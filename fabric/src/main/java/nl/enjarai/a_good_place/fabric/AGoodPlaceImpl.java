@@ -3,6 +3,7 @@ package nl.enjarai.a_good_place.fabric;
 import com.google.common.base.Suppliers;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
@@ -44,7 +45,7 @@ public class AGoodPlaceImpl implements ClientModInitializer {
         WorldRenderEvents.AFTER_ENTITIES.register((context) -> {
             BlocksParticlesManager.renderParticles(context.matrixStack(), context.tickDelta());
         });
-
+        ClientLifecycleEvents.CLIENT_STARTED.register(AGoodPlace::onSetup);
         ClientTickEvents.END_WORLD_TICK.register(BlocksParticlesManager::tickParticles);
 
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
@@ -60,7 +61,7 @@ public class AGoodPlaceImpl implements ClientModInitializer {
 
         BlockStatePredicateType.init();
 
-        AGoodPlace.IS_DEV= FabricLoader.getInstance().isDevelopmentEnvironment();
+        AGoodPlace.IS_DEV = FabricLoader.getInstance().isDevelopmentEnvironment();
     }
 
     public static void renderBlock(BakedModel model, long seed, PoseStack poseStack, MultiBufferSource buffer, BlockState state, Level level, BlockPos pos, BlockRenderDispatcher blockRenderer) {
