@@ -40,6 +40,7 @@ import nl.enjarai.a_good_place.pack.AnimationsManager;
 import nl.enjarai.a_good_place.pack.state_tests.BlockStatePredicateType;
 import nl.enjarai.a_good_place.particles.BlocksParticlesManager;
 
+import javax.annotation.Nullable;
 import java.util.Optional;
 
 
@@ -72,8 +73,11 @@ public class AGoodPlaceImpl {
     public void registerResourcePack(AddPackFindersEvent event) {
         if (event.getPackType() == PackType.CLIENT_RESOURCES) {
 
-            event.addRepositorySource(infoConsumer -> infoConsumer.accept(createOptionalPack(AGoodPlace.res("default_animations"),
-                    Component.nullToEmpty("Default Place Animations"), firstInstall)));
+            event.addRepositorySource(infoConsumer -> {
+                Pack optionalPack = createOptionalPack(AGoodPlace.res("default_animations"),
+                        Component.nullToEmpty("Default Place Animations"), firstInstall);
+                if (optionalPack != null) infoConsumer.accept(optionalPack);
+            });
         }
     }
 
@@ -118,6 +122,7 @@ public class AGoodPlaceImpl {
         }
     }
 
+    @Nullable
     public static Pack createOptionalPack(ResourceLocation folderName, Component displayName, boolean defaultEnabled) {
 
         IModFile file = ModList.get().getModFileById(folderName.getNamespace()).getFile();

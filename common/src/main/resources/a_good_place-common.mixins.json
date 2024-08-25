@@ -9,8 +9,7 @@
     "BlockBehaviorMixin",
     "BlockEntityRendererDispatcherMixin",
     "BlockItemMixin",
-    "BlockMixin",
-    "SectionCompilerMixin"
+    "BlockMixin"
   ],
   "injectors": {
     "defaultRequire": 1
