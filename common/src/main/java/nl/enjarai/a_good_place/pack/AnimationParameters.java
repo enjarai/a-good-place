@@ -64,6 +64,7 @@ public record AnimationParameters(LazyList<?, BlockStatePredicate> predicates, i
     public boolean matches(BlockState blockState, BlockPos pos, Level level) {
         var pred = this.predicates.get();
         if (AGoodPlace.isHardcodedBlackList(blockState)) return false;
+        if (pred.isEmpty()) return true;
         return pred.stream().allMatch(p -> p.test(blockState, pos, level));
     }
 
@@ -109,9 +110,10 @@ public record AnimationParameters(LazyList<?, BlockStatePredicate> predicates, i
             var res = codec.listOf().decode(RegistryOps.create(toDecode.getOps(), registryAccess), toDecode.getValue());
             try {
                 objects = res.getOrThrow(s ->
-                        new JsonParseException("Could not decode block list for placement animation - error: {}" + s)
+                        new JsonParseException("Could not decode block list for placement animation - error: " + s)
                 ).getFirst();
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                AGoodPlace.LOGGER.error("Could not decode block list for placement animation", e);
             }
         }
     }

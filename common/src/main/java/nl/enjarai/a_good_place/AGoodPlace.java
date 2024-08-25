@@ -63,7 +63,7 @@ public class AGoodPlace {
     private static Block bubbleBlock;
 
     public static boolean isHardcodedBlackList(BlockState blockState) {
-        return blockState.getBlock() != bubbleBlock;
+        return blockState.getBlock() == bubbleBlock;
     }
 
     public static void onSetup(Minecraft minecraft) {

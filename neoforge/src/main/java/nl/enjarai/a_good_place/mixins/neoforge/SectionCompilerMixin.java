@@ -1,4 +1,4 @@
-package nl.enjarai.a_good_place.mixins.fabric.sodium;
+package nl.enjarai.a_good_place.mixins.neoforge;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.At;
 public abstract class SectionCompilerMixin {
 
     @WrapOperation(
-            method = "compile",
+            method = "compile(Lnet/minecraft/core/SectionPos;Lnet/minecraft/client/renderer/chunk/RenderChunkRegion;Lcom/mojang/blaze3d/vertex/VertexSorting;Lnet/minecraft/client/renderer/SectionBufferBuilderPack;Ljava/util/List;)Lnet/minecraft/client/renderer/chunk/SectionCompiler$Results;",
             at = @At(
                     value = "INVOKE",
                     ordinal = 0,
@@ -23,8 +23,7 @@ public abstract class SectionCompilerMixin {
             )
     )
     private BlockState wonkyblock$hideBlock(RenderChunkRegion instance, BlockPos arg, Operation<BlockState> original) {
-        if ( BlocksParticlesManager.isBlockHidden(arg)) {
-
+        if (BlocksParticlesManager.isBlockHidden(arg)) {
             return Blocks.AIR.defaultBlockState();
         }
         return original.call(instance, arg);

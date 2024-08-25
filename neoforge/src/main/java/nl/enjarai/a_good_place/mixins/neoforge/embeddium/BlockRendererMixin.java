@@ -1,4 +1,4 @@
-package nl.enjarai.a_good_place.mixins.neoforge.sodium;
+package nl.enjarai.a_good_place.mixins.neoforge.embeddium;
 
 import nl.enjarai.a_good_place.particles.BlocksParticlesManager;
 import org.embeddedt.embeddium.api.render.chunk.BlockRenderContext;

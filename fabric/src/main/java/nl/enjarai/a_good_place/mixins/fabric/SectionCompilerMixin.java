@@ -1,4 +1,4 @@
-package nl.enjarai.a_good_place.mixins.neoforge.sodium;
+package nl.enjarai.a_good_place.mixins.fabric;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.At;
 public abstract class SectionCompilerMixin {
 
     @WrapOperation(
-            method = "compile(Lnet/minecraft/core/SectionPos;Lnet/minecraft/client/renderer/chunk/RenderChunkRegion;Lcom/mojang/blaze3d/vertex/VertexSorting;Lnet/minecraft/client/renderer/SectionBufferBuilderPack;Ljava/util/List;)Lnet/minecraft/client/renderer/chunk/SectionCompiler$Results;",
+            method = "compile",
             at = @At(
                     value = "INVOKE",
                     ordinal = 0,

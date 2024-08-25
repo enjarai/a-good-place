@@ -6,8 +6,7 @@
   "mixins": [
   ],
   "client": [
-    "sodium.BlockOcclusionCacheMixin",
-    "sodium.BlockRendererMixin"
+    "SectionCompilerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

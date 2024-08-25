@@ -1,4 +1,4 @@
-package nl.enjarai.a_good_place.mixins.fabric.sodium;
+package nl.enjarai.a_good_place.mixin.sodium;
 
 import net.caffeinemc.mods.sodium.client.render.chunk.compile.ChunkBuildBuffers;
 import net.caffeinemc.mods.sodium.client.render.chunk.compile.pipeline.BlockRenderContext;
