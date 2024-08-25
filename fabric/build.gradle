@@ -26,7 +26,7 @@ dependencies {
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 
-    modRuntimeOnly("maven.modrinth:sodium:mc1.21-0.6.0-beta.1-fabric")
+    modCompileOnly("maven.modrinth:sodium:mc1.21-0.6.0-beta.1-fabric")
 
 }
 

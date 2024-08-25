@@ -1,6 +1,7 @@
 package nl.enjarai.a_good_place.pack.state_tests;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
@@ -13,8 +14,8 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTestType;
 
 public record MatchingState(BlockState blockState) implements BlockStatePredicate {
 
-    public static final Codec<MatchingState> CODEC = BlockState.CODEC.fieldOf("block_state")
-            .xmap(MatchingState::new, MatchingState::blockState).codec();
+    public static final MapCodec<MatchingState> CODEC = BlockState.CODEC.fieldOf("block_state")
+            .xmap(MatchingState::new, MatchingState::blockState);
 
 
     @Override

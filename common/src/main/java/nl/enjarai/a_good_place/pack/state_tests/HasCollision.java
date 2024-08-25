@@ -1,6 +1,7 @@
 package nl.enjarai.a_good_place.pack.state_tests;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -8,7 +9,7 @@ import net.minecraft.world.level.block.state.BlockState;
 public class HasCollision implements BlockStatePredicate {
 
     public static final HasCollision INSTANCE = new HasCollision();
-    public static final Codec<HasCollision> CODEC = Codec.unit(INSTANCE);
+    public static final MapCodec<HasCollision> CODEC = MapCodec.unit(INSTANCE);
 
 
     @Override

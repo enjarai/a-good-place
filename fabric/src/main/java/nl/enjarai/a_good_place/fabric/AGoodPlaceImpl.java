@@ -43,7 +43,8 @@ public class AGoodPlaceImpl implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         WorldRenderEvents.AFTER_ENTITIES.register((context) -> {
-            BlocksParticlesManager.renderParticles(context.matrixStack(), context.tickDelta());
+            BlocksParticlesManager.renderParticles(context.matrixStack(), context.tickCounter()
+                    .getGameTimeDeltaPartialTick(false));
         });
         ClientLifecycleEvents.CLIENT_STARTED.register(AGoodPlace::onSetup);
         ClientTickEvents.END_WORLD_TICK.register(BlocksParticlesManager::tickParticles);

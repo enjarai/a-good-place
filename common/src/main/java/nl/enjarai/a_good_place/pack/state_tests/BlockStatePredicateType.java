@@ -2,12 +2,13 @@ package nl.enjarai.a_good_place.pack.state_tests;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.MapCodec;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public record BlockStatePredicateType<T extends BlockStatePredicate>(Codec<T> codec, String name) {
+public record BlockStatePredicateType<T extends BlockStatePredicate>(MapCodec<T> codec, String name) {
 
     public static final Codec<BlockStatePredicateType<?>> CODEC = Codec.STRING.flatXmap(
             (name) -> BlockStatePredicateType.get(name).map(DataResult::success).orElseGet(
@@ -16,7 +17,7 @@ public record BlockStatePredicateType<T extends BlockStatePredicate>(Codec<T> co
 
     private static final Map<String, BlockStatePredicateType<?>> TYPES = new HashMap<>();
 
-    public static <B extends BlockStatePredicate> BlockStatePredicateType<B> register(String name, Codec<B> codec) {
+    public static <B extends BlockStatePredicate> BlockStatePredicateType<B> register(String name, MapCodec<B> codec) {
         BlockStatePredicateType<B> value = new BlockStatePredicateType<>(codec, name);
         TYPES.put(name, value);
         return value;

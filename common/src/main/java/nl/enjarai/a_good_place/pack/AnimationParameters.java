@@ -1,5 +1,6 @@
 package nl.enjarai.a_good_place.pack;
 
+import com.google.gson.JsonParseException;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.Dynamic;
@@ -107,9 +108,9 @@ public record AnimationParameters(LazyList<?, BlockStatePredicate> predicates, i
 
             var res = codec.listOf().decode(RegistryOps.create(toDecode.getOps(), registryAccess), toDecode.getValue());
             try {
-                objects = res.getOrThrow(false, s -> {
-                    AGoodPlace.LOGGER.error("Could not decode block list for placement animation - error: {}", s);
-                }).getFirst();
+                objects = res.getOrThrow(s ->
+                        new JsonParseException("Could not decode block list for placement animation - error: {}" + s)
+                ).getFirst();
             } catch (Exception ignored) {
             }
         }

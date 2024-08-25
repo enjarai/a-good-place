@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import nl.enjarai.a_good_place.AGoodPlace;
 import nl.enjarai.a_good_place.pack.AnimationParameters;
 import nl.enjarai.a_good_place.pack.AnimationsManager;
+import org.joml.Matrix4fStack;
 
 import java.util.*;
 
@@ -110,9 +111,9 @@ public class BlocksParticlesManager {
 
         // lightTexture.turnOnLightLayer();
         RenderSystem.enableDepthTest();
-        PoseStack poseStack2 = RenderSystem.getModelViewStack();
-        poseStack2.pushPose();
-        poseStack2.mulPoseMatrix(poseStack.last().pose());
+        Matrix4fStack poseStack2 = RenderSystem.getModelViewStack();
+        poseStack2.pushMatrix();
+        poseStack2.mul(poseStack.last().pose());
         RenderSystem.applyModelViewMatrix();
 
         for (var p : PARTICLES.values()) {
@@ -121,7 +122,7 @@ public class BlocksParticlesManager {
         bufferSource.endBatch();
 
 
-        poseStack2.popPose();
+        poseStack2.popMatrix();
         RenderSystem.applyModelViewMatrix();
         RenderSystem.depthMask(true);
         RenderSystem.disableBlend();

@@ -2,6 +2,7 @@ package nl.enjarai.a_good_place.pack;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -38,8 +39,9 @@ public class AnimationsManager extends SimpleJsonResourceReloadListener {
             var id = j.getKey();
 
             AnimationParameters effect = AnimationParameters.CODEC.decode(JsonOps.INSTANCE, json)
-                    .getOrThrow(false, errorMsg ->
-                            AGoodPlace.LOGGER.warn("Could not decode Block Placement Animation with json id {} - error: {} - json: {}", id, errorMsg, j))
+                    .getOrThrow(errorMsg ->
+                            new JsonParseException(
+                                    "Could not decode Block Placement Animation with json id " + id + " - error: " + errorMsg + " - json: " + j))
                     .getFirst();
 
             ANIMATIONS.add(effect);

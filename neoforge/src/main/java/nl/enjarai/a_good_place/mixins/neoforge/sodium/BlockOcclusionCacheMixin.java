@@ -1,12 +1,12 @@
 package nl.enjarai.a_good_place.mixins.neoforge.sodium;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import me.jellysquid.mods.sodium.client.render.chunk.compile.pipeline.BlockOcclusionCache;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import nl.enjarai.a_good_place.particles.BlocksParticlesManager;
+import org.embeddedt.embeddium.impl.render.chunk.compile.pipeline.BlockOcclusionCache;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;

@@ -10,7 +10,7 @@
     "BlockEntityRendererDispatcherMixin",
     "BlockItemMixin",
     "BlockMixin",
-    "RebuildTaskMixin"
+    "SectionCompilerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
