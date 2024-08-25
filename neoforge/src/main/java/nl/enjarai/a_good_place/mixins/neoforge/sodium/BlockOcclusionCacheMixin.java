@@ -1,4 +1,4 @@
-package nl.enjarai.a_good_place.mixins.forge.sodium;
+package nl.enjarai.a_good_place.mixins.neoforge.sodium;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.pipeline.BlockOcclusionCache;
