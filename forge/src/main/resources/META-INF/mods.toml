@@ -26,7 +26,7 @@ issueTrackerURL = "${mod_github}/issues"
 [[dependencies.a_good_place]]
     modId = "minecraft"
     mandatory = true
-    versionRange = "[${minecraft_min_version},${minecraft_max_version})"
+    versionRange = "[${minecraft_min_version},${minecraft_max_version}]"
     ordering = "NONE"
     side = "CLIENT"
 
