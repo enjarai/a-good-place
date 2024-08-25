@@ -1,4 +1,4 @@
-package nl.enjarai.a_good_place.mixins.forge.sodium;
+package nl.enjarai.a_good_place.mixins.neoforge.sodium;
 
 import me.jellysquid.mods.sodium.client.render.chunk.compile.ChunkBuildBuffers;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.pipeline.BlockRenderContext;

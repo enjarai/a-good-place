@@ -28,7 +28,7 @@ public class AGoodPlace {
     public static boolean IS_DEV = false;
 
     public static ResourceLocation res(String path) {
-        return new ResourceLocation(MOD_ID, path);
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
     }
 
     @ExpectPlatform
@@ -67,6 +67,6 @@ public class AGoodPlace {
     }
 
     public static void onSetup(Minecraft minecraft) {
-        bubbleBlock = BuiltInRegistries.BLOCK.get(new ResourceLocation("supplementaries", "bubble_block"));
+        bubbleBlock = BuiltInRegistries.BLOCK.get(ResourceLocation.fromNamespaceAndPath("supplementaries", "bubble_block"));
     }
 }
