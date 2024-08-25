@@ -147,6 +147,50 @@ public class AGoodPlaceImpl {
         );
     }
 
+    public static void registerOptionalTexturePack(ResourceLocation folderName, Component displayName, boolean defaultEnabled) {
+        Moonlight.assertInitPhase();
+
+        PlatHelper.registerResourcePack(PackType.CLIENT_RESOURCES,
+                () -> {
+                    IModFile file = ModList.get().getModFileById(folderName.getNamespace()).getFile();
+                    PackLocationInfo locationInfo = new PackLocationInfo(
+                            folderName.toString(),
+                            displayName,
+                            PackSource.BUILT_IN,
+                            Optional.empty()
+                    );
+                    try (PathPackResources pack = new PathPackResources(
+                            locationInfo,
+                            file.findResource("resourcepacks/" + folderName.getPath()))) {
+                        return Pack.readMetaAndCreate(
+                                locationInfo,
+                                new Pack.ResourcesSupplier() {
+                                    @Override
+                                    public PackResources openPrimary(PackLocationInfo location) {
+                                        return pack;
+                                    }
+
+                                    @Override
+                                    public PackResources openFull(PackLocationInfo location, Pack.Metadata metadata) {
+                                        return pack;
+                                    }
+                                },
+                                PackType.CLIENT_RESOURCES,
+                                new PackSelectionConfig(
+                                        defaultEnabled,
+                                        Pack.Position.TOP,
+                                        false
+                                ));
+                    } catch (Exception ee) {
+                        if (!DatagenModLoader.isRunningDataGen()) ee.printStackTrace();
+                    }
+                    return null;
+                }
+        );
+    }
+
+
+
     public static void registerResourcePack(PackType packType, @Nullable Supplier<Pack> packSupplier) {
         if (packSupplier == null) return;
         var bus = FMLJavaModLoadingContext.get().getModEventBus();
