@@ -1,1 +1,1 @@
-fixed default animation angles being in radiants instead of degrees
+fixed some issues
