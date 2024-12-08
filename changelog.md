@@ -1,1 +1,2 @@
-updated to 1.21
+improved logic for block entities
+fixed an issue
