@@ -11,12 +11,15 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import nl.enjarai.a_good_place.AGoodPlace;
 import nl.enjarai.a_good_place.pack.AnimationParameters;
 import nl.enjarai.a_good_place.pack.AnimationsManager;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 // static class so we have 1 less method call for get instance as isHidden will be called a lot
@@ -43,12 +46,20 @@ public class BlocksParticlesManager {
             if (camera.getPosition().distanceToSqr(pos.getCenter()) <= 1024.0) {
                 var p = new ConfiguredPlacingParticle(level, pos, face, player, hand, param);
 
-                var old = BlocksParticlesManager.PARTICLES.put(pos, p);
-                if (old != null){
+                var old = PARTICLES.put(pos, p);
+                if (old != null) {
                     old.remove();
                 }
-                BlocksParticlesManager.hideBlock(pos);
 
+                //dont hide stuff with tile renderer (hiding will make tile renderer disappear too)
+                boolean isJustModel = state.getRenderShape() == RenderShape.MODEL;
+
+                if (isJustModel) {
+                    p.canRender = true;
+                    hideBlock(pos);
+                } else {
+                    p.canRender = false;
+                }
 
                 if (AGoodPlace.RENDER_AS_VANILLA_PARTICLES) {
                     Minecraft.getInstance().particleEngine.add(p);

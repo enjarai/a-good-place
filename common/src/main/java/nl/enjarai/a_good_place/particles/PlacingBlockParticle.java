@@ -28,6 +28,7 @@ public abstract class PlacingBlockParticle extends Particle {
     private final long seed;
     private final BlockRenderDispatcher renderer;
     protected int extraLifeTicks = 0;
+    public boolean canRender;
 
 
     public PlacingBlockParticle(ClientLevel world, BlockPos blockPos, Direction face) {
@@ -50,7 +51,7 @@ public abstract class PlacingBlockParticle extends Particle {
 
     @Override
     public void tick() {
-        if (this.removed){
+        if (this.removed) {
             return;
         }
         age++;
@@ -70,6 +71,7 @@ public abstract class PlacingBlockParticle extends Particle {
 
     @Override
     public void render(VertexConsumer buffer, Camera camera, float partialTicks) {
+        if (!this.canRender) return;
         PoseStack poseStack = new PoseStack();
 
         var cameraPos = camera.getPosition();
