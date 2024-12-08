@@ -60,7 +60,7 @@ public class AnimationsManager extends SimpleJsonResourceReloadListener<Animatio
                     new Vec3(0.1, 0.2, 0.2), 0.9f,
                     new Vec3(0, -0.1, 0.1),
                     new Vec3(0.5, -0.5, 0.5), -0.08f,
-                    1, 0, Optional.empty());
+                    1, 0,true, Optional.empty());
             if (a.matches(blockState, pos, level)) {
                 return a;
             } else return null;
