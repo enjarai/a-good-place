@@ -97,5 +97,6 @@ dependencies {
     implementation 'org.jetbrains:annotations:22.0.0'
 
     modCompileOnly "curse.maven:embeddium-908741:5630163"
+    modImplementation "curse.maven:farmers-delight-398521:5878217"
 
 }

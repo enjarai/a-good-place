@@ -18,13 +18,14 @@ import nl.enjarai.a_good_place.pack.AnimationsManager;
 import org.joml.Matrix4fStack;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 // static class so we have 1 less method call for get instance as isHidden will be called a lot
 public class BlocksParticlesManager {
 
     protected static final Map<BlockPos, PlacingBlockParticle> PARTICLES = new HashMap<>();
     //replace each time so its thread safe. Supposedly faster than a concurrent set
-    private static Set<BlockPos> hiddenBlocks = Set.of();
+    private static final Set<BlockPos> HIDDEN_BLOCKS = new CopyOnWriteArraySet<>();
 
 
     public static void addParticle(BlockState state, BlockPos pos, ClientLevel level, Direction face, Player player, InteractionHand hand) {
@@ -58,22 +59,17 @@ public class BlocksParticlesManager {
     }
 
     public static void hideBlock(BlockPos pos) {
-        Set<BlockPos> list = new HashSet<>(hiddenBlocks);
-        var success = list.add(pos);
-        if (success) {
-            hiddenBlocks = Set.of(list.toArray(new BlockPos[0]));
-        }
+        HIDDEN_BLOCKS.add(pos);
     }
 
     public static boolean isBlockHidden(BlockPos pos) {
-        return hiddenBlocks.contains(pos);
+        return HIDDEN_BLOCKS.contains(pos);
     }
 
     public static void unHideBlock(BlockPos pos) {
-        ArrayList<BlockPos> list = new ArrayList<>(hiddenBlocks);
-        var success = list.remove(pos);
+        boolean success = HIDDEN_BLOCKS.remove(pos);
+        PARTICLES.remove(pos);
         if (success) {
-            hiddenBlocks = Set.of(list.toArray(new BlockPos[0]));
             markBlockForRender(pos);
         }
     }
@@ -142,6 +138,6 @@ public class BlocksParticlesManager {
 
     public static void clear() {
         PARTICLES.clear();
-        hiddenBlocks = Set.of();
+        HIDDEN_BLOCKS.clear();
     }
 }
