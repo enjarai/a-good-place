@@ -82,7 +82,9 @@ public class ConfiguredPlacingParticle extends PlacingBlockParticle {
         }
         Vector3f slideDir = tr.mul(changeOfBasis);
 
-        slideDir = adjustDirectionBasedOnNeighbors(level, placer, slideDir);
+        if(params.restrictDirection()) {
+            slideDir = adjustDirectionBasedOnNeighbors(level, placer, slideDir);
+        }
 
         //config here
         Vec3 animationDirection = new Vec3(slideDir.normalize());

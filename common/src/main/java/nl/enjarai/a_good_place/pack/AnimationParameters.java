@@ -26,6 +26,7 @@ public record AnimationParameters(LazyList<?, BlockStatePredicate> predicates, i
                                   Vec3 rotation, Vec3 pivot,
                                   float rotationCurve,
                                   float heightStart, float heightCurve,
+                                  boolean restrictDirection,
                                   Optional<Holder<SoundEvent>> sound
 ) {
 
@@ -58,6 +59,7 @@ public record AnimationParameters(LazyList<?, BlockStatePredicate> predicates, i
             StrOpt.of(FLOAT_CODEC, "rotation_curve", 0.5f).forGetter(AnimationParameters::rotationCurve),
             StrOpt.of(Codec.floatRange(0, 10), "height", 1f).forGetter(AnimationParameters::heightStart),
             StrOpt.of(FLOAT_CODEC, "height_curve", 0.5f).forGetter(AnimationParameters::heightCurve),
+            StrOpt.of(Codec.BOOL, "restrict_direction", true).forGetter(AnimationParameters::restrictDirection),
             StrOpt.of(SoundEvent.CODEC, "sound").forGetter(AnimationParameters::sound)
     ).apply(instance, AnimationParameters::new));
 
