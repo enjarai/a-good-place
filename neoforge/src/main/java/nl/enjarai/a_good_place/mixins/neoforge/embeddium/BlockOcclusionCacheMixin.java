@@ -23,7 +23,7 @@ public abstract class BlockOcclusionCacheMixin {
                     remap = true,
                     shift = At.Shift.AFTER,
                     args = {"log=true"},
-                    target = "Lnet/minecraft/core/BlockPos$MutableBlockPos;set(III)Lnet/minecraft/core/BlockPos$MutableBlockPos;"),
+                    target = "Lnet/minecraft/world/level/BlockGetter;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;"),
             remap = false,
             cancellable = true
     )

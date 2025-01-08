@@ -14,6 +14,7 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(SectionCompiler.class)
 public abstract class SectionCompilerMixin {
 
+    /*
     @WrapOperation(
             method = "compile",
             at = @At(
@@ -24,9 +25,8 @@ public abstract class SectionCompilerMixin {
     )
     private BlockState wonkyblock$hideBlock(RenderChunkRegion instance, BlockPos arg, Operation<BlockState> original) {
         if ( BlocksParticlesManager.isBlockHidden(arg)) {
-
             return Blocks.AIR.defaultBlockState();
         }
         return original.call(instance, arg);
-    }
+    }*/
 }

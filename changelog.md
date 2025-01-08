@@ -1,2 +1,1 @@
-improved logic for block entities
-fixed an issue
+many things change. this version of the mod is a lot weaker than 1.21 due to loss of context in many vanilla calls that was done in 1.21.4. unfortunately means that the mod will generally look a bit worse in places or could not look right 

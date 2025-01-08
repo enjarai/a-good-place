@@ -68,17 +68,20 @@ public abstract class PlacingBlockParticle extends Particle {
         }
     }
 
-
     @Override
     public void render(VertexConsumer buffer, Camera camera, float partialTicks) {
+    }
+
+    @Override
+    public void renderCustom(PoseStack poseStack, MultiBufferSource multiBufferSource, Camera camera, float partialTicks) {
         if (!this.canRender) return;
-        PoseStack poseStack = new PoseStack();
 
         var cameraPos = camera.getPosition();
         float px = (float) (Mth.lerp(partialTicks, this.xo, this.x) - cameraPos.x());
         float py = (float) (Mth.lerp(partialTicks, this.yo, this.y) - cameraPos.y());
         float pz = (float) (Mth.lerp(partialTicks, this.zo, this.z) - cameraPos.z());
 
+        poseStack.pushPose();
         poseStack.translate(px, py, pz);
 
         applyAnimation(poseStack, partialTicks);
@@ -88,6 +91,8 @@ public abstract class PlacingBlockParticle extends Particle {
         AGoodPlace.renderBlock(model, seed, poseStack, bufferSource, blockState, level, pos, renderer);
 
         if (AGoodPlace.RENDER_AS_VANILLA_PARTICLES) Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
+
+        poseStack.popPose();
     }
 
 

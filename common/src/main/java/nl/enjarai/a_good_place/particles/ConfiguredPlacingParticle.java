@@ -100,7 +100,6 @@ public class ConfiguredPlacingParticle extends PlacingBlockParticle {
 
     @Override
     public void applyAnimation(PoseStack poseStack, float time, float partialTicks) {
-
         poseStack.translate(0.5, 0.5, 0.5);
         Vec3 offset = blockState.getOffset(pos);
 

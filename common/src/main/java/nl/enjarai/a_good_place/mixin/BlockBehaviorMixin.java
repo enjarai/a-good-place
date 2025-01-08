@@ -11,6 +11,7 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(BlockBehaviour.BlockStateBase.class)
 public abstract class BlockBehaviorMixin {
 
+    /*
     @ModifyReturnValue(
             method = "isSolidRender",
             at = @At("RETURN")
@@ -20,5 +21,5 @@ public abstract class BlockBehaviorMixin {
             return false;
         }
         return original;
-    }
+    }*/
 }
