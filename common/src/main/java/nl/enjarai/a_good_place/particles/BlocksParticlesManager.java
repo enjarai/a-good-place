@@ -121,7 +121,7 @@ public class BlocksParticlesManager {
         Matrix4fStack poseStack2 = RenderSystem.getModelViewStack();
         poseStack2.pushMatrix();
         poseStack2.mul(poseStack.last().pose());
-        RenderSystem.applyModelViewMatrix();
+       // RenderSystem.applyModelViewMatrix();
 
         for (var p : PARTICLES.values()) {
             p.render(null, camera, tickDelta);
@@ -130,7 +130,7 @@ public class BlocksParticlesManager {
 
 
         poseStack2.popMatrix();
-        RenderSystem.applyModelViewMatrix();
+    //    RenderSystem.applyModelViewMatrix();
         RenderSystem.depthMask(true);
         RenderSystem.disableBlend();
         // lightTexture.turnOffLightLayer();

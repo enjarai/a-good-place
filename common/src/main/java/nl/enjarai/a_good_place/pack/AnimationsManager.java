@@ -7,6 +7,7 @@ import com.mojang.serialization.JsonOps;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -22,27 +23,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class AnimationsManager extends SimpleJsonResourceReloadListener {
+public class AnimationsManager extends SimpleJsonResourceReloadListener<AnimationParameters> {
 
     private static final List<AnimationParameters> ANIMATIONS = new ArrayList<>();
 
     public AnimationsManager() {
-        super(new Gson(), "placement_animations");
+        super(AnimationParameters.CODEC, FileToIdConverter.json("placement_animations"));
     }
 
     @Override
-    protected void apply(Map<ResourceLocation, JsonElement> jsons, ResourceManager resourceManager, ProfilerFiller profiler) {
+    protected void apply(Map<ResourceLocation, AnimationParameters> jsons, ResourceManager resourceManager, ProfilerFiller profiler) {
         ANIMATIONS.clear();
 
         for (var j : jsons.entrySet()) {
-            var json = j.getValue();
-            var id = j.getKey();
-
-            AnimationParameters effect = AnimationParameters.CODEC.decode(JsonOps.INSTANCE, json)
-                    .getOrThrow(errorMsg ->
-                            new JsonParseException(
-                                    "Could not decode Block Placement Animation with json id " + id + " - error: " + errorMsg + " - json: " + j))
-                    .getFirst();
+            var effect = j.getValue();
 
             ANIMATIONS.add(effect);
         }

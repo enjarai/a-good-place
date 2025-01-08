@@ -102,7 +102,7 @@ public class ConfiguredPlacingParticle extends PlacingBlockParticle {
     public void applyAnimation(PoseStack poseStack, float time, float partialTicks) {
 
         poseStack.translate(0.5, 0.5, 0.5);
-        Vec3 offset = blockState.getOffset(level, pos);
+        Vec3 offset = blockState.getOffset(pos);
 
         poseStack.translate(offset.x, offset.y, offset.z);
 

@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
@@ -67,6 +68,7 @@ public class AGoodPlace {
     }
 
     public static void onSetup(Minecraft minecraft) {
-        bubbleBlock = BuiltInRegistries.BLOCK.get(ResourceLocation.fromNamespaceAndPath("supplementaries", "bubble_block"));
+        bubbleBlock = BuiltInRegistries.BLOCK.get(ResourceLocation.fromNamespaceAndPath("supplementaries", "bubble_block"))
+                .map(Holder.Reference::value).orElse(null);
     }
 }
