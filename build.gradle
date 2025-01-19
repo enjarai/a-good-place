@@ -2,32 +2,53 @@ plugins {
     id "architectury-plugin" version "3.4-SNAPSHOT"
     id "dev.architectury.loom" version "1.7-SNAPSHOT" apply false
     id 'io.github.juuxel.loom-quiltflower' version '1.7.1' apply false
+    id 'io.github.juuxel.loom-vineflower' version '1.11.0' apply false
     id "com.matthewprenger.cursegradle" version "1.4.0"
     id "com.modrinth.minotaur" version "2.+"
+    id "com.github.breadmoirai.github-release" version "2.4.1"
 }
+
 
 architectury {
     minecraft = minecraft_version
 }
 
-static def listGameVersions(String string1, String string2) {
-    // Extract the base version and the starting and ending patch numbers
-    String baseVersion = string1
-    int startPatch = 0
-    int endPatch = Integer.parseInt(string2.split('\\.')[2])
+repositories{
+    mavenCentral()
+}
 
-    // Initialize an array to hold the generated versions
-    def versions = []
-
-    // Add the base version (string1) to the array
-    versions << baseVersion
-
-    // Generate and add the patch versions
-    for (int i = startPatch + 1; i <= endPatch; i++) {
-        versions << "${baseVersion}.${i}"
+static def listGameVersions(String minVersion, String maxVersion) {
+    def parseVersion = { version ->
+        def parts = version.split('\\.').collect { it as Integer }
+        if (parts.size() == 2) parts << 0 // Treat X.Y as X.Y.0
+        parts
     }
 
-    // Return the generated versions
+    def minParts = parseVersion(minVersion)
+    def maxParts = parseVersion(maxVersion)
+
+    def versions = []
+    def currentVersion = minParts.clone()
+
+    // Helper function to compare versions
+    def isLessThanOrEqual = { a, b ->
+        for (int i = 0; i < a.size(); i++) {
+            if (a[i] < b[i]) return true
+            if (a[i] > b[i]) return false
+        }
+        return true
+    }
+
+    while (isLessThanOrEqual(currentVersion, maxParts)) {
+        versions << currentVersion.join('.')
+        currentVersion[2]++ // Increment last part
+
+        if (currentVersion[2] > maxParts[2] && currentVersion[1] < maxParts[1]) {
+            currentVersion[1]++  // Increment middle part if we've exceeded the last part max
+            currentVersion[2] = 0
+        }
+    }
+
     return versions
 }
 
@@ -47,7 +68,7 @@ subprojects {
             it.officialMojangMappings {
                 setNameSyntheticMembers(false)
             }
-            //it.parchment("org.parchmentmc.data:parchment-${parchment_version}")
+            it.parchment("org.parchmentmc.data:parchment-${parchment_version}")
         }
     }
 
@@ -63,14 +84,12 @@ subprojects {
         modrinth {
             projectId = "a-good-place"
             uploadFile = tasks.remapJar
-            additionalFiles.add(tasks.remapSourcesJar)
             gameVersions = versions
             if (modLoader == "forge") {
                 loaders = ["neoforge"]
             } else loaders = [modLoader]
             changelog = changelogText
-            versionNumber = modLoader +"_"+ mod_version
-            versionType = release_type
+
             if (modLoader == "fabric") {
                 dependencies {
                     required.project "fabric-api"
@@ -88,18 +107,16 @@ subprojects {
             project {
                 id = project_id
                 changelog = changelogText
-                releaseType = release_type
-                for (var ver : versions){
-                    addGameVersion ver
+                releaseType = 'release'
+                for(v in versions) {
+                    addGameVersion v
                 }
-
 
                 if (modLoader == "neoforge") {
                     addGameVersion("NeoForge")
                 } else addGameVersion modLoader.capitalize()
 
                 mainArtifact(tasks.remapJar)
-                addArtifact(tasks.remapSourcesJar)
 
                 if (modLoader == "fabric") {
                     relations {
@@ -128,8 +145,9 @@ allprojects {
             dirs 'mods'
         }
 
-        mavenLocal()
         mavenCentral()
+
+        mavenLocal()
 
         maven { url "https://maven.parchmentmc.org" }
 
@@ -165,7 +183,7 @@ allprojects {
 
     tasks.withType(JavaCompile) {
         options.encoding = "UTF-8"
-        options.release = rootProject.java_version.toInteger()
+        options.release = 21
     }
 
     java {

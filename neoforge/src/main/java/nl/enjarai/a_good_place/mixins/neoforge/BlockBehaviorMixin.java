@@ -1,4 +1,4 @@
-package nl.enjarai.a_good_place.mixin;
+package nl.enjarai.a_good_place.mixins.neoforge;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;

@@ -1,4 +1,4 @@
-package nl.enjarai.a_good_place.mixin;
+package nl.enjarai.a_good_place.mixins.fabric;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -15,7 +15,8 @@ import org.spongepowered.asm.mixin.injection.At;
 public abstract class ModelBlockRendererMixin {
     @WrapOperation(
             method = "tesselateWithoutAO",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/Block;shouldRenderFace(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;)Z")
+            at = @At(value = "INVOKE",
+                    target = "Lnet/minecraft/world/level/block/Block;shouldRenderFace(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;)Z")
     )
     private boolean wonkyblock$overrideCulling(BlockState blockState, BlockState blockState2, Direction direction, Operation<Boolean> operation,
                                                @Local(argsOnly = true) BlockPos pos) {
