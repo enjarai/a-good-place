@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.chunk.RenderChunkRegion;
 import net.minecraft.client.renderer.chunk.SectionCompiler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import nl.enjarai.a_good_place.particles.BlocksParticlesManager;
 import org.spongepowered.asm.mixin.Mixin;
@@ -16,19 +17,18 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(SectionCompiler.class)
 public abstract class SectionCompilerMixin {
 
-    @WrapOperation(
+    @ModifyExpressionValue(
             method = "compile(Lnet/minecraft/core/SectionPos;Lnet/minecraft/client/renderer/chunk/RenderChunkRegion;Lcom/mojang/blaze3d/vertex/VertexSorting;Lnet/minecraft/client/renderer/SectionBufferBuilderPack;Ljava/util/List;)Lnet/minecraft/client/renderer/chunk/SectionCompiler$Results;",
             at = @At(
                     value = "INVOKE",
-                    ordinal = 0,
-                    target = "Lnet/minecraft/client/renderer/chunk/RenderChunkRegion;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;"
+                    target = "Lnet/minecraft/world/level/block/state/BlockState;getRenderShape()Lnet/minecraft/world/level/block/RenderShape;"
             )
     )
-    private BlockState wonkyblock$hideBlock(RenderChunkRegion instance, BlockPos arg, Operation<BlockState> original) {
-        if (BlocksParticlesManager.isBlockHidden(arg)) {
-            return Blocks.AIR.defaultBlockState();
+    private RenderShape aGoodPlace$hideBlock(RenderShape original, @Local(ordinal = 2) BlockPos pos) {
+        if (original != RenderShape.INVISIBLE && BlocksParticlesManager.isBlockHidden(pos)) {
+            return RenderShape.INVISIBLE;
         }
-        return original.call(instance, arg);
+        return original;
     }
 
     @ModifyExpressionValue(method = "compile(Lnet/minecraft/core/SectionPos;Lnet/minecraft/client/renderer/chunk/RenderChunkRegion;Lcom/mojang/blaze3d/vertex/VertexSorting;Lnet/minecraft/client/renderer/SectionBufferBuilderPack;Ljava/util/List;)Lnet/minecraft/client/renderer/chunk/SectionCompiler$Results;", at = @At(value = "INVOKE",

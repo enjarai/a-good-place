@@ -20,7 +20,7 @@ public abstract class BlockRenderInfoMixin {
             at = @At(value = "HEAD"),
             cancellable = true
     )
-    private void wonkyblock$overrideCulling(Direction side, CallbackInfoReturnable<Boolean> cir) {
+    private void aGoodPlace$overrideCulling(Direction side, CallbackInfoReturnable<Boolean> cir) {
         if (BlocksParticlesManager.isBlockHidden(blockPos)) {
             cir.setReturnValue(false);
         }

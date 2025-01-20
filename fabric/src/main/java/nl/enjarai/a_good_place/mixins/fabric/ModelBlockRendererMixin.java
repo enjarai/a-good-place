@@ -18,7 +18,7 @@ public abstract class ModelBlockRendererMixin {
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/world/level/block/Block;shouldRenderFace(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;)Z")
     )
-    private boolean wonkyblock$overrideCulling(BlockState blockState, BlockState blockState2, Direction direction, Operation<Boolean> operation,
+    private boolean aGoodPlace$overrideCulling(BlockState blockState, BlockState blockState2, Direction direction, Operation<Boolean> operation,
                                                @Local(argsOnly = true) BlockPos pos) {
         if (BlocksParticlesManager.isBlockHidden(pos)) {
             return false;
@@ -30,7 +30,7 @@ public abstract class ModelBlockRendererMixin {
             method = "tesselateWithAO",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/Block;shouldRenderFace(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;)Z")
     )
-    private boolean wonkyblock$overrideCullingAO(BlockState blockState, BlockState blockState2, Direction direction, Operation<Boolean> operation,
+    private boolean aGoodPlace$overrideCullingAO(BlockState blockState, BlockState blockState2, Direction direction, Operation<Boolean> operation,
                                                @Local(argsOnly = true) BlockPos pos) {
         if (BlocksParticlesManager.isBlockHidden(pos)) {
             return false;

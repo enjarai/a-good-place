@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import nl.enjarai.a_good_place.particles.BlocksParticlesManager;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,8 +19,8 @@ public abstract class BlockMixin {
             at = @At("HEAD"),
             cancellable = true
     )
-    private static void wonkyblock$overrideCulling(BlockGetter level, BlockPos pos, BlockState arg, BlockState arg2, Direction arg3, CallbackInfoReturnable<Boolean> cir) {
-        if (BlocksParticlesManager.isBlockHidden(pos)) {
+    private static void aGoodPlace$overrideCulling(BlockGetter level, BlockPos pos, BlockState arg, BlockState arg2, Direction dir, CallbackInfoReturnable<Boolean> cir) {
+        if (!arg2.is(Blocks.AIR) && BlocksParticlesManager.isBlockHidden(pos.relative(dir))) {
             cir.setReturnValue(true);
         }
     }
