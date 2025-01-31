@@ -36,7 +36,6 @@ public abstract class SectionCompilerMixin {
         if (isSolid && BlocksParticlesManager.isBlockHidden(pos)) {
             return false;
         }
-        // Insert your code here
         return isSolid;
     }
 }

@@ -1,5 +1,6 @@
 package nl.enjarai.a_good_place.mixins.fabric;
 
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -13,29 +14,22 @@ import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(ModelBlockRenderer.class)
 public abstract class ModelBlockRendererMixin {
-    @WrapOperation(
+
+    @WrapWithCondition(
             method = "tesselateWithoutAO",
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/world/level/block/Block;shouldRenderFace(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;)Z")
     )
-    private boolean aGoodPlace$overrideCulling(BlockState blockState, BlockState blockState2, Direction direction, Operation<Boolean> operation,
-                                               @Local(argsOnly = true) BlockPos pos) {
-        if (BlocksParticlesManager.isBlockHidden(pos)) {
-            return false;
-        }
-        return operation.call(blockState, blockState2, direction);
+    private boolean aGoodPlace$overrideCulling(BlockState blockState, BlockState blockState2, Direction direction, @Local(argsOnly = true) BlockPos pos) {
+        return !BlocksParticlesManager.isBlockHidden(pos);
     }
 
-    @WrapOperation(
+    @WrapWithCondition(
             method = "tesselateWithAO",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/Block;shouldRenderFace(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;)Z")
     )
-    private boolean aGoodPlace$overrideCullingAO(BlockState blockState, BlockState blockState2, Direction direction, Operation<Boolean> operation,
-                                               @Local(argsOnly = true) BlockPos pos) {
-        if (BlocksParticlesManager.isBlockHidden(pos)) {
-            return false;
-        }
-        return operation.call(blockState, blockState2, direction);
+    private boolean aGoodPlace$overrideCullingAO(BlockState blockState, BlockState blockState2, Direction direction, @Local(argsOnly = true) BlockPos pos) {
+        return !BlocksParticlesManager.isBlockHidden(pos);
     }
 
 
