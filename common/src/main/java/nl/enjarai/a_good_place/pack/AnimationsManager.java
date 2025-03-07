@@ -59,7 +59,7 @@ public class AnimationsManager extends SimpleJsonResourceReloadListener {
     public static AnimationParameters getAnimation(BlockState blockState, BlockPos pos, Level level) {
 
         //for testing
-        if (AGoodPlace.IS_DEV && false) {
+        if (AGoodPlace.IS_DEV) {
             var a = new AnimationParameters(new AnimationParameters.LazyList<>(null, null),
                     0, 3,
                     1f, -0.7f,
