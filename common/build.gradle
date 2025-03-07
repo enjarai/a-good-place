@@ -22,6 +22,7 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
 
     modImplementation("maven.modrinth:sodium:mc1.21.4-0.6.6-fabric")
+    modImplementation("curse.maven:continuity-531351:6027976")
 
 }
 
