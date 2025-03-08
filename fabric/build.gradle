@@ -31,10 +31,9 @@ dependencies {
     annotationProcessor 'net.fabricmc:sponge-mixin:0.12.5+mixin.0.8.5'
 
     //modImplementation("maven.modrinth:sodium:mc1.20.3-0.5.6")
-    modCompileOnly "curse.maven:embeddium-908741:5321174"
+    modImplementation "curse.maven:embeddium-908741:5630140"
 
-     modImplementation ("curse.maven:continuity-531351:5344958")
-
+     modImplementation ("curse.maven:continuity-531351:5962874")
 }
 
 

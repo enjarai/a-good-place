@@ -13,6 +13,7 @@ import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
@@ -64,8 +65,16 @@ public class AGoodPlaceImpl implements ClientModInitializer {
         AGoodPlace.IS_DEV = FabricLoader.getInstance().isDevelopmentEnvironment();
     }
 
+    private static final boolean CONTINUITY = FabricLoader.getInstance().isModLoaded("continuity");
+
     public static void renderBlock(BakedModel model, long seed, PoseStack poseStack, MultiBufferSource buffer, BlockState state, Level level, BlockPos pos, BlockRenderDispatcher blockRenderer) {
-        blockRenderer.getModelRenderer().tesselateBlock(level, blockRenderer.getBlockModel(state), state, pos, poseStack, buffer.getBuffer(ItemBlockRenderTypes.getMovingBlockRenderType(state)),
+        RenderType movingBlockRenderType = ItemBlockRenderTypes.getMovingBlockRenderType(state);
+        //bs because of FABRIC BUG which makes above method not return correct render type, skipping their OWN API
+        if (CONTINUITY && movingBlockRenderType != RenderType.translucent()) {
+            movingBlockRenderType = RenderType.cutout();
+        }
+        blockRenderer.getModelRenderer().tesselateBlock(level, blockRenderer.getBlockModel(state), state, pos, poseStack,
+                buffer.getBuffer(movingBlockRenderType),
                 false, RandomSource.create(), seed, OverlayTexture.NO_OVERLAY);
     }
 
