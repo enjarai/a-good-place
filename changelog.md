@@ -1,2 +1,1 @@
-improved logic for block entities
-fixed an issue
+when continuity is on all block paticles will render in cutout or translucent layer
