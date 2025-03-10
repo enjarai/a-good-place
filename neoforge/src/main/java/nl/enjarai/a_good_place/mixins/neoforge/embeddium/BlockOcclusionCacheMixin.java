@@ -19,12 +19,12 @@ public abstract class BlockOcclusionCacheMixin {
 
     @Inject(
             method = "shouldDrawSide",
-            at = @At(value = "INVOKE",
-                    remap = true,
-                    shift = At.Shift.AFTER,
-                    args = {"log=true"},
-                    target = "Lnet/minecraft/world/level/BlockGetter;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;"),
-            remap = false,
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/level/BlockGetter;getBlockState(" +
+                            "Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;",
+                    shift = At.Shift.BEFORE
+            ),
             cancellable = true
     )
     private void wonkyblock$overrideCulling(BlockState selfState, BlockGetter view, BlockPos pos, Direction facing,

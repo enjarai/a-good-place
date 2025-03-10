@@ -14,19 +14,22 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Pseudo //won't get loaded if mod isn't there
-@Mixin(value = BlockOcclusionCache.class, priority = 600 ) //for more cullint
+@Mixin(value = BlockOcclusionCache.class, priority = 600 ) //for more culling
 public abstract class BlockOcclusionCacheMixin {
 
+    //same exact place as more culling with lower priority so its not ambiguous
     @Inject(
             method = "shouldDrawSide",
-            at = @At(value = "INVOKE",
-                    shift = At.Shift.AFTER,
-                    remap = true,
-                    target = "Lnet/minecraft/world/level/BlockGetter;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;"),
-            remap = false,
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/level/BlockGetter;getBlockState(" +
+                            "Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;",
+                    shift = At.Shift.BEFORE
+            ),
             cancellable = true
     )
-    private void wonkyblock$overrideCulling(BlockState selfState, BlockGetter view, BlockPos pos, Direction facing, CallbackInfoReturnable<Boolean> cir,
+    private void moreculling$useMoreCulling(BlockState selfState, BlockGetter view, BlockPos pos,
+                                            Direction facing, CallbackInfoReturnable<Boolean> cir,
                                             @Local BlockPos.MutableBlockPos cpos) {
         if (BlocksParticlesManager.isBlockHidden(cpos)){
             cir.setReturnValue(true);
