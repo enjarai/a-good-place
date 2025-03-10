@@ -1,1 +1,1 @@
-fixed an issue on fabric
+lowered mixin priority
