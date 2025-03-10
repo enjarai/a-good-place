@@ -1,1 +1,1 @@
-when continuity is on all block paticles will render in cutout or translucent layer
+lowered mixin priority
