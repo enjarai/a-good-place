@@ -14,16 +14,16 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Pseudo //won't get loaded if mod isn't there
-@Mixin(BlockOcclusionCache.class)
+@Mixin(value = BlockOcclusionCache.class, priority = 600)
 public abstract class BlockOcclusionCacheMixin {
 
     @Inject(
             method = "shouldDrawSide",
             at = @At(value = "INVOKE",
                     remap = true,
-                    shift = At.Shift.AFTER,
+                    shift = At.Shift.BEFORE,
                     args = {"log=true"},
-                    target = "Lnet/minecraft/core/BlockPos$MutableBlockPos;set(III)Lnet/minecraft/core/BlockPos$MutableBlockPos;"),
+                    target = "Lnet/minecraft/world/level/BlockGetter;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;"),
             remap = false,
             cancellable = true
     )
