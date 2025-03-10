@@ -22,7 +22,7 @@ public abstract class BlockOcclusionCacheMixin {
             at = @At(value = "INVOKE",
                     shift = At.Shift.BEFORE,
                     remap = true,
-                    target = "getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;"),
+                    target = "Lnet/minecraft/world/level/BlockGetter;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;"),
             remap = false,
             cancellable = true
     )
