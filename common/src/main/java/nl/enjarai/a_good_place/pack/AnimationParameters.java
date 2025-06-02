@@ -46,21 +46,21 @@ public record AnimationParameters(LazyList<?, BlockStatePredicate> predicates, i
     ).apply(instance, Vec3::new));
 
     public static final Codec<AnimationParameters> CODEC = RecordCodecBuilder.create((instance) -> instance.group(
-            StrOpt.of(LazyList.codec(BlockStatePredicate.CODEC), "predicates", new LazyList<>(null, null))
+            LazyList.codec(BlockStatePredicate.CODEC).optionalFieldOf("predicates", new LazyList<>(null, null))
                     .forGetter(AnimationParameters::predicates),
-            StrOpt.of(Codec.INT, "priority", 0).forGetter(AnimationParameters::priority), // not used
-            StrOpt.of(Codec.intRange(0, 300), "duration", 4).forGetter(AnimationParameters::duration),
-            StrOpt.of(Codec.floatRange(0, 10), "scale", 1f).forGetter(AnimationParameters::scaleStart),
-            StrOpt.of(FLOAT_CODEC, "scale_curve", 0.5f).forGetter(AnimationParameters::scaleCurve),
-            StrOpt.of(VEC_CODEC, "translation", Vec3.ZERO).forGetter(AnimationParameters::translation),
-            StrOpt.of(FLOAT_CODEC, "translation_curve", 0.5f).forGetter(AnimationParameters::translationCurve),
-            StrOpt.of(ANGLE_VEC_CODEC, "rotation", Vec3.ZERO).forGetter(AnimationParameters::rotation),
-            StrOpt.of(VEC_CODEC, "rotation_pivot", Vec3.ZERO).forGetter(AnimationParameters::pivot),
-            StrOpt.of(FLOAT_CODEC, "rotation_curve", 0.5f).forGetter(AnimationParameters::rotationCurve),
-            StrOpt.of(Codec.floatRange(0, 10), "height", 1f).forGetter(AnimationParameters::heightStart),
-            StrOpt.of(FLOAT_CODEC, "height_curve", 0.5f).forGetter(AnimationParameters::heightCurve),
-            StrOpt.of(Codec.BOOL, "restrict_direction", true).forGetter(AnimationParameters::restrictDirection),
-            StrOpt.of(SoundEvent.CODEC, "sound").forGetter(AnimationParameters::sound)
+            Codec.INT.optionalFieldOf( "priority", 0).forGetter(AnimationParameters::priority), // not used
+            Codec.intRange(0, 300).optionalFieldOf( "duration", 4).forGetter(AnimationParameters::duration),
+            Codec.floatRange(0, 10).optionalFieldOf( "scale", 1f).forGetter(AnimationParameters::scaleStart),
+            FLOAT_CODEC.optionalFieldOf( "scale_curve", 0.5f).forGetter(AnimationParameters::scaleCurve),
+            VEC_CODEC.optionalFieldOf( "translation", Vec3.ZERO).forGetter(AnimationParameters::translation),
+            FLOAT_CODEC.optionalFieldOf( "translation_curve", 0.5f).forGetter(AnimationParameters::translationCurve),
+            ANGLE_VEC_CODEC.optionalFieldOf( "rotation", Vec3.ZERO).forGetter(AnimationParameters::rotation),
+            VEC_CODEC.optionalFieldOf( "rotation_pivot", Vec3.ZERO).forGetter(AnimationParameters::pivot),
+            FLOAT_CODEC.optionalFieldOf( "rotation_curve", 0.5f).forGetter(AnimationParameters::rotationCurve),
+            Codec.floatRange(0, 10).optionalFieldOf( "height", 1f).forGetter(AnimationParameters::heightStart),
+            FLOAT_CODEC.optionalFieldOf( "height_curve", 0.5f).forGetter(AnimationParameters::heightCurve),
+            Codec.BOOL.optionalFieldOf( "restrict_direction", true).forGetter(AnimationParameters::restrictDirection),
+            SoundEvent.CODEC.optionalFieldOf( "sound").forGetter(AnimationParameters::sound)
     ).apply(instance, AnimationParameters::new));
 
     public boolean matches(BlockState blockState, BlockPos pos, Level level) {
