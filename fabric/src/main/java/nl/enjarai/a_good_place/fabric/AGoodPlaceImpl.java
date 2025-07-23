@@ -14,6 +14,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
@@ -65,9 +66,9 @@ public class AGoodPlaceImpl implements ClientModInitializer {
         AGoodPlace.IS_DEV = FabricLoader.getInstance().isDevelopmentEnvironment();
     }
 
-    public static void renderBlock(BakedModel model, long seed, PoseStack poseStack, MultiBufferSource buffer, BlockState state, Level level, BlockPos pos, BlockRenderDispatcher blockRenderer) {
+    public static void renderBlock(BlockStateModel model, long seed, PoseStack poseStack, MultiBufferSource buffer, BlockState state, Level level, BlockPos pos, BlockRenderDispatcher blockRenderer) {
         blockRenderer.getModelRenderer().tesselateBlock(level, blockRenderer.getBlockModel(state), state, pos, poseStack, buffer.getBuffer(ItemBlockRenderTypes.getMovingBlockRenderType(state)),
-                false, RandomSource.create(), seed, OverlayTexture.NO_OVERLAY);
+                false, OverlayTexture.NO_OVERLAY);
     }
 
     public static void addClientReloadListener(final Supplier<PreparableReloadListener> listener, final ResourceLocation name) {

@@ -9,7 +9,7 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
@@ -24,7 +24,7 @@ public abstract class PlacingBlockParticle extends Particle {
     protected final BlockState blockState;
 
     //for block renderer
-    private final BakedModel model;
+    private final BlockStateModel model;
     private final long seed;
     private final BlockRenderDispatcher renderer;
     protected int extraLifeTicks = 0;

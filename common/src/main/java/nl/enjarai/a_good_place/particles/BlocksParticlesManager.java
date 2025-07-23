@@ -117,7 +117,7 @@ public class BlocksParticlesManager {
         MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
 
         // lightTexture.turnOnLightLayer();
-        RenderSystem.enableDepthTest();
+      //  RenderSystem.enableDepthTest();
         Matrix4fStack poseStack2 = RenderSystem.getModelViewStack();
         poseStack2.pushMatrix();
         poseStack2.mul(poseStack.last().pose());
@@ -131,8 +131,8 @@ public class BlocksParticlesManager {
 
         poseStack2.popMatrix();
     //    RenderSystem.applyModelViewMatrix();
-        RenderSystem.depthMask(true);
-        RenderSystem.disableBlend();
+       // RenderSystem.depthMask(true);
+       // RenderSystem.disableBlend();
         // lightTexture.turnOffLightLayer();
 
         poseStack.popPose();
