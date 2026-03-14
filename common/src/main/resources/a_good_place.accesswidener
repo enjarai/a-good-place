@@ -1,4 +1,4 @@
 accessWidener   v2  named
 
-accessible class net/minecraft/client/renderer/chunk/ChunkRenderDispatcher$RenderChunk$RebuildTask
-accessible class net/minecraft/client/renderer/chunk/ChunkRenderDispatcher$RenderChunk$RebuildTask$CompileResults
+# SectionCompiler is a public top-level class in 1.21.1
+# (was ChunkRenderDispatcher$RenderChunk$RebuildTask in 1.20.1 - no longer needs access widener)

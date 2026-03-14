@@ -17,7 +17,7 @@ issueTrackerURL = "${mod_github}/issues"
     itemIcon="minecraft:brush" #catalogue icon
 
 [[dependencies.a_good_place]]
-    modId = "forge"
+    modId = "neoforge"
     mandatory = true
     versionRange = "${neo_version_range}"
     ordering = "NONE"

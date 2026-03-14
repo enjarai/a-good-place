@@ -4,20 +4,12 @@ plugins {
 
 architectury {
     platformSetupLoomIde()
-    forge()
+    neoForge()
 }
 
 
 loom {
     accessWidenerPath = project(":common").loom.accessWidenerPath
-
-    forge {
-        convertAccessWideners = true
-        extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
-
-        mixinConfig  "a_good_place.mixins.json"
-        mixinConfig  "a_good_place-common.mixins.json"
-    }
 }
 
 configurations {
@@ -25,7 +17,7 @@ configurations {
     shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
     compileClasspath.extendsFrom common
     runtimeClasspath.extendsFrom common
-    developmentForge.extendsFrom common
+    developmentNeoForge.extendsFrom common
 }
 
 
@@ -117,22 +109,22 @@ repositories{
     flatDir {
         dirs "mods"
     }
+    maven { url "https://maven.neoforged.net/releases" }
     mavenCentral()
 }
 
 dependencies {
-    forge "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    neoForge "net.neoforged:neoforge:${neo_version}"
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
-    shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
+    shadowCommon(project(path: ":common", configuration: "transformProductionNeoForge")) { transitive = false }
 
-    compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.3.6"))
-    implementation(include("io.github.llamalad7:mixinextras-forge:0.3.6"))
+    compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:${mixin_extras_version}"))
+    implementation(include("io.github.llamalad7:mixinextras-neoforge:${mixin_extras_version}"))
 
-    annotationProcessor 'net.fabricmc:sponge-mixin:0.12.5+mixin.0.8.5'
+    // Sodium (NeoForge) - optional compile dependency for Sodium compat mixins (@Pseudo)
+    // The modrinth jar uses jarjar; extract the core jar for compilation
+    compileOnly files("libs/sodium-neoforge-core.jar")
 
-    modImplementation "curse.maven:embeddium-908741:5352230"
-
-
-    implementation 'org.jetbrains:annotations:22.0.0'
+    implementation 'org.jetbrains:annotations:24.0.0'
 }

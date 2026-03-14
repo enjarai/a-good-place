@@ -1,5 +1,37 @@
 # A Good Place
 
+## Installing for Testing
+
+### Prerequisites
+- Java 21 or later
+- Minecraft Java Edition 1.21.11
+
+### Option 1: Build and install manually
+
+1. Clone the repository and build the mod:
+   ```bash
+   git clone https://github.com/enjarai/a-good-place
+   cd a-good-place
+   ./gradlew :fabric:remapJar    # for Fabric
+   ./gradlew :forge:remapJar     # for NeoForge
+   ```
+2. Find the built jar in `fabric/build/libs/` or `forge/build/libs/` — use the file **without** `-dev` or `-sources` in the name.
+3. Drop the jar into your Minecraft `mods/` folder alongside [Fabric Loader 0.18.1+](https://fabricmc.net/use/installer/) + [Fabric API 0.140.2+1.21.11](https://modrinth.com/mod/fabric-api) (Fabric), or [NeoForge 21.11.x](https://neoforged.net/) (NeoForge).
+4. Launch Minecraft 1.21.11.
+
+### Option 2: Run directly from the repo (dev environment)
+
+Requires the Minecraft account to be set up in the Gradle environment.
+
+```bash
+./gradlew :fabric:runClient     # launch Fabric client
+./gradlew :forge:runClient      # launch NeoForge client
+```
+
+### Verifying it works
+
+Place any block in-game — it should play a short pop/squish animation. The default animation pack is bundled and enabled automatically. Open the resource pack screen to confirm **"Default Place Animations"** is listed and active.
+
 A client-side mod that adds block placement animations.
 
 The mod contains a default animation that will be applied to all suitable blocks (excluding ones like double flowers and

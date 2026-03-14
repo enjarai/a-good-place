@@ -1,6 +1,7 @@
 package nl.enjarai.a_good_place.pack.state_tests;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
@@ -11,8 +12,8 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public record MatchingBlocks(HolderSet<Block> blocks) implements BlockStatePredicate {
 
-    public static final Codec<MatchingBlocks> CODEC = RegistryCodecs.homogeneousList(Registries.BLOCK)
-            .fieldOf("blocks").xmap(MatchingBlocks::new, MatchingBlocks::blocks).codec();
+    public static final MapCodec<MatchingBlocks> CODEC = RegistryCodecs.homogeneousList(Registries.BLOCK)
+            .fieldOf("blocks").xmap(MatchingBlocks::new, MatchingBlocks::blocks);
 
 
     @Override

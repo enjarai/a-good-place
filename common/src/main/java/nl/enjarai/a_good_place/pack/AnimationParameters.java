@@ -109,12 +109,9 @@ public record AnimationParameters(LazyList<?, BlockStatePredicate> predicates, i
             objects = List.of();
 
             var res = codec.listOf().decode(RegistryOps.create(toDecode.getOps(), registryAccess), toDecode.getValue());
-            try {
-                objects = res.getOrThrow(false, s -> {
-                    AGoodPlace.LOGGER.error("Could not decode block list for placement animation - error: {}", s);
-                }).getFirst();
-            } catch (Exception ignored) {
-            }
+            objects = res.resultOrPartial(s -> AGoodPlace.LOGGER.error("Could not decode block list for placement animation - error: {}", s))
+                    .map(pair -> pair.getFirst())
+                    .orElse(List.of());
         }
     }
 }
