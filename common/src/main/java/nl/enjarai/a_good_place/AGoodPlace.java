@@ -1,16 +1,14 @@
 package nl.enjarai.a_good_place;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import dev.architectury.injectables.annotations.ExpectPlatform;
+import net.mehvahdjukaar.candlelight.api.PlatformImpl;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -29,12 +27,12 @@ public class AGoodPlace {
     public static boolean RENDER_AS_VANILLA_PARTICLES = true;
     public static boolean IS_DEV = false;
 
-    public static ResourceLocation res(String path) {
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+    public static Identifier res(String path) {
+        return Identifier.fromNamespaceAndPath(MOD_ID, path);
     }
 
-    @ExpectPlatform
-    public static void renderBlock(BlockStateModel model, long seed, PoseStack poseStack, MultiBufferSource buffer, BlockState state, Level level, BlockPos pos, BlockRenderDispatcher blockRenderer) {
+    @PlatformImpl
+    public static void renderBlock(PoseStack poseStack, MultiBufferSource buffer, BlockState state, Level level, BlockPos pos, BlockRenderDispatcher blockRenderer) {
         throw new AssertionError();
     }
 
@@ -69,7 +67,7 @@ public class AGoodPlace {
     }
 
     public static void onSetup(Minecraft minecraft) {
-        bubbleBlock = BuiltInRegistries.BLOCK.get(ResourceLocation.fromNamespaceAndPath("supplementaries", "bubble_block"))
+        bubbleBlock = BuiltInRegistries.BLOCK.get(Identifier.fromNamespaceAndPath("supplementaries", "bubble_block"))
                 .map(Holder.Reference::value).orElse(null);
     }
 }

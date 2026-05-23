@@ -1,11 +1,11 @@
 package nl.enjarai.a_good_place.mixin;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import nl.enjarai.a_good_place.particles.BlocksParticlesManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -16,11 +16,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class BlockEntityRendererDispatcherMixin {
 
     @Inject(
-            method = "setupAndRender",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/blockentity/BlockEntityRenderer;render(Lnet/minecraft/world/level/block/entity/BlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;IILnet/minecraft/world/phys/Vec3;)V",
-                    shift = At.Shift.BEFORE)
+            method = "submit",
+            at = @At("HEAD")
     )
-    private static<T extends BlockEntity> void render(BlockEntityRenderer<T> blockEntityRenderer, T blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource, Vec3 vec3, CallbackInfo ci){
-        BlocksParticlesManager.modifyTilePosition(blockEntity.getBlockPos(), poseStack, partialTick);
+    private <S extends BlockEntityRenderState> void aGoodplace$applyAnimation(S renderState, PoseStack poseStack, SubmitNodeCollector nodeCollector, CameraRenderState cameraRenderState, CallbackInfo ci) {
+        float partialTick = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false);
+        BlocksParticlesManager.modifyTilePosition(renderState.blockPos, poseStack, partialTick);
     }
 }

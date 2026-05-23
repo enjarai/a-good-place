@@ -8,7 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.FileToIdConverter;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
@@ -32,7 +32,7 @@ public class AnimationsManager extends SimpleJsonResourceReloadListener<Animatio
     }
 
     @Override
-    protected void apply(Map<ResourceLocation, AnimationParameters> jsons, ResourceManager resourceManager, ProfilerFiller profiler) {
+    protected void apply(Map<Identifier, AnimationParameters> jsons, ResourceManager resourceManager, ProfilerFiller profiler) {
         ANIMATIONS.clear();
 
         for (var j : jsons.entrySet()) {
@@ -53,7 +53,7 @@ public class AnimationsManager extends SimpleJsonResourceReloadListener<Animatio
     public static AnimationParameters getAnimation(BlockState blockState, BlockPos pos, Level level) {
 
         //for testing
-        if (AGoodPlace.IS_DEV) {
+        if (AGoodPlace.IS_DEV && false) {
             var a = new AnimationParameters(new AnimationParameters.LazyList<>(null, null),
                     0, 300,
                     1f, -0.7f,

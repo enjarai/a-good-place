@@ -1,4 +1,4 @@
-package nl.enjarai.a_good_place.fabric;
+package nl.enjarai.a_good_place.platform;
 
 import com.google.common.base.Suppliers;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -6,25 +6,22 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.util.RandomSource;
-import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import nl.enjarai.a_good_place.AGoodPlace;
@@ -44,8 +41,8 @@ public class AGoodPlaceImpl implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         WorldRenderEvents.AFTER_ENTITIES.register((context) -> {
-            BlocksParticlesManager.renderParticles(context.matrixStack(), context.tickCounter()
-                    .getGameTimeDeltaPartialTick(false));
+            BlocksParticlesManager.renderParticles(context.matrices(),
+                    Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false));
         });
         ClientLifecycleEvents.CLIENT_STARTED.register(AGoodPlace::onSetup);
         ClientTickEvents.END_WORLD_TICK.register(BlocksParticlesManager::tickParticles);
@@ -53,8 +50,6 @@ public class AGoodPlaceImpl implements ClientModInitializer {
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
             AnimationsManager.populateTags(client.getConnection().registryAccess());
         });
-
-        //todo: clear on level change
 
         AGoodPlace.copySamplePackIfNotPresent();
         addClientReloadListener(AnimationsManager::new, AGoodPlace.res("animations"));
@@ -66,28 +61,27 @@ public class AGoodPlaceImpl implements ClientModInitializer {
         AGoodPlace.IS_DEV = FabricLoader.getInstance().isDevelopmentEnvironment();
     }
 
-    public static void renderBlock(BlockStateModel model, long seed, PoseStack poseStack, MultiBufferSource buffer, BlockState state, Level level, BlockPos pos, BlockRenderDispatcher blockRenderer) {
-        blockRenderer.getModelRenderer().tesselateBlock(level, blockRenderer.getBlockModel(state), state, pos, poseStack, buffer.getBuffer(ItemBlockRenderTypes.getMovingBlockRenderType(state)),
-                false, OverlayTexture.NO_OVERLAY);
+    public static void renderBlock(PoseStack poseStack, MultiBufferSource buffer, BlockState state, Level level, BlockPos pos, BlockRenderDispatcher blockRenderer) {
+        blockRenderer.renderSingleBlock(state, poseStack, buffer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
     }
 
-    public static void addClientReloadListener(final Supplier<PreparableReloadListener> listener, final ResourceLocation name) {
+    public static void addClientReloadListener(final Supplier<PreparableReloadListener> listener, final Identifier name) {
         ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(new IdentifiableResourceReloadListener() {
             private final Supplier<PreparableReloadListener> inner = Suppliers.memoize(listener::get);
 
-            public ResourceLocation getFabricId() {
+            public Identifier getFabricId() {
                 return name;
             }
 
             @Override
-            public CompletableFuture<Void> reload(PreparationBarrier preparationBarrier, ResourceManager resourceManager, Executor backgroundExecutor, Executor gameExecutor) {
-                return this.inner.get().reload(preparationBarrier, resourceManager, backgroundExecutor, gameExecutor);
+            public CompletableFuture<Void> reload(PreparableReloadListener.SharedState sharedState, Executor executor, PreparableReloadListener.PreparationBarrier barrier, Executor applyExecutor) {
+                return this.inner.get().reload(sharedState, executor, barrier, applyExecutor);
             }
         });
     }
 
 
-    public static void registerOptionalTexturePack(ResourceLocation folderName, Component displayName, boolean defaultEnabled) {
+    public static void registerOptionalTexturePack(Identifier folderName, Component displayName, boolean defaultEnabled) {
         FabricLoader.getInstance().getModContainer(folderName.getNamespace()).ifPresent(c -> {
             ResourceManagerHelper.registerBuiltinResourcePack(folderName, c,
                     defaultEnabled ? ResourcePackActivationType.DEFAULT_ENABLED : ResourcePackActivationType.NORMAL);

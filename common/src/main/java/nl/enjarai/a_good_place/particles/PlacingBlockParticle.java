@@ -1,7 +1,6 @@
 package nl.enjarai.a_good_place.particles;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -9,23 +8,17 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
 import nl.enjarai.a_good_place.AGoodPlace;
 
-// this ideally could be used for some sort of mod api so mods can create their own particles
-// we use a non registered particle because this is a client only mod and we need to render from event anyways
+// we use a non-registered particle because this is a client only mod and we need to render from event anyways
 public abstract class PlacingBlockParticle extends Particle {
 
     protected final BlockPos pos;
     protected final BlockState blockState;
-
-    //for block renderer
-    private final BlockStateModel model;
-    private final long seed;
     private final BlockRenderDispatcher renderer;
     protected int extraLifeTicks = 0;
     public boolean canRender;
@@ -34,14 +27,9 @@ public abstract class PlacingBlockParticle extends Particle {
     public PlacingBlockParticle(ClientLevel world, BlockPos blockPos, Direction face) {
         super(world, blockPos.getX(), blockPos.getY(), blockPos.getZ());
 
-        var client = Minecraft.getInstance();
-
         pos = BlockPos.containing(x, y, z);
         blockState = world.getBlockState(pos);
-        model = client.getBlockRenderer().getBlockModel(blockState);
-        seed = blockState.getSeed(pos);
-        renderer = client.getBlockRenderer();
-
+        renderer = Minecraft.getInstance().getBlockRenderer();
 
         hasPhysics = false;
         lifetime = 7;
@@ -64,19 +52,14 @@ public abstract class PlacingBlockParticle extends Particle {
         }
         if (level.getBlockState(pos) != this.blockState) {
             this.remove();
-            BlocksParticlesManager.unHideBlock(pos); //just incase
+            BlocksParticlesManager.unHideBlock(pos);
         }
     }
 
-    @Override
-    public void render(VertexConsumer buffer, Camera camera, float partialTicks) {
-    }
-
-    @Override
-    public void renderCustom(PoseStack poseStack, MultiBufferSource multiBufferSource, Camera camera, float partialTicks) {
+    public void renderBlock(PoseStack poseStack, Camera camera, float partialTicks) {
         if (!this.canRender) return;
 
-        var cameraPos = camera.getPosition();
+        var cameraPos = camera.position();
         float px = (float) (Mth.lerp(partialTicks, this.xo, this.x) - cameraPos.x());
         float py = (float) (Mth.lerp(partialTicks, this.yo, this.y) - cameraPos.y());
         float pz = (float) (Mth.lerp(partialTicks, this.zo, this.z) - cameraPos.z());
@@ -87,10 +70,8 @@ public abstract class PlacingBlockParticle extends Particle {
         applyAnimation(poseStack, partialTicks);
 
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-
-        AGoodPlace.renderBlock(model, seed, poseStack, bufferSource, blockState, level, pos, renderer);
-
-        if (AGoodPlace.RENDER_AS_VANILLA_PARTICLES) Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
+        AGoodPlace.renderBlock(poseStack, bufferSource, blockState, level, pos, renderer);
+        Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
 
         poseStack.popPose();
     }
@@ -104,8 +85,8 @@ public abstract class PlacingBlockParticle extends Particle {
     protected abstract void applyAnimation(PoseStack poseStack, float animationTime, float partialTicks);
 
     @Override
-    public ParticleRenderType getRenderType() {
-        return ParticleRenderType.CUSTOM;
+    public ParticleRenderType getGroup() {
+        return ParticleRenderType.NO_RENDER;
     }
 
     public boolean finishedAnimation() {

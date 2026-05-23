@@ -26,7 +26,7 @@ public abstract class BlockItemMixin {
                                                 @Local(ordinal = 0) BlockState oldState,
                                                 @Local(ordinal = 1) BlockState state,
                                                 @Local Player player) {
-        if (oldState.is(state.getBlock()) && level.isClientSide && level instanceof ClientLevel cl) {
+        if (oldState.is(state.getBlock()) && level.isClientSide() && level instanceof ClientLevel cl) {
             BlocksParticlesManager.addParticle(state, pos, cl, context.getClickedFace(), player, context.getHand());
         }
     }

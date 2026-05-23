@@ -6,7 +6,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import nl.enjarai.a_good_place.particles.BlocksParticlesManager;
-import org.embeddedt.embeddium.impl.render.chunk.compile.pipeline.BlockOcclusionCache;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
@@ -14,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Pseudo //won't get loaded if mod isn't there
-@Mixin(value = BlockOcclusionCache.class, priority = 600)
+@Mixin(targets = "org.embeddedt.embeddium.impl.render.chunk.compile.pipeline.BlockOcclusionCache", remap = false, priority = 600)
 public abstract class BlockOcclusionCacheMixin {
 
     @Inject(
@@ -25,7 +24,8 @@ public abstract class BlockOcclusionCacheMixin {
                             "Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;",
                     shift = At.Shift.BEFORE
             ),
-            cancellable = true
+            cancellable = true,
+            remap = false
     )
     private void wonkyblock$overrideCulling(BlockState selfState, BlockGetter view, BlockPos pos, Direction facing,
                                             CallbackInfoReturnable<Boolean> cir,
