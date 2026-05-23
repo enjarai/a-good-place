@@ -1,29 +1,19 @@
 package nl.enjarai.a_good_place.platform;
 
 import com.google.common.base.Suppliers;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import nl.enjarai.a_good_place.AGoodPlace;
 import nl.enjarai.a_good_place.pack.AnimationsManager;
 import nl.enjarai.a_good_place.pack.state_tests.BlockStatePredicateType;
@@ -40,10 +30,6 @@ public class AGoodPlaceImpl implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        WorldRenderEvents.AFTER_ENTITIES.register((context) -> {
-            BlocksParticlesManager.renderParticles(context.matrices(),
-                    Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false));
-        });
         ClientLifecycleEvents.CLIENT_STARTED.register(AGoodPlace::onSetup);
         ClientTickEvents.END_WORLD_TICK.register(BlocksParticlesManager::tickParticles);
 
@@ -59,10 +45,6 @@ public class AGoodPlaceImpl implements ClientModInitializer {
         BlockStatePredicateType.init();
 
         AGoodPlace.IS_DEV = FabricLoader.getInstance().isDevelopmentEnvironment();
-    }
-
-    public static void renderBlock(PoseStack poseStack, MultiBufferSource buffer, BlockState state, Level level, BlockPos pos, BlockRenderDispatcher blockRenderer) {
-        blockRenderer.renderSingleBlock(state, poseStack, buffer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
     }
 
     public static void addClientReloadListener(final Supplier<PreparableReloadListener> listener, final Identifier name) {

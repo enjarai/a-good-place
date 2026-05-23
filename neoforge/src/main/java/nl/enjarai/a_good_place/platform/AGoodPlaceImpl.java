@@ -1,19 +1,11 @@
 package nl.enjarai.a_good_place.platform;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.*;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -26,7 +18,6 @@ import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
-import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.resource.JarContentsPackResources;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.data.loading.DatagenModLoader;
@@ -97,21 +88,10 @@ public class AGoodPlaceImpl {
     }
 
     @SubscribeEvent
-    public void onRenderWorld(RenderLevelStageEvent.AfterEntities event) {
-        BlocksParticlesManager.renderParticles(event.getPoseStack(),
-                Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false));
-    }
-
-    @SubscribeEvent
     public void onClientTick(LevelTickEvent.Post tickEvent) {
         if (tickEvent.getLevel().isClientSide()) {
             BlocksParticlesManager.tickParticles((ClientLevel) tickEvent.getLevel());
         }
-    }
-
-    public static void renderBlock(PoseStack poseStack, MultiBufferSource buffer, BlockState state,
-                                   Level level, BlockPos pos, BlockRenderDispatcher dispatcher) {
-        dispatcher.renderSingleBlock(state, poseStack, buffer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, level, pos);
     }
 
     @Nullable

@@ -1,25 +1,22 @@
 package nl.enjarai.a_good_place.particles;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Camera;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleRenderType;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.block.MovingBlockRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
-import nl.enjarai.a_good_place.AGoodPlace;
+import net.minecraft.world.phys.Vec3;
 
 // we use a non-registered particle because this is a client only mod and we need to render from event anyways
 public abstract class PlacingBlockParticle extends Particle {
 
     protected final BlockPos pos;
     protected final BlockState blockState;
-    private final BlockRenderDispatcher renderer;
+    private final MovingBlockRenderState movingBlockRenderState = new MovingBlockRenderState();
     protected int extraLifeTicks = 0;
     public boolean canRender;
 
@@ -29,7 +26,6 @@ public abstract class PlacingBlockParticle extends Particle {
 
         pos = BlockPos.containing(x, y, z);
         blockState = world.getBlockState(pos);
-        renderer = Minecraft.getInstance().getBlockRenderer();
 
         hasPhysics = false;
         lifetime = 7;
@@ -63,23 +59,21 @@ public abstract class PlacingBlockParticle extends Particle {
         }
     }
 
-    public void renderBlock(PoseStack poseStack, Camera camera, float partialTicks) {
+    public void submitBlock(PoseStack poseStack, Vec3 cameraPos, SubmitNodeCollector collector, float partialTicks) {
         if (!this.canRender) return;
 
-        var cameraPos = camera.position();
-        float px = (float) (Mth.lerp(partialTicks, this.xo, this.x) - cameraPos.x());
-        float py = (float) (Mth.lerp(partialTicks, this.yo, this.y) - cameraPos.y());
-        float pz = (float) (Mth.lerp(partialTicks, this.zo, this.z) - cameraPos.z());
-
         poseStack.pushPose();
-        poseStack.translate(px, py, pz);
-
+        poseStack.translate(pos.getX() - cameraPos.x(), pos.getY() - cameraPos.y(), pos.getZ() - cameraPos.z());
         applyAnimation(poseStack, partialTicks);
 
-        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-        AGoodPlace.renderBlock(poseStack, bufferSource, blockState, level, pos, renderer);
-        Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
+        movingBlockRenderState.blockState = blockState;
+        movingBlockRenderState.blockPos = pos;
+        movingBlockRenderState.randomSeedPos = pos;
+        movingBlockRenderState.biome = level.getBiome(pos);
+        movingBlockRenderState.cardinalLighting = level.cardinalLighting();
+        movingBlockRenderState.lightEngine = level.getLightEngine();
 
+        collector.submitMovingBlock(poseStack, movingBlockRenderState);
         poseStack.popPose();
     }
 

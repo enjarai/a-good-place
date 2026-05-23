@@ -9,7 +9,8 @@
   ],
   "client": [
     "BlockEntityRendererDispatcherMixin",
-    "BlockItemMixin"
+    "BlockItemMixin",
+    "LevelRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

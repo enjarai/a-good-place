@@ -8,6 +8,6 @@ neoforge {
 }
 
 dependencies {
-    modCompileOnly("curse.maven:sodium-394468:7366772")
+    modCompileOnly("curse.maven:sodium-394468:7867828")
 
 }

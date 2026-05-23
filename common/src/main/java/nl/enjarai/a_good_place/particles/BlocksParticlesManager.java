@@ -3,6 +3,7 @@ package nl.enjarai.a_good_place.particles;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -94,13 +95,12 @@ public class BlocksParticlesManager {
         }
     }
 
-    public static void renderParticles(PoseStack poseStack, float tickDelta) {
+    public static void submitParticles(PoseStack poseStack, SubmitNodeCollector collector, float partialTick) {
         if (PARTICLES.isEmpty()) return;
 
-        Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
-
+        var cameraPos = Minecraft.getInstance().gameRenderer.getMainCamera().position();
         for (var p : PARTICLES.values()) {
-            p.renderBlock(poseStack, camera, tickDelta);
+            p.submitBlock(poseStack, cameraPos, collector, partialTick);
         }
     }
 

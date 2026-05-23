@@ -1,17 +1,11 @@
 package nl.enjarai.a_good_place;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.mehvahdjukaar.candlelight.api.PlatformImpl;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -29,11 +23,6 @@ public class AGoodPlace {
 
     public static Identifier res(String path) {
         return Identifier.fromNamespaceAndPath(MOD_ID, path);
-    }
-
-    @PlatformImpl
-    public static void renderBlock(PoseStack poseStack, MultiBufferSource buffer, BlockState state, Level level, BlockPos pos, BlockRenderDispatcher blockRenderer) {
-        throw new AssertionError();
     }
 
     // copied from quark :skull:

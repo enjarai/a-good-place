@@ -1,6 +1,6 @@
 package nl.enjarai.a_good_place.mixin.sodium;
 
-import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 import nl.enjarai.a_good_place.particles.BlocksParticlesManager;
