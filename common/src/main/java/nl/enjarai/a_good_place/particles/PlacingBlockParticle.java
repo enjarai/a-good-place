@@ -43,16 +43,23 @@ public abstract class PlacingBlockParticle extends Particle {
             return;
         }
         age++;
-        if (age >= lifetime + extraLifeTicks) {
-            remove();
-        }
 
-        if (this.finishedAnimation()) {
-            BlocksParticlesManager.unHideBlock(pos);
-        }
         if (level.getBlockState(pos) != this.blockState) {
             this.remove();
             BlocksParticlesManager.unHideBlock(pos);
+            BlocksParticlesManager.PARTICLES.remove(pos, this);
+            return;
+        }
+
+        if (this.finishedAnimation()) {
+            // un-hide so the chunk starts re-rendering, but keep rendering the particle
+            // at its final position (t=1) during extraLifeTicks to cover the re-render delay
+            BlocksParticlesManager.unHideBlock(pos);
+        }
+
+        if (age >= lifetime + extraLifeTicks) {
+            remove();
+            BlocksParticlesManager.PARTICLES.remove(pos, this);
         }
     }
 

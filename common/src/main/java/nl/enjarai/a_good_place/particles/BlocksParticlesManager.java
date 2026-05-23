@@ -68,7 +68,6 @@ public class BlocksParticlesManager {
 
     public static void unHideBlock(BlockPos pos) {
         boolean success = HIDDEN_BLOCKS.remove(pos);
-        PARTICLES.remove(pos);
         if (success) {
             markBlockForRender(pos);
         }
