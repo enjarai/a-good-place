@@ -31,7 +31,7 @@ public class AGoodPlaceImpl implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         ClientLifecycleEvents.CLIENT_STARTED.register(AGoodPlace::onSetup);
-        ClientTickEvents.END_WORLD_TICK.register(BlocksParticlesManager::tickParticles);
+        ClientTickEvents.END_LEVEL_TICK.register(BlocksParticlesManager::tickParticles);
 
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
             AnimationsManager.populateTags(client.getConnection().registryAccess());
