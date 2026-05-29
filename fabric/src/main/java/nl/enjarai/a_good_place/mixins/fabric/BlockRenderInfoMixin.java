@@ -16,6 +16,7 @@ public abstract class BlockRenderInfoMixin {
     public BlockPos blockPos;
 
     @Inject(
+            require = 0,
             method = "shouldDrawSide",
             at = @At(value = "HEAD"),
             cancellable = true
@@ -23,6 +24,10 @@ public abstract class BlockRenderInfoMixin {
     private void aGoodPlace$overrideCulling(Direction side, CallbackInfoReturnable<Boolean> cir) {
         if (BlocksParticlesManager.isBlockHidden(blockPos)) {
             cir.setReturnValue(false);
+            return;
+        }
+        if (side != null && BlocksParticlesManager.isBlockHidden(blockPos.relative(side))) {
+            cir.setReturnValue(true);
         }
     }
 
