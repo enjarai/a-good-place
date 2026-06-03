@@ -2,7 +2,7 @@ package nl.enjarai.a_good_place.mixins.fabric;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import com.llamalad7.mixinextras.sugar.Local;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -15,24 +15,27 @@ import org.spongepowered.asm.mixin.injection.At;
 public abstract class ModelBlockRendererMixin {
 
     @WrapOperation(
-            method = "tesselateWithoutAO",
+            method = "tesselateFlat",
             at = @At(value = "INVOKE",
-                    target = "Lnet/minecraft/world/level/block/Block;shouldRenderFace(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;)Z")
+                    target = "Lnet/minecraft/client/renderer/block/ModelBlockRenderer;shouldRenderFace(Lnet/minecraft/client/renderer/block/BlockAndTintGetter;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;Lnet/minecraft/core/BlockPos;)Z")
     )
-    private boolean aGoodPlace$overrideCulling(BlockState arg, BlockState arg2, Direction arg3, Operation<Boolean> original, @Local(argsOnly = true) BlockPos pos) {
-        var alwaysRenders = !BlocksParticlesManager.isBlockHidden(pos);
-        if (alwaysRenders) return true;
-        return original.call(arg, arg2, arg3);
+    private boolean aGoodPlace$overrideCulling(ModelBlockRenderer instance, BlockAndTintGetter level, BlockState state, Direction direction, BlockPos neighborPos, Operation<Boolean> original) {
+        if (BlocksParticlesManager.isBlockHidden(neighborPos)) {
+            return true;
+        }
+        return original.call(instance, level, state, direction, neighborPos);
     }
 
     @WrapOperation(
-            method = "tesselateWithAO",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/Block;shouldRenderFace(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;)Z")
+            method = "tesselateAmbientOcclusion",
+            at = @At(value = "INVOKE",
+                    target = "Lnet/minecraft/client/renderer/block/ModelBlockRenderer;shouldRenderFace(Lnet/minecraft/client/renderer/block/BlockAndTintGetter;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;Lnet/minecraft/core/BlockPos;)Z")
     )
-    private boolean aGoodPlace$overrideCullingAO(BlockState arg, BlockState arg2, Direction arg3, Operation<Boolean> original, @Local(argsOnly = true) BlockPos pos) {
-        var alwaysRenders = !BlocksParticlesManager.isBlockHidden(pos);
-        if (alwaysRenders) return true;
-        return original.call(arg, arg2, arg3);
+    private boolean aGoodPlace$overrideCullingAO(ModelBlockRenderer instance, BlockAndTintGetter level, BlockState state, Direction direction, BlockPos neighborPos, Operation<Boolean> original) {
+        if (BlocksParticlesManager.isBlockHidden(neighborPos)) {
+            return true;
+        }
+        return original.call(instance, level, state, direction, neighborPos);
     }
 
 

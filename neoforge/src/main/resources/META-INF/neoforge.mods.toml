@@ -1,5 +1,6 @@
 
 modLoader = "javafml"
+loaderVersion = "*"
 
 license = "${mod_license}"
 issueTrackerURL = "${mod_github}/issues"
