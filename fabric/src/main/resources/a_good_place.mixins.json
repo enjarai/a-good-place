@@ -7,7 +7,8 @@
   ],
   "client": [
     "ModelBlockRendererMixin",
-    "SectionCompilerMixin"
+    "SectionCompilerMixin",
+    "sodium.BlockOcclusionCacheMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -10,7 +10,8 @@
     "BlockMixin",
     "SectionCompilerMixin",
     "embeddium.BlockOcclusionCacheMixin",
-    "embeddium.BlockRendererMixin"
+    "embeddium.BlockRendererMixin",
+    "sodium.BlockOcclusionCacheMixin"
   ],
   "injectors": {
     "defaultRequire": 1
