@@ -31,6 +31,6 @@ issueTrackerURL = "${mod_github}/issues"
 [[dependencies.${mod_id}]]
     modId = "minecraft"
     type = "required"
-    versionRange = "[${minecraft_version}]"
+    versionRange = "[26.1,26.1.2]"
     ordering = "NONE"
     side = "BOTH"
