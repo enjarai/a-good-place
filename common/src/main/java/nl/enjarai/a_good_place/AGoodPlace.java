@@ -32,7 +32,7 @@ public class AGoodPlace {
     }
 
     @PlatformImpl
-    public static void renderBlock(PoseStack poseStack, MultiBufferSource buffer, BlockState state, Level level, BlockPos pos, BlockRenderDispatcher blockRenderer) {
+    public static void renderBlock(PoseStack poseStack, MultiBufferSource buffer, BlockState state, Level level, BlockPos pos, BlockRenderDispatcher blockRenderer, int packedLight) {
         throw new AssertionError();
     }
 

@@ -24,7 +24,6 @@
     "${mod_id}-common.mixins.json"
   ],
   "depends": {
-    "fabric": "*",
     "minecraft": "=${minecraft_version}"
   },
   "custom": {

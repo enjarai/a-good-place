@@ -1,4 +1,4 @@
-package nl.enjarai.a_good_place.mixin.sodium;
+package nl.enjarai.a_good_place.mixins.fabric.sodium;
 
 import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.core.BlockPos;

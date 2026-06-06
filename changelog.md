@@ -1,1 +1,2 @@
-fixes
+- verified fabric runs fine both with and without sodium
+- fixed pack mcmeta

@@ -2,7 +2,6 @@ package nl.enjarai.a_good_place.platform;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -110,8 +109,8 @@ public class AGoodPlaceImpl {
     }
 
     public static void renderBlock(PoseStack poseStack, MultiBufferSource buffer, BlockState state,
-                                   Level level, BlockPos pos, BlockRenderDispatcher dispatcher) {
-        dispatcher.renderSingleBlock(state, poseStack, buffer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, level, pos);
+                                   Level level, BlockPos pos, BlockRenderDispatcher dispatcher, int packedLight) {
+        dispatcher.renderSingleBlock(state, poseStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, level, pos);
     }
 
     @Nullable

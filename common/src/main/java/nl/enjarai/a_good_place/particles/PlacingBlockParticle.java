@@ -6,6 +6,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleRenderType;
+import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.core.BlockPos;
@@ -77,10 +79,23 @@ public abstract class PlacingBlockParticle extends Particle {
         applyAnimation(poseStack, partialTicks);
 
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-        AGoodPlace.renderBlock(poseStack, bufferSource, blockState, level, pos, renderer);
+        AGoodPlace.renderBlock(poseStack, bufferSource, blockState, level, pos, renderer, getPackedLight());
         Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
 
         poseStack.popPose();
+    }
+
+    // block at pos is hidden but still present in the world, so light at pos itself is 0 (solid).
+    // Take the max sky/block light from pos + 6 neighbors so the placed block matches its surroundings.
+    private int getPackedLight() {
+        int maxBlock = LightTexture.block(LevelRenderer.getLightColor(level, pos));
+        int maxSky = LightTexture.sky(LevelRenderer.getLightColor(level, pos));
+        for (Direction dir : Direction.values()) {
+            int neighbor = LevelRenderer.getLightColor(level, pos.relative(dir));
+            maxBlock = Math.max(maxBlock, LightTexture.block(neighbor));
+            maxSky = Math.max(maxSky, LightTexture.sky(neighbor));
+        }
+        return LightTexture.pack(maxBlock, maxSky);
     }
 
 

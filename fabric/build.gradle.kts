@@ -9,6 +9,6 @@ fabric {
 
 dependencies {
 
-    modCompileOnly("curse.maven:sodium-394468:8111043")
+    modImplementation("curse.maven:sodium-394468:8111043")
 
 }
