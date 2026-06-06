@@ -13,6 +13,7 @@
   },
   "license": "${mod_license}",
   "icon": "icon.png",
+  "accessWidener": "a_good_place.accesswidener",
   "environment": "*",
   "entrypoints": {
     "client": [
