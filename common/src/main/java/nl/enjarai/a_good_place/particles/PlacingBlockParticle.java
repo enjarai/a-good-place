@@ -7,6 +7,8 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
@@ -16,6 +18,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
+import nl.enjarai.a_good_place.AGoodPlace;
 
 // we use a non-registered particle because this is a client only mod and we need to render from event anyways
 public abstract class PlacingBlockParticle extends Particle {
@@ -84,15 +87,33 @@ public abstract class PlacingBlockParticle extends Particle {
         applyAnimation(poseStack, partialTicks);
 
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-        renderer.getModelRenderer().tesselateBlock(
-                level,
-                model.collectParts(RandomSource.create(seed)),
-                blockState, pos, poseStack,
-                bufferSource.getBuffer(ItemBlockRenderTypes.getMovingBlockRenderType(blockState)),
-                false, OverlayTexture.NO_OVERLAY);
+        if (AGoodPlace.USE_SIMPLE_RENDERER) {
+            renderer.renderSingleBlock(blockState, poseStack, bufferSource, getPackedLight(), OverlayTexture.NO_OVERLAY);
+        } else {
+            renderer.getModelRenderer().tesselateBlock(
+                    level,
+                    model.collectParts(RandomSource.create(seed)),
+                    blockState, pos, poseStack,
+                    bufferSource.getBuffer(ItemBlockRenderTypes.getMovingBlockRenderType(blockState)),
+                    false, OverlayTexture.NO_OVERLAY);
+        }
         bufferSource.endBatch();
 
         poseStack.popPose();
+    }
+
+    // Fallback lighting: block at pos is hidden but still present in the world, so light at pos itself is 0 (solid).
+    // Take the per-channel max sky/block light from pos + 6 neighbors so the placed block roughly matches its surroundings.
+    private int getPackedLight() {
+        int self = LevelRenderer.getLightColor(level, pos);
+        int maxBlock = LightTexture.block(self);
+        int maxSky = LightTexture.sky(self);
+        for (Direction dir : Direction.values()) {
+            int neighbor = LevelRenderer.getLightColor(level, pos.relative(dir));
+            maxBlock = Math.max(maxBlock, LightTexture.block(neighbor));
+            maxSky = Math.max(maxSky, LightTexture.sky(neighbor));
+        }
+        return LightTexture.pack(maxBlock, maxSky);
     }
 
 

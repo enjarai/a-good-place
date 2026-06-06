@@ -19,6 +19,9 @@ public class AGoodPlace {
 
     public static final Logger LOGGER = LogManager.getLogger("A Good Place");
     public static boolean RENDER_AS_VANILLA_PARTICLES = true;
+    // Fallback path: renderSingleBlock with a uniform packed light derived from the max of pos + 6 neighbors.
+    // Less accurate than tesselateBlock (no per-face / AO lighting) but compatible with weirder renderer chains.
+    public static boolean USE_SIMPLE_RENDERER = false;
     public static boolean IS_DEV = false;
 
     public static Identifier res(String path) {

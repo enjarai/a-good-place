@@ -10,8 +10,11 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.minecraft.client.Minecraft;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.jarcontents.JarContents;
 import net.neoforged.fml.loading.FMLEnvironment;
@@ -40,12 +43,15 @@ public class AGoodPlaceImpl {
     public static final String MOD_ID = AGoodPlace.MOD_ID;
     private final boolean firstInstall;
 
-    public AGoodPlaceImpl(IEventBus bus) {
+    public AGoodPlaceImpl(IEventBus bus, ModContainer container) {
         if (FMLEnvironment.getDist() == Dist.CLIENT) {
 
             bus.addListener(this::onSetup);
             bus.addListener(this::addClientReloadListener);
             bus.addListener(this::registerResourcePack);
+            bus.addListener(this::onConfigChange);
+
+            container.registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC);
 
             this.firstInstall = AGoodPlace.copySamplePackIfNotPresent();
             NeoForge.EVENT_BUS.register(this);
@@ -54,6 +60,12 @@ public class AGoodPlaceImpl {
             AGoodPlace.IS_DEV = !FMLLoader.getCurrent().isProduction();
         } else {
             this.firstInstall = false;
+        }
+    }
+
+    public void onConfigChange(ModConfigEvent event) {
+        if (event.getConfig().getSpec() == ClientConfig.SPEC) {
+            ClientConfig.sync();
         }
     }
 
