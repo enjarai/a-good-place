@@ -8,6 +8,6 @@ common {
 
 dependencies {
 
-    modCompileOnly("curse.maven:sodium-394468:7867828")
+    modCompileOnly("curse.maven:sodium-394468:8111040")
 
 }
