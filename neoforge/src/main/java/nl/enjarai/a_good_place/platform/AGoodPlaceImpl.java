@@ -1,18 +1,11 @@
 package nl.enjarai.a_good_place.platform;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.*;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -106,11 +99,6 @@ public class AGoodPlaceImpl {
         if (tickEvent.getLevel().isClientSide()) {
             BlocksParticlesManager.tickParticles((ClientLevel) tickEvent.getLevel());
         }
-    }
-
-    public static void renderBlock(PoseStack poseStack, MultiBufferSource buffer, BlockState state,
-                                   Level level, BlockPos pos, BlockRenderDispatcher dispatcher, int packedLight) {
-        dispatcher.renderSingleBlock(state, poseStack, buffer, packedLight, OverlayTexture.NO_OVERLAY, level, pos);
     }
 
     @Nullable

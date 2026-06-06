@@ -6,21 +6,24 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleRenderType;
-import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
-import nl.enjarai.a_good_place.AGoodPlace;
 
 // we use a non-registered particle because this is a client only mod and we need to render from event anyways
 public abstract class PlacingBlockParticle extends Particle {
 
     protected final BlockPos pos;
     protected final BlockState blockState;
+    private final BlockStateModel model;
+    private final long seed;
     private final BlockRenderDispatcher renderer;
     protected int extraLifeTicks = 0;
     public boolean canRender;
@@ -32,6 +35,8 @@ public abstract class PlacingBlockParticle extends Particle {
         pos = BlockPos.containing(x, y, z);
         blockState = world.getBlockState(pos);
         renderer = Minecraft.getInstance().getBlockRenderer();
+        model = renderer.getBlockModel(blockState);
+        seed = blockState.getSeed(pos);
 
         hasPhysics = false;
         lifetime = 7;
@@ -79,23 +84,15 @@ public abstract class PlacingBlockParticle extends Particle {
         applyAnimation(poseStack, partialTicks);
 
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-        AGoodPlace.renderBlock(poseStack, bufferSource, blockState, level, pos, renderer, getPackedLight());
-        Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
+        renderer.getModelRenderer().tesselateBlock(
+                level,
+                model.collectParts(RandomSource.create(seed)),
+                blockState, pos, poseStack,
+                bufferSource.getBuffer(ItemBlockRenderTypes.getMovingBlockRenderType(blockState)),
+                false, OverlayTexture.NO_OVERLAY);
+        bufferSource.endBatch();
 
         poseStack.popPose();
-    }
-
-    // block at pos is hidden but still present in the world, so light at pos itself is 0 (solid).
-    // Take the max sky/block light from pos + 6 neighbors so the placed block matches its surroundings.
-    private int getPackedLight() {
-        int maxBlock = LightTexture.block(LevelRenderer.getLightColor(level, pos));
-        int maxSky = LightTexture.sky(LevelRenderer.getLightColor(level, pos));
-        for (Direction dir : Direction.values()) {
-            int neighbor = LevelRenderer.getLightColor(level, pos.relative(dir));
-            maxBlock = Math.max(maxBlock, LightTexture.block(neighbor));
-            maxSky = Math.max(maxSky, LightTexture.sky(neighbor));
-        }
-        return LightTexture.pack(maxBlock, maxSky);
     }
 
 
