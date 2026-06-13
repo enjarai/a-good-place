@@ -25,7 +25,8 @@
     "${mod_id}-common.mixins.json"
   ],
   "depends": {
-    "minecraft": ">=26.1- <=26.1.2"
+    "minecraft": ">=26.1- <=26.1.2",
+    "java": ">=25"
   },
   "custom": {
     "modmenu": {
