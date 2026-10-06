@@ -36,6 +36,7 @@ public class AGoodPlaceImpl implements ClientModInitializer {
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
             AnimationsManager.populateTags(client.getConnection().registryAccess());
         });
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> BlocksParticlesManager.clear());
 
         AGoodPlace.copySamplePackIfNotPresent();
         addClientReloadListener(AnimationsManager::new, AGoodPlace.res("animations"));

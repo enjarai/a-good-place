@@ -12,7 +12,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
-import nl.enjarai.a_good_place.AGoodPlace;
 import nl.enjarai.a_good_place.pack.AnimationParameters;
 import nl.enjarai.a_good_place.pack.AnimationsManager;
 
@@ -52,9 +51,6 @@ public class BlocksParticlesManager {
                 } else {
                     p.canRender = false;
                 }
-
-                // add to particle engine for ticking only (NO_RENDER group handles no rendering)
-                Minecraft.getInstance().particleEngine.add(p);
             }
         }
     }
@@ -82,10 +78,8 @@ public class BlocksParticlesManager {
     }
 
 
-    //tick manually just to be safe (only used when not added to particle engine)
+    //not in the particle engine, it can drop them without us knowing and leave ghost blocks
     public static void tickParticles(ClientLevel level) {
-        if (AGoodPlace.RENDER_AS_VANILLA_PARTICLES) return;
-
         var iterator = PARTICLES.entrySet().iterator();
         while (iterator.hasNext()) {
             var entry = iterator.next();

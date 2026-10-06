@@ -18,7 +18,6 @@ public class AGoodPlace {
     public static final String MOD_ID = "a_good_place";
 
     public static final Logger LOGGER = LogManager.getLogger("A Good Place");
-    public static boolean RENDER_AS_VANILLA_PARTICLES = true;
     public static boolean IS_DEV = false;
 
     public static Identifier res(String path) {

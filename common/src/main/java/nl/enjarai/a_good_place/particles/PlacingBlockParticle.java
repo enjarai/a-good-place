@@ -1,6 +1,7 @@
 package nl.enjarai.a_good_place.particles;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleRenderType;
@@ -40,7 +41,8 @@ public abstract class PlacingBlockParticle extends Particle {
         }
         age++;
 
-        if (level.getBlockState(pos) != this.blockState) {
+        boolean leftLevel = level != Minecraft.getInstance().level;
+        if (leftLevel || level.getBlockState(pos) != this.blockState) {
             this.remove();
             BlocksParticlesManager.unHideBlock(pos);
             BlocksParticlesManager.PARTICLES.remove(pos, this);
