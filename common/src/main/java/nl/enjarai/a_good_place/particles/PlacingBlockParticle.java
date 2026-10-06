@@ -45,7 +45,6 @@ public abstract class PlacingBlockParticle extends Particle {
         if (leftLevel || level.getBlockState(pos) != this.blockState) {
             this.remove();
             BlocksParticlesManager.unHideBlock(pos);
-            BlocksParticlesManager.PARTICLES.remove(pos, this);
             return;
         }
 
@@ -57,7 +56,6 @@ public abstract class PlacingBlockParticle extends Particle {
 
         if (age >= lifetime + extraLifeTicks) {
             remove();
-            BlocksParticlesManager.PARTICLES.remove(pos, this);
         }
     }
 

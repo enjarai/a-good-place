@@ -1,1 +1,1 @@
-marked as compatible from 26.1 to 26.1.2
+- fixed an issue with particles not disappearing corectly
